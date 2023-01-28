@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
-import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.Communication;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotTellResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotAskResponse;
@@ -27,14 +26,12 @@ import com.andreasmenzel.adds_dji.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
 import okhttp3.Call;
@@ -93,7 +90,7 @@ public class TrafficSystemManager {
 
     // Auto communication: my_health
     private Handler autoCommunicationMyHealthHandler = new Handler();
-    private int autoCommunicationMyHealthDelay = 30_000;
+    private int autoCommunicationMyHealthDelay = 10_000;
 
 
     private String trafficSystemVersion;
@@ -248,6 +245,7 @@ public class TrafficSystemManager {
         autoCommunicationActive = true;
 
         addTellToSend("here_i_am");
+        addTellToSend("my_health");
     }
     /*
      * Stop the automatic communication for TELLs.
@@ -256,6 +254,7 @@ public class TrafficSystemManager {
         autoCommunicationActive = false;
 
         autoCommunicationHereIAmHandler.removeCallbacksAndMessages(null);
+        autoCommunicationMyHealthHandler.removeCallbacksAndMessages(null);
     }
 
 
@@ -265,6 +264,8 @@ public class TrafficSystemManager {
     private void addTellToSend(String tell) {
         if(tell.equals("here_i_am")) {
             autoCommunicationHereIAmHandler.removeCallbacksAndMessages(null);
+        } else if(tell.equals("my_health")) {
+            autoCommunicationMyHealthHandler.removeCallbacksAndMessages(null);
         }
 
         processingTellsToSend.lock();
@@ -324,7 +325,14 @@ public class TrafficSystemManager {
             requestData += "&yaw=" + aircraftLocation.getYaw();
             requestData += "&roll=" + aircraftLocation.getRoll();
         } if(tell.equals("my_health")) {
-            requestData += "&drone_id=" + "testdrone1"; // TODO: get correct drone id
+            AircraftPower aircraftPower = djiManager.getAircraftPower();
+
+            requestData += "&drone_id=" + "dummy_drone"; // TODO: get correct drone id
+            requestData += "&health=" + "ok"; // TODO: get correct value
+            requestData += "&battery_remaining=" + aircraftPower.getBatteryRemaining();
+            requestData += "&battery_remaining_percent=" + aircraftPower.getBatteryRemainingPercent();
+            requestData += "&remaining_flight_time=" + aircraftPower.getRemainingFlightTime();
+            requestData += "&remaining_flight_radius=" + aircraftPower.getRemainingFlightRadius();
         }
 
         // Remove first '&' character and send request
@@ -368,9 +376,15 @@ public class TrafficSystemManager {
         }
 
         if(autoCommunicationActive) {
-            autoCommunicationHereIAmHandler.postDelayed(() -> {
-                addTellToSend(event.getTell());
-            }, autoCommunicationHereIAmDelay);
+            if(event.getTell().equals("here_i_am")) {
+                autoCommunicationHereIAmHandler.postDelayed(() -> {
+                    addTellToSend("here_i_am");
+                }, autoCommunicationHereIAmDelay);
+            } else if(event.getTell().equals("my_health")) {
+                autoCommunicationMyHealthHandler.postDelayed(() -> {
+                    addTellToSend("my_health");
+                }, autoCommunicationMyHealthDelay);
+            }
         }
     }
 
@@ -386,9 +400,15 @@ public class TrafficSystemManager {
 
         // This currently ignores that the TELL failed.
         if(autoCommunicationActive) {
-            autoCommunicationHereIAmHandler.postDelayed(() -> {
-                addTellToSend(event.getTell());
-            }, autoCommunicationHereIAmDelay);
+            if(event.getTell().equals("here_i_am")) {
+                autoCommunicationHereIAmHandler.postDelayed(() -> {
+                    addTellToSend("here_i_am");
+                }, autoCommunicationHereIAmDelay);
+            } else if(event.getTell().equals("my_health")) {
+                autoCommunicationMyHealthHandler.postDelayed(() -> {
+                    addTellToSend("my_health");
+                }, autoCommunicationMyHealthDelay);
+            }
         }
     }
     /**************************** END - automatic communication: tell *****************************/

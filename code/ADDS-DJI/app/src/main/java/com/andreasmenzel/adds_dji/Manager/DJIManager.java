@@ -246,5 +246,8 @@ public class DJIManager {
     public AircraftLocation getAircraftLocation() {
         return aircraftLocation;
     }
+    public AircraftPower getAircraftPower() {
+        return aircraftPower;
+    }
 
 }
