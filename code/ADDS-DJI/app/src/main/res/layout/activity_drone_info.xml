@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/txtView_label_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Location"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtView_label_gpsLat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="GPS Lat:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_location" />
+
+    <TextView
+        android:id="@+id/txtView_label_gpsLon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="GPS Lon:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsLat" />
+
+    <TextView
+        android:id="@+id/txtView_label_altitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Altitude:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsStrength" />
+
+    <TextView
+        android:id="@+id/txtView_gpsLat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsLat"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsLat" />
+
+    <TextView
+        android:id="@+id/txtView_gpsLon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsLon"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsLon" />
+
+    <TextView
+        android:id="@+id/txtView_altitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_altitude"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_altitude" />
+
+    <TextView
+        android:id="@+id/txtView_label_pitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Pitch:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_altitude" />
+
+    <TextView
+        android:id="@+id/txtView_label_yaw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Yaw:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_pitch" />
+
+    <TextView
+        android:id="@+id/txtView_label_roll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Roll:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_yaw" />
+
+    <TextView
+        android:id="@+id/txtView_pitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_pitch"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_pitch" />
+
+    <TextView
+        android:id="@+id/txtView_yaw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_yaw"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_yaw" />
+
+    <TextView
+        android:id="@+id/txtView_roll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_roll"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_roll" />
+
+    <TextView
+        android:id="@+id/txtView_label_gpsStrength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="GPS Strength:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsLon" />
+
+    <TextView
+        android:id="@+id/txtView_gpsStrength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsStrength"
+        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsStrength" />
+</androidx.constraintlayout.widget.ConstraintLayout>

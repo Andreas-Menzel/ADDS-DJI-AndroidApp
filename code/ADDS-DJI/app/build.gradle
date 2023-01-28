@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.andreasmenzel.adds_dji'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.andreasmenzel.adds_dji"
@@ -26,14 +26,35 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions{
+        doNotStrip "*/*/libdjivideo.so"
+        doNotStrip "*/*/libSDKRelativeJNI.so"
+        doNotStrip "*/*/libFlyForbid.so"
+        doNotStrip "*/*/libduml_vision_bokeh.so"
+        doNotStrip "*/*/libyuv2.so"
+        doNotStrip "*/*/libGroudStation.so"
+        doNotStrip "*/*/libFRCorkscrew.so"
+        doNotStrip "*/*/libUpgradeVerify.so"
+        doNotStrip "*/*/libFR.so"
+        doNotStrip "*/*/libDJIFlySafeCore.so"
+        doNotStrip "*/*/libdjifs_jni.so"
+        doNotStrip "*/*/libsfjni.so"
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation('com.dji:dji-sdk:4.16.4', {exclude module: 'library-anti-distortion'})
+    compileOnly 'com.dji:dji-sdk-provided:4.16.4'
+
+    implementation("org.greenrobot:eventbus:3.3.1")
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 }

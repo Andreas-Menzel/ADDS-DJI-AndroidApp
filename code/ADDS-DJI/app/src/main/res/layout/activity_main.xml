@@ -7,12 +7,157 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/txtView_label_ProductModelName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_productModelName"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdk"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_msdk" />
+
+    <TextView
+        android:id="@+id/txtView_productModelName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product_not_connected"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_ProductModelName"
+        app:layout_constraintStart_toStartOf="@+id/txtView_msdk"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_ProductModelName" />
+
+    <Button
+        android:id="@+id/btn_activationChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/label_activate_drone"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/txtView_label_droneID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/label_drone_id"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_activationChange"
+        app:layout_constraintEnd_toStartOf="@+id/txtView_droneID"
+        app:layout_constraintTop_toTopOf="@+id/btn_activationChange" />
+
+    <TextView
+        android:id="@+id/txtView_droneID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="testdrone1"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_activationChange"
+        app:layout_constraintEnd_toStartOf="@+id/btn_activationChange"
+        app:layout_constraintTop_toTopOf="@+id/btn_activationChange" />
+
+    <TextView
+        android:id="@+id/txtView_tmp_droneIDFixedForNow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fixed for now"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_droneID"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_droneID" />
+
+    <TextView
+        android:id="@+id/txtView_label_trafficSystem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_trafficSystem"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdk"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_ProductModelName" />
+
+    <TextView
+        android:id="@+id/txtView_trafficSystem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trafficSystem_not_checked_yet"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficSystem"
+        app:layout_constraintStart_toStartOf="@+id/txtView_productModelName"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficSystem" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/drone_id_not_registered"
+        android:textColor="#F44336"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btn_activationChange"
+        app:layout_constraintEnd_toEndOf="@+id/btn_activationChange"
+        app:layout_constraintStart_toStartOf="@+id/btn_activationChange" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/button_show_drone_info"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_testFlightModes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/button_test_flight_modes"
+        app:layout_constraintEnd_toEndOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <TextView
+        android:id="@+id/txtView_label_msdk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_msdkRegistration"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtView_msdk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:text="@string/msdkRegistration_not_registered_yet"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_msdk"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_msdk"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_msdk" />
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="START"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="STOP"
+        app:layout_constraintStart_toEndOf="@+id/btn_start"
+        app:layout_constraintTop_toTopOf="@+id/btn_start" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

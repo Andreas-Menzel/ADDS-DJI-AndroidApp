@@ -1,3 +1,42 @@
 <resources>
     <string name="app_name">ADDS-DJI</string>
+
+    <!-- activity_main -->
+    <string name="label_msdkRegistration">DJI MSDK:</string>
+    <string name="msdkRegistration_not_registered_yet">not registered yet</string>
+    <string name="msdkRegistration_missing_permissions">FAILED: MISSING PERMISSIONS</string>
+    <string name="msdkRegistration_registration_in_progress">registration in progress...</string>
+    <string name="msdkRegistration_registered">OK</string>
+    <string name="msdkRegistration_registration_failed">REGISTRATION FAILED</string>
+
+    <string name="label_productModelName">Model:</string>
+    <string name="product_not_connected">not connected</string>
+
+    <string name="label_trafficSystem">Traffic System:</string>
+    <string name="trafficSystem_not_checked_yet">not checked yet</string>
+    <string name="trafficSystem_checking_connection">checking connection...</string>
+    <string name="trafficSystem_not_connected">not connected</string>
+
+
+
+    <string name="label_activate_drone">Activate Drone</string>
+    <string name="drone_id_not_registered">Drone ID not registered!</string>
+
+    <string name="button_show_drone_info">Show Drone Info</string>
+    <string name="button_test_flight_modes">Test Flight Modes</string>
+
+    <string name="label_drone_id">Drone ID:</string>
+
+    <string name="virtual_stick">Virtual Stick</string>
+    <string name="virtual_stick_description">With this mode the app can simulate a pilot and control the drone through a virtual controller (Virtual Stick).
+
+Click the button below start the Virtual Stick demonstration. The drone will then fly left->right->left->…
+    </string>
+    <string name="virtual_stick_button">Test Virtual Stick</string>
+
+    <string name="waypoint_mission">Waypoint Mission</string>
+    <string name="waypoint_mission_description">With this mode the app can fly simple waypoint missions.
+
+Click the button below start the waypoint mission demonstration. You can then manually add waypoints (record your flight) and start the automatic flight.</string>
+    <string name="waypoint_mission_button">Test Waypoint Mission</string>
 </resources>
