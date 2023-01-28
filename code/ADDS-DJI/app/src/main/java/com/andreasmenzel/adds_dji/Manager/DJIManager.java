@@ -8,6 +8,7 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChange
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnectivityChange;
 import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
+import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 import com.andreasmenzel.adds_dji.MainActivity;
@@ -66,6 +67,7 @@ public class DJIManager {
     private void setupCallbacks() {
         setupBatteryStateCallback();
         setupFlightControllerStateCallback();
+        bus.post(new ToastMessage("Registered Callbacks"));
     }
 
 

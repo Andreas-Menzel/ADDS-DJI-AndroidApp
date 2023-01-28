@@ -311,9 +311,18 @@ public class TrafficSystemManager {
         String requestData = "";
 
         if(tell.equals("here_i_am")) {
+            AircraftLocation aircraftLocation = djiManager.getAircraftLocation();
+
             requestData += "&drone_id=" + "testdrone1"; // TODO: get correct drone id
-            requestData += "&coordinates_lat=";
-            requestData += "&coordinates_lon=";
+            requestData += "&gps_signal_level=" + aircraftLocation.getGpsSignalLevel();
+            requestData += "&gps_satellites_connected=" + aircraftLocation.getGpsSatellitesConnected();
+            requestData += "&gps_valid=" + aircraftLocation.getGpsValid();
+            requestData += "&gps_lat=" + aircraftLocation.getGpsLat();
+            requestData += "&gps_lon=" + aircraftLocation.getGpsLon();
+            requestData += "&altitude=" + aircraftLocation.getAltitude();
+            requestData += "&pitch=" + aircraftLocation.getPitch();
+            requestData += "&yaw=" + aircraftLocation.getYaw();
+            requestData += "&roll=" + aircraftLocation.getRoll();
         } if(tell.equals("my_health")) {
             requestData += "&drone_id=" + "testdrone1"; // TODO: get correct drone id
         }
