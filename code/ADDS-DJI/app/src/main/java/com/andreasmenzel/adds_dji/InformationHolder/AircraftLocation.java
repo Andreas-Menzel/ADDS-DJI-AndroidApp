@@ -29,6 +29,13 @@ public class AircraftLocation {
     private float altitude;
 
     /*
+     * Aircraft velocities in m/s using N-E-D (North-East-Down) coordinate system.
+     */
+    private float velocityX;
+    private float velocityY;
+    private float velocityZ;
+
+    /*
      * Pitch, yaw and roll in degrees. -180 - 180.
      */
     private double pitch;
@@ -49,27 +56,13 @@ public class AircraftLocation {
 
         this.altitude = 0;
 
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.velocityZ = 0;
+
         this.pitch = 0;
         this.yaw = 0;
         this.roll = 0;
-    }
-
-    public AircraftLocation(int gpsSignalLevel, int gpsSatellitesConnected,
-                            boolean gpsValid, double gpsLat, double gpsLon,
-                            float altitude,
-                            double pitch, double yaw, double roll) {
-        this.gpsSignalLevel = gpsSignalLevel;
-        this.gpsSatellitesConnected = gpsSatellitesConnected;
-
-        this.gpsValid = gpsValid;
-        this.gpsLat = gpsLat;
-        this.gpsLon = gpsLon;
-
-        this.altitude = altitude;
-
-        this.pitch = pitch;
-        this.yaw = yaw;
-        this.roll = roll;
     }
 
 
@@ -79,6 +72,7 @@ public class AircraftLocation {
     public void updateData(int gpsSignalLevel, int gpsSatellitesConnected,
                            boolean gpsValid, double gpsLat, double gpsLon,
                            float altitude,
+                           float velocityX, float velocityY, float velocityZ,
                            double pitch, double yaw, double roll) {
         this.gpsSignalLevel = gpsSignalLevel;
         this.gpsSatellitesConnected = gpsSatellitesConnected;
@@ -88,6 +82,10 @@ public class AircraftLocation {
         this.gpsLon = gpsLon;
 
         this.altitude = altitude;
+
+        this.velocityX = velocityX;
+        this.velocityY = velocityY;
+        this.velocityZ = velocityZ;
 
         this.pitch = pitch;
         this.yaw = yaw;
@@ -115,6 +113,15 @@ public class AircraftLocation {
     }
     public float getAltitude() {
         return altitude;
+    }
+    public float getVelocityX() {
+        return velocityX;
+    }
+    public float getVelocityY() {
+        return velocityY;
+    }
+    public float getVelocityZ() {
+        return velocityZ;
     }
     public double getPitch() {
         return pitch;

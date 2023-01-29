@@ -57,17 +57,18 @@ public class DJIManager {
     @Subscribe
     public void productConnected(ProductConnected event) {
         setupCallbacks();
+        bus.post(new ToastMessage("productConnected(): Registered Callbacks"));
     }
 
     @Subscribe
     public void productChanged(ProductChanged event) {
         setupCallbacks();
+        bus.post(new ToastMessage("productChanged(): Registered Callbacks"));
     }
 
     private void setupCallbacks() {
         setupBatteryStateCallback();
         setupFlightControllerStateCallback();
-        bus.post(new ToastMessage("Registered Callbacks"));
     }
 
 
@@ -128,10 +129,11 @@ public class DJIManager {
                     processUpdatedBatteryState(batteryState);
                 });
             } catch (Exception ignored) {
-
+                // TODO: Error - retry?
             }
         } else {
             // Could not setup
+            // TODO: Error - retry?
         }
 
     }
@@ -223,6 +225,10 @@ public class DJIManager {
                 djiAircraftLocation.getLongitude(),
 
                 djiAircraftLocation.getAltitude(),
+
+                flightControllerState.getVelocityX(),
+                flightControllerState.getVelocityY(),
+                flightControllerState.getVelocityZ(),
 
                 aircraftAttitude.pitch,
                 aircraftAttitude.yaw,

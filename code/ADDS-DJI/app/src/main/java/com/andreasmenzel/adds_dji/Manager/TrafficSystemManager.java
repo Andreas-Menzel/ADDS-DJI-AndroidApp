@@ -321,6 +321,9 @@ public class TrafficSystemManager {
             requestData += "&gps_lat=" + aircraftLocation.getGpsLat();
             requestData += "&gps_lon=" + aircraftLocation.getGpsLon();
             requestData += "&altitude=" + aircraftLocation.getAltitude();
+            requestData += "&velocity_x=" + aircraftLocation.getVelocityX();
+            requestData += "&velocity_Y=" + aircraftLocation.getVelocityY();
+            requestData += "&velocity_Z=" + aircraftLocation.getVelocityZ();
             requestData += "&pitch=" + aircraftLocation.getPitch();
             requestData += "&yaw=" + aircraftLocation.getYaw();
             requestData += "&roll=" + aircraftLocation.getRoll();
