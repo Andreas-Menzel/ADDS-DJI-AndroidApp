@@ -2,7 +2,7 @@ package com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication;
 
 import androidx.annotation.NonNull;
 
-public class GotAskResponse extends Communication {
+public class GotAskResponse extends RequestSucceeded {
 
     private String ask;
     private String response;

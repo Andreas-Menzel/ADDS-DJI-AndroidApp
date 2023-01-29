@@ -2,7 +2,7 @@ package com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication;
 
 import androidx.annotation.NonNull;
 
-public class AskFailed extends Communication {
+public class AskFailed extends RequestFailed {
 
     private String ask;
 

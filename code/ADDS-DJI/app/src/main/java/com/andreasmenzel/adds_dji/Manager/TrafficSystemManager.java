@@ -1,14 +1,17 @@
 package com.andreasmenzel.adds_dji.Manager;
 
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
+import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.Communication;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotTellResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotAskResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.InvalidTellResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.RequestFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.RequestSucceeded;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.TellFailed;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.AskFailed;
 
@@ -42,10 +45,7 @@ import okhttp3.Response;
 
 public class TrafficSystemManager {
 
-    private static final String TAG = MainActivity.class.getName();
-
     private final EventBus bus = EventBus.getDefault();
-    private Handler handler;
 
     /*
      * Manager
@@ -68,14 +68,14 @@ public class TrafficSystemManager {
      * Periodically check the connection to the Traffic System
      * (every <checkConnectionUntilConnectedDelay> seconds) until a connection can be established.
      */
-    private boolean checkConnectionUntilConnected = false;
-    private int checkConnectionUntilConnectedDelay = 5000;
+    private final Handler connectivityCheckHandler = new Handler();
+    private int connectivityCheckDelay = 1000;
 
     /*
      *
      */
     private LinkedList<String> tellsToSend = new LinkedList<>();
-    private ReentrantLock processingTellsToSend = new ReentrantLock();
+    private final ReentrantLock processingTellsToSend = new ReentrantLock();
 
     /*
      * Automatically send TELLs in specified intervals. Periodically check the connection
@@ -85,25 +85,32 @@ public class TrafficSystemManager {
     private boolean autoCommunicationActive = false;
 
     // Auto communication: here_i_am
-    private Handler autoCommunicationHereIAmHandler = new Handler();
+    private final Handler autoCommunicationHereIAmHandler = new Handler();
     private int autoCommunicationHereIAmDelay = 2000;
 
     // Auto communication: my_health
-    private Handler autoCommunicationMyHealthHandler = new Handler();
+    private final Handler autoCommunicationMyHealthHandler = new Handler();
     private int autoCommunicationMyHealthDelay = 10_000;
 
+    /*
+     * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
+     * Consider the device disconnected when the requests failed multiple times consecutively.
+     */
+    private int requestsFailedCounter = 0;
+    private final int requestsFailedCounterMax = 3;
 
-    private String trafficSystemVersion;
+    /*
+     * The Traffic System version. This is null if the Traffic System cannot be reached.
+     */
+    private String trafficSystemVersion = null;
 
 
     public TrafficSystemManager() {
         bus.register(this);
 
-        handler = new Handler();
-
         djiManager = MApplication.getDjiManager();
 
-        trafficSystemVersion = null;
+        checkConnection();
     }
 
 
@@ -111,6 +118,67 @@ public class TrafficSystemManager {
     protected void finalize() throws Throwable {
         super.finalize();
         bus.unregister(this);
+    }
+
+
+    public void checkConnection() {
+        bus.post(new TrafficSystemConnectionCheckInProgeress());
+
+        Request request = new Request.Builder()
+                .url(trafficSystemUrl + "how_are_you")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                if(trafficSystemVersion == null) {
+                    // Was already not connected
+                    bus.post(new TrafficSystemNotConnected());
+                } else {
+                    // Was connected earlier
+                    trafficSystemVersion = null;
+                    bus.post(new TrafficSystemNowDisconnected());
+                }
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if(response.isSuccessful()) {
+                    String myResponse = response.body().string();
+
+                    try {
+                        JSONObject json = new JSONObject(myResponse);
+                        String version = json.getString("version");
+
+                        if(version.equals(trafficSystemVersion)) {
+                            bus.post(new TrafficSystemConnected());
+                        } else {
+                            trafficSystemVersion = version;
+                            bus.post(new TrafficSystemNowConnected());
+                        }
+                    } catch (JSONException e) {
+                        // TODO: invalid response
+                        if(trafficSystemVersion == null) {
+                            // Was already not connected
+                            bus.post(new TrafficSystemNotConnected());
+                        } else {
+                            // Was connected earlier
+                            trafficSystemVersion = null;
+                            bus.post(new TrafficSystemNowDisconnected());
+                        }
+                    }
+                } else {
+                    if(trafficSystemVersion == null) {
+                        // Was already not connected
+                        bus.post(new TrafficSystemNotConnected());
+                    } else {
+                        // Was connected earlier
+                        trafficSystemVersion = null;
+                        bus.post(new TrafficSystemNowDisconnected());
+                    }
+                }
+            }
+        });
     }
 
 
@@ -158,79 +226,43 @@ public class TrafficSystemManager {
     }
 
 
-    public void checkConnection(boolean checkConnectionUntilConnected) {
-        // NOTE: This will also reset this flag from another call!
-        this.checkConnectionUntilConnected = checkConnectionUntilConnected;
-        Log.d(TAG, "Checking connection...");
+    @Subscribe
+    public void nowConnected(TrafficSystemNowConnected event) {
+        bus.post(new ToastMessage("Now conneced: startAutoCommunicationTell()"));
+        startAutoCommunicationTell();
+    }
 
-        bus.post(new TrafficSystemConnectionCheckInProgeress());
-
-        Request request = new Request.Builder()
-                .url(trafficSystemUrl + "how_are_you")
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if(trafficSystemVersion == null) {
-                    // Was already not connected
-                    bus.post(new TrafficSystemNotConnected());
-                } else {
-                    // Was connected earlier
-                    trafficSystemVersion = null;
-                    bus.post(new TrafficSystemNowDisconnected());
-                }
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()) {
-                    String myResponse = response.body().string();
-
-                    try {
-                        JSONObject json = new JSONObject(myResponse);
-                        String version = json.getString("version");
-
-                        if(version == trafficSystemVersion) {
-                            bus.post(new TrafficSystemConnected());
-                        } else {
-                            trafficSystemVersion = version;
-                            bus.post(new TrafficSystemNowConnected());
-                        }
-                    } catch (JSONException e) {
-                        // TODO: invalid response
-                        if(trafficSystemVersion == null) {
-                            // Was already not connected
-                            bus.post(new TrafficSystemNotConnected());
-                        } else {
-                            // Was connected earlier
-                            trafficSystemVersion = null;
-                            bus.post(new TrafficSystemNowDisconnected());
-                        }
-                    }
-                } else {
-                    if(trafficSystemVersion == null) {
-                        // Was already not connected
-                        bus.post(new TrafficSystemNotConnected());
-                    } else {
-                        // Was connected earlier
-                        trafficSystemVersion = null;
-                        bus.post(new TrafficSystemNowDisconnected());
-                    }
-                }
-            }
-        });
+    @Subscribe
+    public void nowDisconnected(TrafficSystemNowDisconnected event) {
+        trafficSystemVersion = null; // Just in case it is missing somewhere else.
+        bus.post(new ToastMessage("Now disconneced: stopAutoCommunicationTell()"));
+        stopAutoCommunicationTell();
     }
 
     @Subscribe
     public void notConnected(TrafficSystemNotConnected event) {
-        handler.postDelayed(() -> checkConnection(checkConnectionUntilConnected), checkConnectionUntilConnectedDelay);
+        if(event instanceof TrafficSystemNowDisconnected) {
+            checkConnection();
+        } else {
+            connectivityCheckHandler.postDelayed(this::checkConnection, connectivityCheckDelay);
+        }
+    }
+
+
+    @Subscribe
+    public void requestFailed(RequestFailed event) {
+        requestsFailedCounter++;
+        if(requestsFailedCounter > requestsFailedCounterMax) {
+            requestsFailedCounter = 0;
+
+            trafficSystemVersion = null;
+            bus.post(new TrafficSystemNowDisconnected());
+        }
     }
 
     @Subscribe
-    public void connected(TrafficSystemConnected event) {
-        // NOTE: This will also reset this flag from another call!
-        checkConnectionUntilConnected = false;
+    public void requestSucceeded(RequestSucceeded event) {
+        requestsFailedCounter = 0;
     }
 
 
@@ -362,7 +394,7 @@ public class TrafficSystemManager {
             }
 
             if(!executed) {
-                bus.post(new TellFailed(event.getTell()));
+                // TODO
             }
 
             // TODO: Handle errors and warnings
@@ -375,7 +407,7 @@ public class TrafficSystemManager {
             }
         } catch (JSONException e) {
             // Invalid response
-            bus.post(new TellFailed(event.getTell()));
+            bus.post(new InvalidTellResponse(event.getTell()));
         }
 
         if(autoCommunicationActive) {

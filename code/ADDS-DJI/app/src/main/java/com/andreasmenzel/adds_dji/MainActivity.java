@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler(Looper.getMainLooper());
 
+        // Get custom manager
         djiManager = MApplication.getDjiManager();
         trafficSystemManager = MApplication.getTrafficSystemManager();
 
@@ -88,22 +89,12 @@ public class MainActivity extends AppCompatActivity {
         checkAndRequestPermissions();
 
 
-        trafficSystemManager.checkConnection(true);
-
-
         findViewById(R.id.button).setOnClickListener((View view) -> {
             showDroneInfoActivity();
         });
         findViewById(R.id.btn_testFlightModes).setOnClickListener((View view) -> {
             Intent switchActivityIntent = new Intent(this, TestFlightModesActivity.class);
             startActivity(switchActivityIntent);
-        });
-
-        findViewById(R.id.btn_start).setOnClickListener((View view) -> {
-            trafficSystemManager.startAutoCommunicationTell();
-        });
-        findViewById(R.id.btn_stop).setOnClickListener((View view) -> {
-            trafficSystemManager.stopAutoCommunicationTell();
         });
     }
 
