@@ -16,16 +16,15 @@ import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.TellFailed;
 import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.AskFailed;
 
 // Traffic System Connectivity Events - TODO: update and improve
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemConnectionCheckInProgeress;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemNotConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemNowConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemNowDisconnected;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.Connected;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NotConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NowConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NowDisconnected;
 
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 import com.andreasmenzel.adds_dji.MApplication;
-import com.andreasmenzel.adds_dji.MainActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -98,6 +97,8 @@ public class TrafficSystemManager {
      */
     private int requestsFailedCounter = 0;
     private final int requestsFailedCounterMax = 3;
+    private int totalRequestsFailed = 0;
+    private int totalRequestsSucceeded = 0;
 
     /*
      * The Traffic System version. This is null if the Traffic System cannot be reached.
@@ -122,7 +123,7 @@ public class TrafficSystemManager {
 
 
     public void checkConnection() {
-        bus.post(new TrafficSystemConnectionCheckInProgeress());
+        bus.post(new ConnectionCheckInProgress());
 
         Request request = new Request.Builder()
                 .url(trafficSystemUrl + "how_are_you")
@@ -133,11 +134,11 @@ public class TrafficSystemManager {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 if(trafficSystemVersion == null) {
                     // Was already not connected
-                    bus.post(new TrafficSystemNotConnected());
+                    bus.post(new NotConnected());
                 } else {
                     // Was connected earlier
                     trafficSystemVersion = null;
-                    bus.post(new TrafficSystemNowDisconnected());
+                    bus.post(new NowDisconnected());
                 }
             }
 
@@ -151,30 +152,30 @@ public class TrafficSystemManager {
                         String version = json.getString("version");
 
                         if(version.equals(trafficSystemVersion)) {
-                            bus.post(new TrafficSystemConnected());
+                            bus.post(new Connected());
                         } else {
                             trafficSystemVersion = version;
-                            bus.post(new TrafficSystemNowConnected());
+                            bus.post(new NowConnected());
                         }
                     } catch (JSONException e) {
                         // TODO: invalid response
                         if(trafficSystemVersion == null) {
                             // Was already not connected
-                            bus.post(new TrafficSystemNotConnected());
+                            bus.post(new NotConnected());
                         } else {
                             // Was connected earlier
                             trafficSystemVersion = null;
-                            bus.post(new TrafficSystemNowDisconnected());
+                            bus.post(new NowDisconnected());
                         }
                     }
                 } else {
                     if(trafficSystemVersion == null) {
                         // Was already not connected
-                        bus.post(new TrafficSystemNotConnected());
+                        bus.post(new NotConnected());
                     } else {
                         // Was connected earlier
                         trafficSystemVersion = null;
-                        bus.post(new TrafficSystemNowDisconnected());
+                        bus.post(new NowDisconnected());
                     }
                 }
             }
@@ -227,21 +228,21 @@ public class TrafficSystemManager {
 
 
     @Subscribe
-    public void nowConnected(TrafficSystemNowConnected event) {
+    public void nowConnected(NowConnected event) {
         bus.post(new ToastMessage("Now conneced: startAutoCommunicationTell()"));
         startAutoCommunicationTell();
     }
 
     @Subscribe
-    public void nowDisconnected(TrafficSystemNowDisconnected event) {
+    public void nowDisconnected(NowDisconnected event) {
         trafficSystemVersion = null; // Just in case it is missing somewhere else.
         bus.post(new ToastMessage("Now disconneced: stopAutoCommunicationTell()"));
         stopAutoCommunicationTell();
     }
 
     @Subscribe
-    public void notConnected(TrafficSystemNotConnected event) {
-        if(event instanceof TrafficSystemNowDisconnected) {
+    public void notConnected(NotConnected event) {
+        if(event instanceof NowDisconnected) {
             checkConnection();
         } else {
             connectivityCheckHandler.postDelayed(this::checkConnection, connectivityCheckDelay);
@@ -251,17 +252,21 @@ public class TrafficSystemManager {
 
     @Subscribe
     public void requestFailed(RequestFailed event) {
+        totalRequestsFailed++;
+
         requestsFailedCounter++;
         if(requestsFailedCounter > requestsFailedCounterMax) {
             requestsFailedCounter = 0;
 
             trafficSystemVersion = null;
-            bus.post(new TrafficSystemNowDisconnected());
+            bus.post(new NowDisconnected());
         }
     }
 
     @Subscribe
     public void requestSucceeded(RequestSucceeded event) {
+        totalRequestsSucceeded++;
+
         requestsFailedCounter = 0;
     }
 
@@ -463,6 +468,12 @@ public class TrafficSystemManager {
      */
     public String getTrafficSystemVersion() {
         return trafficSystemVersion;
+    }
+    public int getTotalRequestsFailed() {
+        return totalRequestsFailed;
+    }
+    public int getTotalRequestsSucceeded() {
+        return totalRequestsSucceeded;
     }
 
 }

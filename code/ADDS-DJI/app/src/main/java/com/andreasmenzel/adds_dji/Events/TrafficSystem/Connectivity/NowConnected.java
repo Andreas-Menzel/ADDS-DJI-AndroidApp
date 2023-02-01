@@ -1,4 +1,4 @@
 package com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity;
 
-public class TrafficSystemConnectionEvent {
+public class NowConnected extends Connected {
 }

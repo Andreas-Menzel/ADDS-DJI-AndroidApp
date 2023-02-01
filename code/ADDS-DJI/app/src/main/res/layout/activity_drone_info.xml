@@ -1,153 +1,368 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txtView_label_location"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Location"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtView_label_gpsLat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="GPS Lat:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_location" />
+        <!-- Aircraft Location && Aircraft Power -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16sp"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-    <TextView
-        android:id="@+id/txtView_label_gpsLon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="GPS Lon:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsLat" />
+            <!-- Aircraft Location -->
+            <LinearLayout
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="16sp">
 
-    <TextView
-        android:id="@+id/txtView_label_altitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Altitude:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsStrength" />
+                <TextView
+                    android:id="@+id/txtView_label_aircraftLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aircraft Location"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16sp"/>
 
-    <TextView
-        android:id="@+id/txtView_gpsLat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsLat"
-        app:layout_constraintStart_toEndOf="@+id/txtView_label_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsLat" />
+                <!-- gps_signal_level -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
 
-    <TextView
-        android:id="@+id/txtView_gpsLon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsLon"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsLon" />
+                    <TextView
+                        android:id="@+id/txtView_label_gpsSignalLevel"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="GPS Signal Level:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
 
-    <TextView
-        android:id="@+id/txtView_altitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_altitude"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_altitude" />
+                    <TextView
+                        android:id="@+id/txtView_gpsSignalLevel"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="gps_signal_level"
+                        android:layout_weight="2"/>
+                </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtView_label_pitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Pitch:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_altitude" />
+                <!-- gps_satellites_connected -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
 
-    <TextView
-        android:id="@+id/txtView_label_yaw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Yaw:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_pitch" />
+                    <TextView
+                        android:id="@+id/txtView_label_gpsSatellitesConnected"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Sats Connected:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
 
-    <TextView
-        android:id="@+id/txtView_label_roll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Roll:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_yaw" />
+                    <TextView
+                        android:id="@+id/txtView_gpsSatellitesConnected"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="gps_satellites_connected"
+                        android:layout_weight="2"/>
+                </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtView_pitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_pitch"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_pitch" />
+                <!-- gps_valid -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
 
-    <TextView
-        android:id="@+id/txtView_yaw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_yaw"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_yaw" />
+                    <TextView
+                        android:id="@+id/txtView_label_gpsValid"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="GPS Valid:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
 
-    <TextView
-        android:id="@+id/txtView_roll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_roll"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_roll" />
+                    <TextView
+                        android:id="@+id/txtView_gpsValid"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="gps_valid"
+                        android:layout_weight="2"/>
+                </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtView_label_gpsStrength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="GPS Strength:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_location"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_gpsLon" />
+                <!-- gps_lat && gps_lon -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
 
-    <TextView
-        android:id="@+id/txtView_gpsStrength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_gpsStrength"
-        app:layout_constraintStart_toStartOf="@+id/txtView_gpsLat"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_gpsStrength" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/txtView_label_gpsLocation"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="GPS Location:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:id="@+id/txtView_gpsLat"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:text="gps_lat"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/txtView_gpsLon"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:text="gps_lon"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- altitude -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_altitude"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Altitude:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/txtView_altitude"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="altitude"
+                        android:layout_weight="2"/>
+                </LinearLayout>
+
+                <!-- velocity_x && velocity_y && velocity_z -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_velocity"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Velocity:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <LinearLayout
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:weightSum="3">
+
+                        <TextView
+                            android:id="@+id/txtView_velocityX"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:text="velocity_x"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/txtView_velocityY"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:text="velocity_y"
+                            android:layout_weight="1"/>
+
+                        <TextView
+                            android:id="@+id/txtView_velocityZ"
+                            android:layout_width="0sp"
+                            android:layout_height="wrap_content"
+                            android:text="velocity_z"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout> <!-- Aircraft Location -->
+
+            <!-- Aircraft Power -->
+            <LinearLayout
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="16sp">
+
+                <TextView
+                    android:id="@+id/txtView_label_aircraftPower"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aircraft Power"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8sp"/>
+
+                <!-- battery_remaining -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_batteryRemaining"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Bat. Remaining:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/txtView_batteryRemaining"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="battery_remaining"
+                        android:layout_weight="2"/>
+                </LinearLayout>
+
+                <!-- battery_remaining_percent -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_batteryRemainingPercent"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Battery %:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/txtView_batteryRemainingPercent"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="battery_remaining_percent"
+                        android:layout_weight="2"/>
+                </LinearLayout>
+
+                <!-- remaining_flight_time -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_remainingFlightTime"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Remaining Time:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/txtView_remainingFlightTime"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="remaining_flight_time"
+                        android:layout_weight="2"/>
+                </LinearLayout>
+
+                <!-- remaining_flight_radius -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginVertical="4sp">
+
+                    <TextView
+                        android:id="@+id/txtView_label_remainingFlightRadius"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="Remaining Radius:"
+                        android:textStyle="bold"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/txtView_remainingFlightRadius"
+                        android:layout_width="0sp"
+                        android:layout_height="wrap_content"
+                        android:text="remaining_flight_radius"
+                        android:layout_weight="2"/>
+                </LinearLayout>
+            </LinearLayout> <!-- Aircraft Power -->
+
+        </LinearLayout> <!-- Aircraft Location && Aircraft Power -->
+
+        <!-- Test -->
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="2">-->
+
+            <!-- Column 1 -->
+            <!--<LinearLayout
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:padding="16sp">
+
+                <TextView
+                    android:id="@+id/txtView_label_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16sp"/>-->
+
+                <!-- Test 2 -->
+
+
+            <!--</LinearLayout>--> <!-- Column 1 -->
+
+        <!--</LinearLayout>--> <!-- Aircraft Location && Aircraft Power -->
+
+    </LinearLayout>
+
+</ScrollView>

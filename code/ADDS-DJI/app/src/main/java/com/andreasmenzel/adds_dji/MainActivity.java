@@ -26,8 +26,8 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ComponentChan
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductDisconnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemConnectionCheckInProgeress;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.TrafficSystemConnectionEvent;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionEvent;
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
 import com.andreasmenzel.adds_dji.Manager.TrafficSystemManager;
 
@@ -252,19 +252,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showToast(ToastMessage toastMessage) {
-        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_LONG).show();
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void trafficSystemConnectionCheckInProgress(TrafficSystemConnectionCheckInProgeress event) {
+    public void trafficSystemConnectionCheckInProgress(ConnectionCheckInProgress event) {
         TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystem);
         txtView_trafficSystem.setText(R.string.trafficSystem_checking_connection);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void trafficSystemNowConnectionEvent(TrafficSystemConnectionEvent event) {
+    public void trafficSystemNowConnectionEvent(ConnectionEvent event) {
         TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystem);
 
         String version = trafficSystemManager.getTrafficSystemVersion();
@@ -295,6 +289,12 @@ public class MainActivity extends AppCompatActivity {
     public void showDroneInfoActivity() {
         Intent switchActivityIntent = new Intent(this, DroneInfoActivity.class);
         startActivity(switchActivityIntent);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showToast(ToastMessage toastMessage) {
+        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_SHORT).show();
     }
 
 }

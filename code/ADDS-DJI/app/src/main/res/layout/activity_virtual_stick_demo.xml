@@ -5,15 +5,75 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView"
+    <Button
+        android:id="@+id/btn_takeOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Virtual Stick Demo"
-        android:textSize="24sp"
+        android:layout_marginTop="32dp"
+        android:text="Take Off"
+        app:layout_constraintStart_toStartOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/btn_land"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Land"
+        app:layout_constraintEnd_toEndOf="@+id/btn_takeOff"
+        app:layout_constraintStart_toStartOf="@+id/btn_takeOff"
+        app:layout_constraintTop_toBottomOf="@+id/btn_takeOff" />
+
+    <TextView
+        android:id="@+id/txtView_label_highLevelFlightMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Flight Mode:"
+        android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtView_highLevelFlightMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_highLevelFlightMode"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_highLevelFlightMode"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="State:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_highLevelFlightMode"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_highLevelFlightMode" />
+
+    <TextView
+        android:id="@+id/txtView_flightModeState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unknown"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="@+id/txtView_highLevelFlightMode"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:text="Cancel Mode"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
