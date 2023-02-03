@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">ADDS-DJI</string>
 
-    <!-- activity_main -->
+    <!--
+        activity_main
+    -->
     <string name="label_msdkRegistration">DJI MSDK:</string>
     <string name="msdkRegistration_not_registered_yet">not registered yet</string>
     <string name="msdkRegistration_missing_permissions">FAILED: MISSING PERMISSIONS</string>
@@ -16,6 +18,58 @@
     <string name="trafficSystem_not_checked_yet">not checked yet</string>
     <string name="trafficSystem_checking_connection">checking connection...</string>
     <string name="trafficSystem_not_connected">not connected</string>
+
+
+    <!--
+        activity_drone_info
+    -->
+    <string name="heading_overview">Overview</string>
+    <!-- label_productModelName is defined above. -->
+
+
+    <string name="heading_aircraft_location">Aircraft Location</string>
+
+    <string name="labeL_gps_signal_level">GPS Signal Level:</string>
+    <string name="gps_signal_level">gps_signal_level</string>
+
+    <string name="label_gps_satellites_connected">Satellites Connected:</string>
+    <string name="gps_satellites_connected">gps_satellites_connected</string>
+
+    <string name="label_gps_valid">GPS Valid:</string>
+    <string name="gps_valid">gps_valid</string>
+
+    <string name="label_gps_location">GPS Location:</string>
+    <string name="gps_lat">gps_lat</string>
+    <string name="gps_lon">gps_lon</string>
+
+    <string name="label_altitude">Altitude:</string>
+    <string name="altitude">altitude</string>
+
+    <string name="label_velocity">Velocity:</string>
+    <string name="velocity_x">velocity_x</string>
+    <string name="velocity_y">velocity_y</string>
+    <string name="velocity_z">velocity_z</string>
+
+    <string name="label_attitude">Attitude</string>
+    <string name="pitch">pitch</string>
+    <string name="yaw">yaw</string>
+    <string name="roll">roll</string>
+
+    <string name="heading_aircraft_power">Aircraft Power</string>
+
+    <string name="label_battery_remaining">Battery Remaining:</string>
+    <string name="battery_remaining">battery_remaining</string>
+
+    <string name="battery_remaining_percent">battery_remaining_percent</string>
+    <string name="label_battery_remaining_percent">Battery Percent Rem.:</string>
+
+    <string name="remaining_flight_time">remaining_flight_time</string>
+    <string name="label_remaining_flight_time">Remaining Flight TIme:</string>
+
+    <string name="remaining_flight_radius">remaining_flight_radius</string>
+    <string name="label_remaining_flight_radius">Remaining Flight Radius:</string>
+
+
 
 
 

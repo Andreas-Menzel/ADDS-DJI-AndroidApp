@@ -9,7 +9,7 @@ public class Hovering extends HighLevelOperationMode {
         mode = HighLevelOperationMode.Modes.finished; // This mode is always "finished"
     }
 
-    // nextHightLevelOperationMode is not supported in Hovering
+    // nextHighLevelOperationMode is not supported in Hovering
 
 
     public String toString() {

@@ -3,35 +3,34 @@ package com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes;
 public class HighLevelOperationMode {
 
     public enum Modes {
-        failed {
-            @Override
-            public String toString() {
-                return "failed";
-            }
-        },
-
-        start {
+        start { // The mode was just (re)started
             @Override
             public String toString() {
                 return "start";
             }
         },
         attempting {
-            @Override
+            @Override // The MSDK command was issued
             public String toString() {
                 return "attempting";
             }
         },
         inProgress {
-            @Override
+            @Override // The MSDK command was executed
             public String toString() {
                 return "inProgress";
             }
         },
         finished {
-            @Override
+            @Override // The action issued by the MSDK command was finished
             public String toString() {
                 return "finished";
+            }
+        },
+        failed {
+            @Override // An error occurred (multiple times).
+            public String toString() {
+                return "failed";
             }
         }
     }

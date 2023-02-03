@@ -18,11 +18,13 @@ public class TestFlightModesActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_test_flight_modes);
 
-        findViewById(R.id.btn_startVirtualStickDemo).setOnClickListener((View view) -> {
-            startVirtualStickDemo();
+        findViewById(R.id.btn_testFlightModeTakeOffLanding).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, TakeOffLandingDemoActivity.class);
+            startActivity(switchActivityIntent);
         });
-        findViewById(R.id.btn_startWaypointMissionDemo).setOnClickListener((View view) -> {
-            startWaypointMissionDemo();
+        findViewById(R.id.btn_testFlightModeVirtualStickBasic).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, VirtualStickBasicDemoActivity.class);
+            startActivity(switchActivityIntent);
         });
     }
 
@@ -38,18 +40,6 @@ public class TestFlightModesActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         //bus.unregister(this);
-    }
-
-
-    private void startVirtualStickDemo() {
-        Intent switchActivityIntent = new Intent(this, VirtualStickDemoActivity.class);
-        startActivity(switchActivityIntent);
-    }
-
-
-    private void startWaypointMissionDemo() {
-        Intent switchActivityIntent = new Intent(this, WaypointMissionDemoActivity.class);
-        startActivity(switchActivityIntent);
     }
 
 }

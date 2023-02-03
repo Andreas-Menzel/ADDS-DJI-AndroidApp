@@ -5,6 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/txtView_label_virtualStickBasicDemo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Virtual Stick Basic Demo"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
+        app:layout_constraintTop_toTopOf="@+id/btn_cancel" />
+
     <Button
         android:id="@+id/btn_takeOff"
         android:layout_width="wrap_content"
@@ -75,5 +87,33 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+
+    <Button
+        android:id="@+id/btn_startVirtualStick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Virtual Stick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_virtualStickLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="ADD LEFT"
+        app:layout_constraintEnd_toStartOf="@+id/btn_startVirtualStick"
+        app:layout_constraintTop_toTopOf="@+id/btn_startVirtualStick" />
+
+    <Button
+        android:id="@+id/btn_virtualStickRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="ADD RIGHT"
+        app:layout_constraintStart_toEndOf="@+id/btn_startVirtualStick"
+        app:layout_constraintTop_toTopOf="@+id/btn_startVirtualStick" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

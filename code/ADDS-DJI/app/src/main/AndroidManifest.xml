@@ -91,7 +91,12 @@
             android:screenOrientation="landscape">
         </activity>
 
-        <activity android:name=".VirtualStickDemoActivity"
+        <activity android:name=".TakeOffLandingDemoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
+        </activity>
+
+        <activity android:name=".VirtualStickBasicDemoActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
         </activity>

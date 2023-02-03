@@ -21,15 +21,20 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import com.andreasmenzel.adds_dji.Events.*;
+// Events
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ComponentChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductDisconnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionEvent;
+import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
+import com.andreasmenzel.adds_dji.Events.SdkRegistered;
+import com.andreasmenzel.adds_dji.Events.ToastMessage;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionEvent;
+
+// Manager
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
-import com.andreasmenzel.adds_dji.Manager.TrafficSystemManager;
+import com.andreasmenzel.adds_dji.Manager.TrafficControlManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +49,7 @@ import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static EventBus bus = EventBus.getDefault();
+    private static final EventBus bus = EventBus.getDefault();
 
     private static final String TAG = MainActivity.class.getName();
     private Handler handler;
@@ -64,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
     };
-    private List<String> missingPermissions = new ArrayList<>();
+    private final List<String> missingPermissions = new ArrayList<>();
     private static final int REQUEST_PERMISSION_CODE = 12345;
 
-    private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
+    private final AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
 
     private DJIManager djiManager;
-    private TrafficSystemManager trafficSystemManager;
+    private TrafficControlManager trafficControlManager;
 
 
     @Override
@@ -80,19 +85,20 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler(Looper.getMainLooper());
 
-        // Get custom manager
+        // Get custom managers
         djiManager = MApplication.getDjiManager();
-        trafficSystemManager = MApplication.getTrafficSystemManager();
+        trafficControlManager = MApplication.getTrafficSystemManager();
 
         // Make sure that the app has all required permissions. This also starts the DJI SDK
         // registration afterwards (if all permissions were granted).
         checkAndRequestPermissions();
 
 
-        findViewById(R.id.button).setOnClickListener((View view) -> {
-            showDroneInfoActivity();
+        findViewById(R.id.btn_showDroneInfoActivity).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, DroneInfoActivity.class);
+            startActivity(switchActivityIntent);
         });
-        findViewById(R.id.btn_testFlightModes).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_showTestFlightModesActivity).setOnClickListener((View view) -> {
             Intent switchActivityIntent = new Intent(this, TestFlightModesActivity.class);
             startActivity(switchActivityIntent);
         });
@@ -102,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         bus.register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateUITrafficSystemConnectionState(null);
+        updateUIProductModelName(null);
     }
 
     @Override
@@ -156,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         if (missingPermissions.isEmpty()) {
             permissionsGranted();
         } else {
-            TextView txtView_msdk = findViewById(R.id.txtView_msdk);
+            TextView txtView_msdk = findViewById(R.id.txtView_msdkRegistrationState);
             txtView_msdk.setText(R.string.msdkRegistration_missing_permissions);
 
             bus.post(new ToastMessage("Some required permissions are still not granted!"));
@@ -175,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     public void startSDKRegistration() {
         if (isRegistrationInProgress.compareAndSet(false, true)) {
             handler.post(() -> {
-                TextView txtView_msdk = findViewById(R.id.txtView_msdk);
+                TextView txtView_msdk = findViewById(R.id.txtView_msdkRegistrationState);
                 txtView_msdk.setText(R.string.msdkRegistration_registration_in_progress);
             });
 
@@ -185,15 +199,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onRegister(DJIError djiError) {
                         if (djiError == DJISDKError.REGISTRATION_SUCCESS) {
                             handler.post(() -> {
-                                TextView txtView_msdk = findViewById(R.id.txtView_msdk);
+                                TextView txtView_msdk = findViewById(R.id.txtView_msdkRegistrationState);
                                 txtView_msdk.setText(R.string.msdkRegistration_registered);
                             });
 
-                            DJISDKManager.getInstance().startConnectionToProduct(); // TODO: button for this if not connected to drone?
+                            DJISDKManager.getInstance().startConnectionToProduct(); // TODO: Is this necessary?
                             bus.post(new SdkRegistered());
                         } else {
                             handler.post(() -> {
-                                TextView txtView_msdk = findViewById(R.id.txtView_msdk);
+                                TextView txtView_msdk = findViewById(R.id.txtView_msdkRegistrationState);
                                 txtView_msdk.setText(R.string.msdkRegistration_registration_failed);
                             });
 
@@ -214,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onProductChanged(BaseProduct baseProduct) {
-                        bus.post(new ToastMessage("Product changed"));
+                        bus.post(new ToastMessage("Product changed: e.g. (dis)connected to drone"));
                         bus.post(new ProductChanged());
                     }
 
@@ -253,15 +267,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void trafficSystemConnectionCheckInProgress(ConnectionCheckInProgress event) {
-        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystem);
+        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystemConnectionState);
         txtView_trafficSystem.setText(R.string.trafficSystem_checking_connection);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void trafficSystemNowConnectionEvent(ConnectionEvent event) {
-        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystem);
+    public void updateUITrafficSystemConnectionState(ConnectionEvent event) {
+        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystemConnectionState);
 
-        String version = trafficSystemManager.getTrafficSystemVersion();
+        String version = trafficControlManager.getTrafficSystemVersion();
 
         if(version != null) {
             txtView_trafficSystem.setText(version);
@@ -271,10 +285,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void productModelChanged(ProductModelChanged change) {
-        TextView txtView_productModelName = findViewById(R.id.txtView_productModelName);
+    public void updateUIProductModelName(ProductModelChanged event) {
+        TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
 
         String modelName = djiManager.getModelName();
 
@@ -286,15 +299,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void showDroneInfoActivity() {
-        Intent switchActivityIntent = new Intent(this, DroneInfoActivity.class);
-        startActivity(switchActivityIntent);
-    }
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showToast(ToastMessage toastMessage) {
-        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_LONG).show();
     }
 
 }

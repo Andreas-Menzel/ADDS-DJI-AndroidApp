@@ -7,24 +7,24 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/txtView_label_ProductModelName"
+        android:id="@+id/txtView_label_productModelNameConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/label_productModelName"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdk"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_msdk" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdkRegistrationState"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_msdkRegistrationState" />
 
     <TextView
-        android:id="@+id/txtView_productModelName"
+        android:id="@+id/txtView_productModelNameConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/product_not_connected"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_ProductModelName"
-        app:layout_constraintStart_toStartOf="@+id/txtView_msdk"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_ProductModelName" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_productModelNameConnectionState"
+        app:layout_constraintStart_toStartOf="@+id/txtView_msdkRegistrationState"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_productModelNameConnectionState" />
 
     <Button
         android:id="@+id/btn_activationChange"
@@ -69,24 +69,24 @@
         app:layout_constraintTop_toBottomOf="@+id/txtView_label_droneID" />
 
     <TextView
-        android:id="@+id/txtView_label_trafficSystem"
+        android:id="@+id/txtView_label_trafficSystemConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/label_trafficSystem"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdk"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_ProductModelName" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdkRegistrationState"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_productModelNameConnectionState" />
 
     <TextView
-        android:id="@+id/txtView_trafficSystem"
+        android:id="@+id/txtView_trafficSystemConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/trafficSystem_not_checked_yet"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficSystem"
-        app:layout_constraintStart_toStartOf="@+id/txtView_productModelName"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficSystem" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficSystemConnectionState"
+        app:layout_constraintStart_toStartOf="@+id/txtView_productModelNameConnectionState"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficSystemConnectionState" />
 
     <TextView
         android:id="@+id/textView3"
@@ -101,7 +101,7 @@
         app:layout_constraintStart_toStartOf="@+id/btn_activationChange" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_showDroneInfoActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -111,16 +111,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btn_testFlightModes"
+        android:id="@+id/btn_showTestFlightModesActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/button_test_flight_modes"
-        app:layout_constraintEnd_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_showDroneInfoActivity"
+        app:layout_constraintTop_toBottomOf="@+id/btn_showDroneInfoActivity" />
 
     <TextView
-        android:id="@+id/txtView_label_msdk"
+        android:id="@+id/txtView_label_msdkRegistrationState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -132,13 +132,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtView_msdk"
+        android:id="@+id/txtView_msdkRegistrationState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:text="@string/msdkRegistration_not_registered_yet"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_msdk"
-        app:layout_constraintStart_toEndOf="@+id/txtView_label_msdk"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_msdk" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_msdkRegistrationState"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_msdkRegistrationState"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_msdkRegistrationState" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

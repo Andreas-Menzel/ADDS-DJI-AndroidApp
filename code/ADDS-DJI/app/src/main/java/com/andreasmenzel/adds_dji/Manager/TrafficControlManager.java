@@ -5,22 +5,21 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
-import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.Communication;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.GotAskResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.InvalidTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.RequestFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.RequestSucceeded;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.TellFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Communication.AskFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.Communication;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.GotTellResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.GotAskResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.InvalidTellResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.RequestFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.RequestSucceeded;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.TellFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.AskFailed;
 
 // Traffic System Connectivity Events - TODO: update and improve
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.Connected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NotConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NowConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficSystem.Connectivity.NowDisconnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.Connected;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NotConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NowConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NowDisconnected;
 
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
@@ -42,7 +41,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class TrafficSystemManager {
+public class TrafficControlManager {
 
     private final EventBus bus = EventBus.getDefault();
 
@@ -106,7 +105,7 @@ public class TrafficSystemManager {
     private String trafficSystemVersion = null;
 
 
-    public TrafficSystemManager() {
+    public TrafficControlManager() {
         bus.register(this);
 
         djiManager = MApplication.getDjiManager();
@@ -229,14 +228,12 @@ public class TrafficSystemManager {
 
     @Subscribe
     public void nowConnected(NowConnected event) {
-        bus.post(new ToastMessage("Now conneced: startAutoCommunicationTell()"));
         startAutoCommunicationTell();
     }
 
     @Subscribe
     public void nowDisconnected(NowDisconnected event) {
         trafficSystemVersion = null; // Just in case it is missing somewhere else.
-        bus.post(new ToastMessage("Now disconneced: stopAutoCommunicationTell()"));
         stopAutoCommunicationTell();
     }
 

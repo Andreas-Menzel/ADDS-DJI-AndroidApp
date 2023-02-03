@@ -1,69 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn_startVirtualStickDemo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/virtual_stick_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_virtualStick" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtView_label_virtualStick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/virtual_stick"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <!-- TakeOff / Landing -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp"
+            android:weightSum="3">
 
-    <TextView
-        android:id="@+id/txtView_label_waypointMission"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/waypoint_mission"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_virtualStick"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_virtualStick" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
 
-    <TextView
-        android:id="@+id/txt_view_label_descr_virtualStick"
-        android:layout_width="350dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/virtual_stick_description"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_virtualStick"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_virtualStick" />
+                <TextView
+                    android:id="@+id/txtView_label_takeOffLanding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TakeOff / Landing"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/txtView_label_descr_waypointMission"
-        android:layout_width="350dp"
-        android:layout_height="0dp"
-        android:text="@string/waypoint_mission_description"
-        android:textAlignment="textEnd"
-        app:layout_constraintEnd_toEndOf="@+id/txtView_label_waypointMission"
-        app:layout_constraintTop_toTopOf="@+id/txt_view_label_descr_virtualStick" />
+                <TextView
+                    android:id="@+id/txtView_label_descr_TakeOffLanding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test the TakeOff and Landing modes." />
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_startWaypointMissionDemo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/waypoint_mission_button"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_startVirtualStickDemo"
-        app:layout_constraintEnd_toEndOf="@+id/txtView_label_waypointMission"
-        app:layout_constraintTop_toTopOf="@+id/btn_startVirtualStickDemo"
-        app:layout_constraintVertical_bias="1.0" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_testFlightModeTakeOffLanding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test This Mode!" />
+            </LinearLayout>
+        </LinearLayout> <!-- TakeOff / Landing -->
+
+        <!-- VirtualStickBasic -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/txtView_label_virtualStickBasic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virtual Stick Basic"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/txtView_label_descr_virtualStickBasic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test basic Virtual Stick modes." />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_testFlightModeVirtualStickBasic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test This Mode!" />
+            </LinearLayout>
+        </LinearLayout> <!-- VirtualStickBasic -->
+
+    </LinearLayout>
+
+</ScrollView>

@@ -17,7 +17,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
-public class VirtualStickDemoActivity extends AppCompatActivity {
+public class TakeOffLandingDemoActivity extends AppCompatActivity {
 
     private EventBus bus = EventBus.getDefault();
 
@@ -28,7 +28,7 @@ public class VirtualStickDemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_virtual_stick_demo);
+        setContentView(R.layout.activity_takeoff_landing_demo);
 
         djiManager = MApplication.getDjiManager();
 
@@ -39,37 +39,9 @@ public class VirtualStickDemoActivity extends AppCompatActivity {
         findViewById(R.id.btn_land).setOnClickListener((View view) -> {
             djiManager.land();
         });
-
-        findViewById(R.id.btn_cancel).setOnClickListener((View view) -> {
-            djiManager.cancel();
+        findViewById(R.id.btn_takeOffLand).setOnClickListener((View view) -> {
+            djiManager.takeOffLand();
         });
-
-
-
-        /*findViewById(R.id.btn_motorsOn).setOnClickListener((View view) -> {
-            djiManager.motorsOn();
-        });
-        findViewById(R.id.btn_motorsOff).setOnClickListener((View view) -> {
-            djiManager.motorsOff();
-        });
-
-        findViewById(R.id.btn_vsEnable).setOnClickListener((View view) -> {
-            djiManager.virtualStickModeState(true);
-        });
-        findViewById(R.id.btn_vsDisable).setOnClickListener((View view) -> {
-            djiManager.virtualStickModeState(false);
-        });
-
-        findViewById(R.id.btn_vsRollLeft).setOnClickListener((View view) -> {
-            for(int i = 0; i < 10000; i++) {
-                djiManager.virtualStickRoll((float)-1);
-            }
-        });
-        findViewById(R.id.btn_vsRollRight).setOnClickListener((View view) -> {
-            for(int i = 0; i < 10000; i++) {
-                djiManager.virtualStickRoll((float)1);
-            }
-        });*/
     }
 
     @Override

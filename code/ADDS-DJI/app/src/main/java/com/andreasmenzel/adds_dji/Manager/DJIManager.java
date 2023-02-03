@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+// Events
 import com.andreasmenzel.adds_dji.Events.DJIManager.UIUpdated;
 import com.andreasmenzel.adds_dji.Events.InformationHolder.AircraftLocationChanged;
 import com.andreasmenzel.adds_dji.Events.InformationHolder.AircraftPowerChanged;
@@ -13,9 +14,14 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnec
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnectivityChange;
 import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
+
+// Information Holder
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
+
 import com.andreasmenzel.adds_dji.MainActivity;
+
+// High-Level Operation Modes
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.CancelLanding;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.CancelTakeOff;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.HighLevelOperationMode;
@@ -25,6 +31,8 @@ import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.OnGround;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.TakeOff;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.TurnOffMotors;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.TurnOnMotors;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.StartVirtualStick;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.UseVirtualStick;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,18 +58,18 @@ public class DJIManager {
 
     private static final String TAG = MainActivity.class.getName();
 
-    private final EventBus bus = EventBus.getDefault();
+    private static final EventBus bus = EventBus.getDefault();
 
-    private final Handler controlDroneHandler = new Handler();
+    private static final Handler controlDroneHandler = new Handler();
 
     private static String modelName = null;
-
 
     private static AircraftLocation aircraftLocation;
     private static AircraftPower aircraftPower;
 
-
     private static HighLevelOperationMode highLevelOperationMode = new OnGround();
+
+    FlightControlData virtualStickFlightControlData = new FlightControlData(0, 0, 0, 0);
 
 
     public DJIManager() {
@@ -80,13 +88,13 @@ public class DJIManager {
     @Subscribe
     public void productConnected(ProductConnected event) {
         setupCallbacks();
-        bus.post(new ToastMessage("productConnected(): Registered Callbacks"));
     }
 
     @Subscribe
     public void productChanged(ProductChanged event) {
-        setupCallbacks();
-        bus.post(new ToastMessage("productChanged(): Registered Callbacks"));
+        if(getProductInstance().isConnected()) {
+            setupCallbacks();
+        }
     }
 
     private void setupCallbacks() {
@@ -283,36 +291,32 @@ public class DJIManager {
         changeHighLevelOperationMode(new Landing());
     }
 
+    public void takeOffLand() {
+        changeHighLevelOperationMode(new TakeOff(new Landing()));
+    }
+
     public void cancel() {
         changeHighLevelOperationMode(null); // None Mode
     }
 
-
-    public void virtualStickModeState(boolean enable) {
-        Aircraft aircraft = getAircraftInstance();
-        if(aircraft != null) {
-            FlightController flightController = aircraft.getFlightController();
-
-            flightController.setVirtualStickModeEnabled(enable, djiError -> {
-                if(djiError != null) {
-                    bus.post(new ToastMessage(djiError.getDescription()));
-                } else {
-                    flightController.setVirtualStickAdvancedModeEnabled(true);
-                    flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
-                    flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
-                    flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
-                    flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
-                }
-            });
-            if(enable) {
-                bus.post(new ToastMessage("VirtualStickMode enabled"));
-            } else {
-                bus.post(new ToastMessage("VirtualStickMode disabled"));
-            }
-        } else {
-            bus.post(new ToastMessage("aircraft is none."));
-        }
+    public void virtualStick() {
+        changeHighLevelOperationMode(new StartVirtualStick());
     }
+
+    public void virtualStickAddLeft() {
+        float newValue = virtualStickFlightControlData.getRoll() - (float)0.1;
+        if(newValue < -1) newValue = -1;
+
+        virtualStickFlightControlData.setRoll(newValue);
+    }
+    public void virtualStickAddRight() {
+        float newValue = virtualStickFlightControlData.getRoll() + (float)0.1;
+        if(newValue > 1) newValue = 1;
+
+        virtualStickFlightControlData.setRoll(newValue);
+    }
+
+
 
     public void virtualStickRoll(float val) {
         Aircraft aircraft = getAircraftInstance();
@@ -360,6 +364,9 @@ public class DJIManager {
         } else if(highLevelOperationMode instanceof TurnOffMotors) {
             // Cannot be interrupted. Create new TurnOffMotors object.
             highLevelOperationMode = new TurnOffMotors(newHighLevelOperationMode);
+        }  else if(highLevelOperationMode instanceof StartVirtualStick) {
+            // Cannot be interrupted. Create new TurnOffMotors object.
+            highLevelOperationMode = newHighLevelOperationMode;
         } else {
             // Currently selected mode not recognized
             highLevelOperationMode = newHighLevelOperationMode;
@@ -377,7 +384,14 @@ public class DJIManager {
      * controls the drone.
      */
     public void controlDrone() {
+        controlDrone(true);
+    }
+    public void controlDrone(boolean active) {
         controlDroneHandler.removeCallbacksAndMessages(null);
+        if(!active) {
+            // stop drone control
+            return;
+        }
 
         if(highLevelOperationMode instanceof OnGround) {
             // OnGround
@@ -395,6 +409,10 @@ public class DJIManager {
             controlDroneTurnOnMotors((TurnOnMotors) highLevelOperationMode);
         } else if(highLevelOperationMode instanceof TurnOffMotors) {
             controlDroneTurnOffMotors((TurnOffMotors) highLevelOperationMode);
+        } else if(highLevelOperationMode instanceof StartVirtualStick) {
+            controlDroneStartVirtualStick((StartVirtualStick) highLevelOperationMode);
+        } else if(highLevelOperationMode instanceof UseVirtualStick) {
+            controlDroneUseVirtualStick((UseVirtualStick) highLevelOperationMode);
         }
 
         bus.post(new UIUpdated()); // TODO: update / make better
@@ -818,6 +836,129 @@ public class DJIManager {
                 break;
             case finished:
                 setNextHighLevelOperationModeFromFinished(operationMode.getNextHightLevelOperationMode());
+                break;
+        }
+    }
+
+    private void controlDroneStartVirtualStick(@NonNull StartVirtualStick operationMode)  {
+        Aircraft aircraft;
+        FlightController flightController;
+
+        switch(operationMode.getMode()) {
+            case start:
+                aircraft = getAircraftInstance();
+
+                if(aircraft != null) {
+                    flightController = aircraft.getFlightController();
+
+                    if(flightController != null) {
+                        if(!flightController.isVirtualStickControlModeAvailable()) {
+                            operationMode.setMode(HighLevelOperationMode.Modes.attempting);
+
+                            flightController.setVirtualStickModeEnabled(true, djiError -> {
+                                if(djiError == null) {
+                                    flightController.setVirtualStickAdvancedModeEnabled(true);
+                                    flightController.setVerticalControlMode(VerticalControlMode.VELOCITY);
+                                    flightController.setRollPitchControlMode(RollPitchControlMode.VELOCITY);
+                                    flightController.setYawControlMode(YawControlMode.ANGULAR_VELOCITY);
+                                    flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
+
+                                    operationMode.setMode(HighLevelOperationMode.Modes.inProgress);
+                                } else {
+                                    bus.post(new ToastMessage("StartVirtualStick / start failed: ..."));
+                                    bus.post(new ToastMessage(djiError.getDescription()));
+                                    operationMode.attemptFailed();
+                                }
+                            });
+                        } else {
+                            operationMode.setMode(HighLevelOperationMode.Modes.finished);
+                        }
+                    } else {
+                        bus.post(new ToastMessage("StartVirtualStick / start failed: flightController is null!"));
+                        operationMode.attemptFailed();
+                    }
+                } else {
+                    bus.post(new ToastMessage("StartVirtualStick / start failed: aircraft is null!"));
+                    operationMode.attemptFailed();
+                }
+
+                break;
+            case attempting:
+                // Is currently attempting. Do nothing.
+                break;
+            case inProgress:
+                aircraft = getAircraftInstance();
+
+                if(aircraft != null) {
+                    flightController = aircraft.getFlightController();
+
+                    if(flightController != null) {
+                        if(flightController.isVirtualStickControlModeAvailable()) { // TODO: Is this necessary?
+                            operationMode.setMode(HighLevelOperationMode.Modes.finished);
+                        }
+                    } else {
+                        bus.post(new ToastMessage("StartVirtualStick / inProgress failed: flightController is null!"));
+                        operationMode.attemptFailed();
+                    }
+                } else {
+                    bus.post(new ToastMessage("StartVirtualStick / inProgress failed: aircraft is null!"));
+                    operationMode.attemptFailed();
+                }
+
+                break;
+            case finished:
+                setNextHighLevelOperationModeFromFinished(operationMode.getNextHightLevelOperationMode());
+                break;
+        }
+    }
+
+    private void controlDroneUseVirtualStick(@NonNull UseVirtualStick operationMode)  {
+        Aircraft aircraft;
+        FlightController flightController;
+
+        switch(operationMode.getMode()) {
+            case start:
+                aircraft = getAircraftInstance();
+
+                if(aircraft != null) {
+                    flightController = aircraft.getFlightController();
+
+                    if(flightController != null) {
+                        if(flightController.isVirtualStickControlModeAvailable()) {
+                            operationMode.setMode(HighLevelOperationMode.Modes.attempting);
+
+                            flightController.sendVirtualStickFlightControlData(virtualStickFlightControlData, djiError -> {
+                                if(djiError == null) {
+                                    operationMode.setMode(HighLevelOperationMode.Modes.finished);
+                                } else {
+                                    bus.post(new ToastMessage("UseVirtualStick / start failed: send data failed! ..."));
+                                    bus.post(new ToastMessage(djiError.getDescription()));
+                                    operationMode.attemptFailed();
+                                }
+                            });
+                        } else {
+                            // Virtual Stick is disabled. Restart.
+                            highLevelOperationMode = new StartVirtualStick(highLevelOperationMode);
+                        }
+                    } else {
+                        bus.post(new ToastMessage("UseVirtualStick / start failed: flightController is null!"));
+                        operationMode.attemptFailed();
+                    }
+                } else {
+                    bus.post(new ToastMessage("UseVirtualStick / start failed: aircraft is null!"));
+                    operationMode.attemptFailed();
+                }
+
+                break;
+            case attempting:
+                // Is currently attempting. Do nothing.
+                break;
+            case inProgress:
+                // Not necessary / used here.
+                break;
+            case finished:
+                // Finished sending command. Now send again.
+                highLevelOperationMode.setMode(HighLevelOperationMode.Modes.start);
                 break;
         }
     }
