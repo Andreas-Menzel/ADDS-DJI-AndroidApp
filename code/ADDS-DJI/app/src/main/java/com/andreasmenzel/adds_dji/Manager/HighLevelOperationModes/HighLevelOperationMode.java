@@ -3,6 +3,12 @@ package com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes;
 public class HighLevelOperationMode {
 
     public enum Modes {
+        active { // If the high-level operation mode has no sub-modes, set it to active.
+            @Override
+            public String toString() {
+                return "active";
+            }
+        },
         start { // The mode was just (re)started
             @Override
             public String toString() {
@@ -25,6 +31,12 @@ public class HighLevelOperationMode {
             @Override // The action issued by the MSDK command was finished
             public String toString() {
                 return "finished";
+            }
+        },
+        restart {
+            @Override // Instead of using finished to exit, restart can be used to restart this mode
+            public String toString() {
+                return "restart";
             }
         },
         failed {

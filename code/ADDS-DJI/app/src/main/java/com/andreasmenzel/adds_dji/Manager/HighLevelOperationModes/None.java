@@ -1,19 +1,19 @@
 package com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes;
 
-public class Hovering extends HighLevelOperationMode {
+public class None extends HighLevelOperationMode {
 
     // The modes are defined in the FlightMode class
 
-    public Hovering() {
+    public None() {
         super();
         mode = Modes.active;
     }
 
-    // nextHighLevelOperationMode is not supported in Hovering
+    // nextHighLevelOperationMode is not supported in OnGround
 
 
     public String toString() {
-        return "Hovering";
+        return "None";
     }
 
 }

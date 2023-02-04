@@ -6,7 +6,7 @@ public class OnGround extends HighLevelOperationMode {
 
     public OnGround() {
         super();
-        mode = Modes.finished; // This mode is always "finished"
+        mode = Modes.active;
     }
 
     // nextHighLevelOperationMode is not supported in OnGround
