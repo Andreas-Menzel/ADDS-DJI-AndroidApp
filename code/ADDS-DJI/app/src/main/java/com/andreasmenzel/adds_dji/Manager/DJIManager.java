@@ -54,6 +54,11 @@ import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+/**
+ * Manager for the DJI product. This is the higher-level interface between the app and the DJI
+ * product. Updates the information holders and provides methods to control the drone via high-level
+ * operation modes.
+ */
 public class DJIManager {
 
     private static final String TAG = MainActivity.class.getName();
@@ -69,9 +74,12 @@ public class DJIManager {
 
     private static HighLevelOperationMode highLevelOperationMode = new OnGround();
 
-    FlightControlData virtualStickFlightControlData = new FlightControlData(0, 0, 0, 0);
+    private static final FlightControlData virtualStickFlightControlData = new FlightControlData(0, 0, 0, 0);
 
 
+    /**
+     * Initializes the DJIManager: Registers to the event bus and gets the information holders.
+     */
     public DJIManager() {
         bus.register(this);
 
@@ -79,17 +87,28 @@ public class DJIManager {
         aircraftPower = new AircraftPower();
     }
 
+    /**
+     * Unregisters from the event bus.
+     */
     @Override
-    protected void finalize() throws Throwable {
+    protected void finalize() {
         bus.unregister(this);
     }
 
 
+    /**
+     * This is executed when a DJI product was connected. Sets up the callback methods to retrieve
+     * information about the drone.
+     */
     @Subscribe
     public void productConnected(ProductConnected event) {
         setupCallbacks();
     }
 
+    /**
+     * This is executed when the DJI product was changed. Sets up the callback methods to retrieve
+     * information about the drone IF a product is now connected.
+     */
     @Subscribe
     public void productChanged(ProductChanged event) {
         if(getProductInstance().isConnected()) {
@@ -97,6 +116,9 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Starts the setup callback methods for the battery state and the flight controller state.
+     */
     private void setupCallbacks() {
         setupBatteryStateCallback();
         setupFlightControllerStateCallback();
@@ -104,16 +126,26 @@ public class DJIManager {
 
 
     /**
-     * Gets instance of the specific product connected.
+     * Gets the instance of the specific product connected.
      */
     private static synchronized BaseProduct getProductInstance() {
         return DJISDKManager.getInstance().getProduct();
     }
 
+    /**
+     * Checks if an aircraft is currently connected (could also be a handheld device).
+     *
+     * @return true if an aircraft is connected, false otherwise.
+     */
     public static boolean isAircraftConnected() {
         return getProductInstance() != null && getProductInstance() instanceof Aircraft;
     }
 
+    /**
+     * Gets the instance of the specific aircraft connected (if one is connected).
+     *
+     * @return The aircraft instance if one is connected, null otherwise.
+     */
     private static synchronized Aircraft getAircraftInstance() {
         Aircraft result = null;
         if (isAircraftConnected()) {
@@ -149,6 +181,10 @@ public class DJIManager {
     // END: TODO: MODIFY
 
 
+    /**
+     * Sets up the battery state callbacks. Makes sure that the SDK starts the
+     * processUpdatedBatteryState(...) method when the battery state changes.
+     */
     private void setupBatteryStateCallback() {
         BaseProduct product = getProductInstance();
 
@@ -169,12 +205,23 @@ public class DJIManager {
 
     }
 
+    /**
+     * This method is called whenever the battery state of the connected product changed. Executes
+     * the appropriate method(s) that update the information holder(s).
+     *
+     * @param batteryState The new battery state.
+     */
     private void processUpdatedBatteryState(@NonNull BatteryState batteryState) {
         // TODO: Make sure only running once
 
         processUpdatedBatteryStateUpdateAircraftPower(batteryState);
     }
 
+    /**
+     * Updates the AircraftPower from an updated flight battery state.
+     *
+     * @param batteryState The new battery state.
+     */
     private void processUpdatedBatteryStateUpdateAircraftPower(@NonNull BatteryState batteryState) {
         aircraftPower.updateFromBatteryState(
                 batteryState.getChargeRemaining(),
@@ -185,6 +232,10 @@ public class DJIManager {
     }
 
 
+    /**
+     * Sets up the flight controller state callbacks. Makes sure that the SDK starts the
+     * processUpdatedFlightControllerState(...) method when the battery state changes.
+     */
     private void setupFlightControllerStateCallback() {
         BaseProduct product = getProductInstance();
 
@@ -205,6 +256,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * This method is called whenever the flight controller state of the connected product changed.
+     * Executes the appropriate methods that update the information holders.
+     *
+     * @param flightControllerState The new flight controller state.
+     */
     private void processUpdatedFlightControllerState(@NonNull FlightControllerState flightControllerState) {
         // TODO: Make sure only running once
 
@@ -212,6 +269,11 @@ public class DJIManager {
         processUpdatedFlightControllerStateUpdateAircraftPower(flightControllerState);
     }
 
+    /**
+     * Updates the AircraftLocation from an updated flight controller state.
+     *
+     * @param flightControllerState The new flight controller state.
+     */
     private void processUpdatedFlightControllerStateUpdateAircraftLocation(@NonNull FlightControllerState flightControllerState) {
         LocationCoordinate3D djiAircraftLocation = flightControllerState.getAircraftLocation();
         Attitude aircraftAttitude = flightControllerState.getAttitude();
@@ -271,6 +333,11 @@ public class DJIManager {
         bus.post(new AircraftLocationChanged());
     }
 
+    /**
+     * Updates the AircraftPower from an updated flight controller state.
+     *
+     * @param flightControllerState The new flight controller state.
+     */
     private void processUpdatedFlightControllerStateUpdateAircraftPower(@NonNull FlightControllerState flightControllerState) {
         GoHomeAssessment goHomeAssessment = flightControllerState.getGoHomeAssessment();
 
@@ -283,32 +350,49 @@ public class DJIManager {
     }
 
 
+    /**
+     * Changes the high-level operation mode to TakeOff().
+     */
     public void takeOff() {
         changeHighLevelOperationMode(new TakeOff());
     }
 
+    /**
+     * Changes the high-level operation mode to Landing().
+     */
     public void land() {
         changeHighLevelOperationMode(new Landing());
     }
 
+    /**
+     * Changes the high-level operation mode to TakeOff(), then Landing().
+     */
     public void takeOffLand() {
         changeHighLevelOperationMode(new TakeOff(new Landing()));
     }
 
+    // TODO: None mode
     public void cancel() {
         changeHighLevelOperationMode(null); // None Mode
     }
 
+    /**
+     * Changes the high-level operation mode to StartVirtualStick(). The high-level operation mode
+     * then automatically changes to UseVirtualStick() and the virtualStickFlightControlData is
+     * sent to the SDK.
+     */
     public void virtualStick() {
         changeHighLevelOperationMode(new StartVirtualStick());
     }
 
+    // TODO: THIS IS A DEMO
     public void virtualStickAddLeft() {
         float newValue = virtualStickFlightControlData.getRoll() - (float)0.1;
         if(newValue < -1) newValue = -1;
 
         virtualStickFlightControlData.setRoll(newValue);
     }
+    // TODO: THIS IS A DEMO
     public void virtualStickAddRight() {
         float newValue = virtualStickFlightControlData.getRoll() + (float)0.1;
         if(newValue > 1) newValue = 1;
@@ -317,31 +401,13 @@ public class DJIManager {
     }
 
 
-
-    public void virtualStickRoll(float val) {
-        Aircraft aircraft = getAircraftInstance();
-        if(aircraft != null) {
-            FlightController flightController = aircraft.getFlightController();
-
-            boolean vsAvailable = flightController.isVirtualStickControlModeAvailable();
-            if(vsAvailable) {
-                flightController.sendVirtualStickFlightControlData(new FlightControlData(val, 0, 0, 0), djiError -> {
-                    if(djiError != null) {
-                        //bus.post(new ToastMessage(djiError.getDescription()));
-                    } else {
-                        //bus.post("StickRoll success");
-                    }
-                    //bus.post(new ToastMessage("Was there an error?"));
-                });
-            } else {
-                //bus.post(new ToastMessage("VirtualStick not available."));
-            }
-        } else {
-            //bus.post(new ToastMessage("aircraft is none."));
-        }
-    }
-
-
+    /**
+     * Changes the high-level operation mode. This also performs some checks and potential cleanup
+     * depending on the mode currently active.
+     *
+     * @param newHighLevelOperationMode The new high-level operation mode.
+     */
+    // TODO: Check the sub-modes
     public void changeHighLevelOperationMode(HighLevelOperationMode newHighLevelOperationMode) {
         // TODO: Check mode finished?
         if(highLevelOperationMode instanceof OnGround) {
@@ -373,19 +439,30 @@ public class DJIManager {
         }
     }
 
+
+    // TODO: Necessary?
+    // TODO: Comment
     private void setNextHighLevelOperationModeFromFinished(HighLevelOperationMode nextHighLevelOperationMode) {
         if(nextHighLevelOperationMode != null) {
             highLevelOperationMode = nextHighLevelOperationMode;
         }
     }
 
-    /*
-     * This method has to be executed periodically at least a few times per second. This method
-     * controls the drone.
+
+    /**
+     * Starts the drone control loop.
      */
     public void controlDrone() {
         controlDrone(true);
     }
+
+    /**
+     * Controls the drone depending on the high-level operation mode currently active. This method
+     * has to be executed periodically, at least a few times per second.
+     *
+     * @param active If true, continue the drone control loop. If false, stop the drone control
+     *               loop.
+     */
     public void controlDrone(boolean active) {
         controlDroneHandler.removeCallbacksAndMessages(null);
         if(!active) {
@@ -420,6 +497,13 @@ public class DJIManager {
     }
 
     // TODO: TakeOff when motors are already on?
+
+    /**
+     * Tells the drone to take off. This method is executed when the high-level operation mode is
+     * TakeOff().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneTakeOff(@NonNull TakeOff operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -496,6 +580,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to land. This method is executed when the high-level operation mode is
+     * Landing().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneLanding(@NonNull Landing operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -571,6 +661,13 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to cancel the take off. This method is executed when the high-level operation
+     * mode is CancelTakeOff().
+     *
+     * @param operationMode The high-level operation mode.
+     */
+    // TODO: Doesn't work(?)
     private void controlDroneCancelTakeOff(@NonNull CancelTakeOff operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -640,6 +737,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to cancel the landing. This method is executed when the high-level operation
+     * mode is CancelLanding().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneCancelLanding(@NonNull CancelLanding operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -708,6 +811,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to turn on the motors. This method is executed when the high-level operation
+     * mode is TurnOnMotors().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneTurnOnMotors(@NonNull TurnOnMotors operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -774,6 +883,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to turn off the motors. This method is executed when the high-level operation
+     * mode is TurnOffMotors().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneTurnOffMotors(@NonNull TurnOffMotors operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -840,6 +955,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to start the virtual stick mode so the app can simulate a pilot. This method
+     * is executed when the high-level operation mode is StartVirtualStick().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneStartVirtualStick(@NonNull StartVirtualStick operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -912,6 +1033,12 @@ public class DJIManager {
         }
     }
 
+    /**
+     * Tells the drone to use the virtual stick mode by sending FlightControlData. This method is
+     * executed when the high-level operation mode is UseVirtualStick().
+     *
+     * @param operationMode The high-level operation mode.
+     */
     private void controlDroneUseVirtualStick(@NonNull UseVirtualStick operationMode)  {
         Aircraft aircraft;
         FlightController flightController;
@@ -967,12 +1094,25 @@ public class DJIManager {
     /*
      *  Getter & Setter methods
      */
+
+    /**
+     * Gets the AircraftLocation.
+     * @return The AircraftLocation.
+     */
     public AircraftLocation getAircraftLocation() {
         return aircraftLocation;
     }
+    /**
+     * Gets the AircraftPower.
+     * @return The AircraftPower.
+     */
     public AircraftPower getAircraftPower() {
         return aircraftPower;
     }
+    /**
+     * Gets the high-level operation mode.
+     * @return The high-level operation mode.
+     */
     public HighLevelOperationMode getHighLevelOperationMode() {
         return highLevelOperationMode;
     }

@@ -14,10 +14,10 @@
     <string name="label_productModelName">Model:</string>
     <string name="product_not_connected">not connected</string>
 
-    <string name="label_trafficSystem">Traffic System:</string>
-    <string name="trafficSystem_not_checked_yet">not checked yet</string>
-    <string name="trafficSystem_checking_connection">checking connection...</string>
-    <string name="trafficSystem_not_connected">not connected</string>
+    <string name="label_trafficControl">Traffic System:</string>
+    <string name="trafficControl_not_checked_yet">not checked yet</string>
+    <string name="trafficControl_checking_connection">checking connection...</string>
+    <string name="trafficControl_not_connected">not connected</string>
 
 
     <!--

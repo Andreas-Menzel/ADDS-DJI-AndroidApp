@@ -26,7 +26,7 @@ public class MApplication extends Application {
         return djiManager;
     }
 
-    public static TrafficControlManager getTrafficSystemManager() {
+    public static TrafficControlManager getTrafficControlManager() {
         return trafficControlManager;
     }
 

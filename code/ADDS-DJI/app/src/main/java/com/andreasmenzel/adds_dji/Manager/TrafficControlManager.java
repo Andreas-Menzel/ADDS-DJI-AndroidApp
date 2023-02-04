@@ -5,21 +5,20 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.Communication;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.GotTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.GotAskResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.InvalidTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.RequestFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.RequestSucceeded;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.TellFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Communication.AskFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.Communication;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotTellResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotAskResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.InvalidTellResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestSucceeded;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.TellFailed;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.AskFailed;
 
-// Traffic System Connectivity Events - TODO: update and improve
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.Connected;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NotConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NowConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.NowDisconnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.Connected;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NotConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowConnected;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowDisconnected;
 
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
@@ -41,9 +40,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * The Traffic Control Manager. This provides a high-level interface to send data to and request
+ * data from the Traffic Control. This manager handles connection failures, tries resending failed
+ * requests and automatically sends data that the Traffic Control requests.
+ */
 public class TrafficControlManager {
 
-    private final EventBus bus = EventBus.getDefault();
+    private static final EventBus bus = EventBus.getDefault();
 
     /*
      * Manager
@@ -60,7 +64,7 @@ public class TrafficControlManager {
      * Base information for Traffic System connection
      */
     private final OkHttpClient client = new OkHttpClient();
-    private final String trafficSystemUrl = "http://adds-demo.an-men.de/";
+    private final String trafficControlUrl = "http://adds-demo.an-men.de/";
 
     /*
      * Periodically check the connection to the Traffic System
@@ -102,9 +106,13 @@ public class TrafficControlManager {
     /*
      * The Traffic System version. This is null if the Traffic System cannot be reached.
      */
-    private String trafficSystemVersion = null;
+    private String trafficControlVersion = null;
 
 
+    /**
+     * Initializes the Traffic Control Manager: Registers to the event bus, gets the djiManager and
+     * starts checking the connection to the Traffic Control.
+     */
     public TrafficControlManager() {
         bus.register(this);
 
@@ -113,7 +121,11 @@ public class TrafficControlManager {
         checkConnection();
     }
 
-
+    /**
+     * Unregisters from the event bus.
+     *
+     * @throws Throwable if a Throwable was thrown.
+     */
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
@@ -121,22 +133,26 @@ public class TrafficControlManager {
     }
 
 
+    /**
+     * Checks the connection to the Traffic Control by sending a how_are_you and checking for the
+     * version field in the (JSON) response.
+     */
     public void checkConnection() {
         bus.post(new ConnectionCheckInProgress());
 
         Request request = new Request.Builder()
-                .url(trafficSystemUrl + "how_are_you")
+                .url(trafficControlUrl + "how_are_you")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if(trafficSystemVersion == null) {
+                if(trafficControlVersion == null) {
                     // Was already not connected
                     bus.post(new NotConnected());
                 } else {
                     // Was connected earlier
-                    trafficSystemVersion = null;
+                    trafficControlVersion = null;
                     bus.post(new NowDisconnected());
                 }
             }
@@ -150,30 +166,30 @@ public class TrafficControlManager {
                         JSONObject json = new JSONObject(myResponse);
                         String version = json.getString("version");
 
-                        if(version.equals(trafficSystemVersion)) {
+                        if(version.equals(trafficControlVersion)) {
                             bus.post(new Connected());
                         } else {
-                            trafficSystemVersion = version;
+                            trafficControlVersion = version;
                             bus.post(new NowConnected());
                         }
                     } catch (JSONException e) {
                         // TODO: invalid response
-                        if(trafficSystemVersion == null) {
+                        if(trafficControlVersion == null) {
                             // Was already not connected
                             bus.post(new NotConnected());
                         } else {
                             // Was connected earlier
-                            trafficSystemVersion = null;
+                            trafficControlVersion = null;
                             bus.post(new NowDisconnected());
                         }
                     }
                 } else {
-                    if(trafficSystemVersion == null) {
+                    if(trafficControlVersion == null) {
                         // Was already not connected
                         bus.post(new NotConnected());
                     } else {
                         // Was connected earlier
-                        trafficSystemVersion = null;
+                        trafficControlVersion = null;
                         bus.post(new NowDisconnected());
                     }
                 }
@@ -182,10 +198,17 @@ public class TrafficControlManager {
     }
 
 
-    // example: requestGroup = tell && requestType = here_i_am
+    /**
+     * Sends an asynchronous request to the Traffic Control.
+     *
+     * @param requestGroup The request group, e.g. &quot;tell&quot; or &quot;ask&quot;.
+     * @param requestType  The request type, e.g. &quot;here_i_am&quot; in request group
+     *                     &quot;tell&quot;.
+     * @param requestData  The request data, e.g. &quot;drone_id=demo_drone&amp;i_say=hello&quot;
+     */
     private void sendAsynchronousRequest(String requestGroup, String requestType, String requestData) {
         Request request = new Request.Builder()
-                .url(trafficSystemUrl + requestGroup + "/" + requestType + "?" + requestData)
+                .url(trafficControlUrl + requestGroup + "/" + requestType + "?" + requestData)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -226,17 +249,29 @@ public class TrafficControlManager {
     }
 
 
+    /**
+     * Executes the startAutoCommunicationTell() method. This method is executed whenever a
+     * connection to the Traffic Control could be established.
+     */
     @Subscribe
     public void nowConnected(NowConnected event) {
         startAutoCommunicationTell();
     }
 
+    /**
+     * Executes the stopAutoCommunicationTell() method. This method is executed whenever the
+     * connection to the Traffic Control was lost.
+     */
     @Subscribe
     public void nowDisconnected(NowDisconnected event) {
-        trafficSystemVersion = null; // Just in case it is missing somewhere else.
+        trafficControlVersion = null; // Just in case it is missing somewhere else.
         stopAutoCommunicationTell();
     }
 
+    /**
+     * Periodically checks the connection to the Traffic Control. This method is executed whenever
+     * the NotConnected event was sent.
+     */
     @Subscribe
     public void notConnected(NotConnected event) {
         if(event instanceof NowDisconnected) {
@@ -247,6 +282,11 @@ public class TrafficControlManager {
     }
 
 
+    /**
+     * Increments the totalRequestsFailed counter and creates the NowDisconnected() event if
+     * multiple requests previously failed. This method is called whenever the RequestFailed event
+     * was sent.
+     */
     @Subscribe
     public void requestFailed(RequestFailed event) {
         totalRequestsFailed++;
@@ -255,11 +295,15 @@ public class TrafficControlManager {
         if(requestsFailedCounter > requestsFailedCounterMax) {
             requestsFailedCounter = 0;
 
-            trafficSystemVersion = null;
+            trafficControlVersion = null;
             bus.post(new NowDisconnected());
         }
     }
 
+    /**
+     * Increments the totalRequestsSucceeded counter and resets the requestsFailed counter. This
+     * method is executed whenever the RequestSucceeded event was sent.
+     */
     @Subscribe
     public void requestSucceeded(RequestSucceeded event) {
         totalRequestsSucceeded++;
@@ -271,7 +315,7 @@ public class TrafficControlManager {
     /**********************************************************************************************/
     /********************************* AUTO COMMUNICATION: TELL  **********************************/
     /**********************************************************************************************/
-    /*
+    /**
      * Starts the automatic communication for all TELLs. This will send periodic TELL updates to the
      * Traffic System.
      */
@@ -281,8 +325,8 @@ public class TrafficControlManager {
         addTellToSend("here_i_am");
         addTellToSend("my_health");
     }
-    /*
-     * Stop the automatic communication for TELLs.
+    /**
+     * Stops the automatic communication for TELLs.
      */
     public void stopAutoCommunicationTell() {
         autoCommunicationActive = false;
@@ -292,8 +336,8 @@ public class TrafficControlManager {
     }
 
 
-    /*
-     * Add a new TELL to the buffer list.
+    /**
+     * Adds a new TELL to the buffer list.
      */
     private void addTellToSend(String tell) {
         if(tell.equals("here_i_am")) {
@@ -324,8 +368,8 @@ public class TrafficControlManager {
         }
     }
 
-    /*
-     * "Send" all TELLs currently in the buffer list.
+    /**
+     * Executes the sendTell() method for all TELLs currently in the buffer list.
      */
     private void processTellsToSend() {
         processingTellsToSend.lock();
@@ -339,8 +383,8 @@ public class TrafficControlManager {
         }
     }
 
-    /*
-     * Gather necessary information and send TELL request.
+    /**
+     * Gathers the necessary information and sends the TELL request.
      */
     private void sendTell(@NonNull String tell) {
         String requestData = "";
@@ -378,8 +422,8 @@ public class TrafficControlManager {
     }
 
 
-    /*
-     * Handle response from a TELL request.
+    /**
+     * Handles the response from a TELL request.
      */
     @Subscribe()
     public void gotTellResponse(@NonNull GotTellResponse event) {
@@ -425,8 +469,8 @@ public class TrafficControlManager {
         }
     }
 
-    /*
-     * Handle failed TELL request.
+    /**
+     * Handles a failed TELL request.
      */
     @Subscribe
     public void tellFailed(TellFailed event) {
@@ -463,12 +507,30 @@ public class TrafficControlManager {
     /*
      * Getter methods
      */
-    public String getTrafficSystemVersion() {
-        return trafficSystemVersion;
+
+    /**
+     * Gets the Traffic Control version.
+     *
+     * @return The Traffic Control version.
+     */
+    public String getTrafficControlVersion() {
+        return trafficControlVersion;
     }
+
+    /**
+     * Gets the total requests failed counter.
+     *
+     * @return The total number of requests failed.
+     */
     public int getTotalRequestsFailed() {
         return totalRequestsFailed;
     }
+
+    /**
+     * Gets the total requests succeeded counter.
+     *
+     * @return The total number of requests succeeded.
+     */
     public int getTotalRequestsSucceeded() {
         return totalRequestsSucceeded;
     }

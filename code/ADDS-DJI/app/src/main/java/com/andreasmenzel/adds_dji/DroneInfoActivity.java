@@ -26,13 +26,21 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+/**
+ * Displays information about the drone, e.g. AircraftLocation, AircraftPower, ... This activity is
+ * intended to be used for debugging and testing to make sure that the app can correctly get all
+ * important (sensor) data from the drone.
+ */
 public class DroneInfoActivity extends AppCompatActivity {
 
-    private final EventBus bus = EventBus.getDefault();
+    private static final EventBus bus = EventBus.getDefault();
 
-    private DJIManager djiManager;
+    private static DJIManager djiManager;
 
 
+    /**
+     * Initializes this activity: Gets the djiManager.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +49,18 @@ public class DroneInfoActivity extends AppCompatActivity {
         djiManager = MApplication.getDjiManager();
     }
 
+    /**
+     * Registers to the event bus.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         bus.register(this);
     }
 
+    /**
+     * Makes sure that the UI is updated when this activity resumes.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -56,6 +70,9 @@ public class DroneInfoActivity extends AppCompatActivity {
         updateUIAircraftPower(null);
     }
 
+    /**
+     * Unregisters from the event bus.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -63,6 +80,10 @@ public class DroneInfoActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This is called whenever the product connectivity changes, e.g. the drone is turned on / off.
+     * Updates the UI.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void productConnectivityChange(ProductConnectivityChange event) {
         updateUIProductModelName(null);
@@ -71,6 +92,9 @@ public class DroneInfoActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This is called whenever the product model name changes. Updates the model name in the UI.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUIProductModelName(ProductModelChanged event) {
         TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
@@ -85,6 +109,10 @@ public class DroneInfoActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This is called whenever the AircraftLocation changes. Updates the AircraftLocation
+     * information in the UI.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUIAircraftLocation(AircraftLocationChanged event) {
         AircraftLocation aircraftLocation = djiManager.getAircraftLocation();
@@ -159,6 +187,10 @@ public class DroneInfoActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This is called whenever the AircraftPower changes. Updates the AircraftPower information in
+     * the UI.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUIAircraftPower(AircraftPowerChanged event) {
         AircraftPower aircraftPower = djiManager.getAircraftPower();
@@ -218,6 +250,9 @@ public class DroneInfoActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Shows a toast message.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showToast(ToastMessage toastMessage) {
         Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_LONG).show();

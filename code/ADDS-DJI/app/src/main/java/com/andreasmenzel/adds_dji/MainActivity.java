@@ -29,8 +29,8 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductDiscon
 import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
 import com.andreasmenzel.adds_dji.Events.SdkRegistered;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficControll.Connectivity.ConnectionEvent;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionEvent;
 
 // Manager
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
@@ -47,6 +47,9 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+/**
+ * The main activity. This is shown when the app is started.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final EventBus bus = EventBus.getDefault();
@@ -78,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
     private TrafficControlManager trafficControlManager;
 
 
+    /**
+     * Initializes this activity: Gets the custom managers, checks the permissions, starts the
+     * SDK registration and sets up the onClickListeners.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get custom managers
         djiManager = MApplication.getDjiManager();
-        trafficControlManager = MApplication.getTrafficSystemManager();
+        trafficControlManager = MApplication.getTrafficControlManager();
 
         // Make sure that the app has all required permissions. This also starts the DJI SDK
         // registration afterwards (if all permissions were granted).
@@ -104,20 +111,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Registers to the event bus.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         bus.register(this);
     }
 
+    /**
+     * Makes sure that the UI is updated when this activity resumes.
+     */
     @Override
     protected void onResume() {
         super.onResume();
 
-        updateUITrafficSystemConnectionState(null);
+        updateUITrafficControlConnectionState(null);
         updateUIProductModelName(null);
     }
 
+    /**
+     * Unregisters from the event bus.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -126,8 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Checks if there are any missing permissions, and
-     * requests runtime permission(s) if needed.
+     * Checks if there are any missing permissions, and requests runtime permission(s) if needed.
      */
     private void checkAndRequestPermissions() {
         // Check for permissions
@@ -149,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Result of runtime permission request
+     * Result of runtime permission request. Calls permissionsGranted() afterwards if all required
+     * permissions were granted.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -181,11 +197,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void permissionsGranted() {
-        // TODO: show text on screen: permissions missing?
         startSDKRegistration();
     }
 
 
+    /**
+     * Starts the SDK registration and sets up the DJI specific methods: onProductDisconnect(), ...
+     */
     public void startSDKRegistration() {
         if (isRegistrationInProgress.compareAndSet(false, true)) {
             handler.post(() -> {
@@ -265,26 +283,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This is called whenever a connection check of / to the Traffic Control is in progress. This
+     * will set the text view to "checking connection..."
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void trafficSystemConnectionCheckInProgress(ConnectionCheckInProgress event) {
-        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystemConnectionState);
-        txtView_trafficSystem.setText(R.string.trafficSystem_checking_connection);
+    public void trafficControlConnectionCheckInProgress(ConnectionCheckInProgress event) {
+        TextView txtView_trafficControl = findViewById(R.id.txtView_trafficControlConnectionState);
+        txtView_trafficControl.setText(R.string.trafficControl_checking_connection);
     }
 
+    /**
+     * This is called whenever the connection state of / to the Traffic Control changes. Sets the
+     * text view to the Traffic Control version or "not connected"
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updateUITrafficSystemConnectionState(ConnectionEvent event) {
-        TextView txtView_trafficSystem = findViewById(R.id.txtView_trafficSystemConnectionState);
+    public void updateUITrafficControlConnectionState(ConnectionEvent event) {
+        TextView txtView_trafficControl = findViewById(R.id.txtView_trafficControlConnectionState);
 
-        String version = trafficControlManager.getTrafficSystemVersion();
+        String version = trafficControlManager.getTrafficControlVersion();
 
         if(version != null) {
-            txtView_trafficSystem.setText(version);
+            txtView_trafficControl.setText(version);
         } else {
-            txtView_trafficSystem.setText(R.string.trafficSystem_not_connected);
+            txtView_trafficControl.setText(R.string.trafficControl_not_connected);
         }
     }
 
 
+    // TODO: change to productConnectionStateCHanged
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUIProductModelName(ProductModelChanged event) {
         TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
@@ -299,6 +326,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Shows a toast message.
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showToast(ToastMessage toastMessage) {
         Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_LONG).show();

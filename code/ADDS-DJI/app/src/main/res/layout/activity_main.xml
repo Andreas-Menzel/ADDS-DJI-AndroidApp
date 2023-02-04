@@ -69,24 +69,24 @@
         app:layout_constraintTop_toBottomOf="@+id/txtView_label_droneID" />
 
     <TextView
-        android:id="@+id/txtView_label_trafficSystemConnectionState"
+        android:id="@+id/txtView_label_trafficControlConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/label_trafficSystem"
+        android:text="@string/label_trafficControl"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/txtView_label_msdkRegistrationState"
         app:layout_constraintTop_toBottomOf="@+id/txtView_label_productModelNameConnectionState" />
 
     <TextView
-        android:id="@+id/txtView_trafficSystemConnectionState"
+        android:id="@+id/txtView_trafficControlConnectionState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/trafficSystem_not_checked_yet"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficSystemConnectionState"
+        android:text="@string/trafficControl_not_checked_yet"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficControlConnectionState"
         app:layout_constraintStart_toStartOf="@+id/txtView_productModelNameConnectionState"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficSystemConnectionState" />
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficControlConnectionState" />
 
     <TextView
         android:id="@+id/textView3"

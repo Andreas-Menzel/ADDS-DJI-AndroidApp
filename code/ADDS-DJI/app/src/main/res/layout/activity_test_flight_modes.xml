@@ -47,7 +47,7 @@
                 android:layout_weight="1">
 
                 <Button
-                    android:id="@+id/btn_testFlightModeTakeOffLanding"
+                    android:id="@+id/btn_showTakeOffLandingDemoActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Test This Mode!" />
@@ -90,7 +90,7 @@
                 android:layout_weight="1">
 
                 <Button
-                    android:id="@+id/btn_testFlightModeVirtualStickBasic"
+                    android:id="@+id/btn_showVirtualStickBasicDemoActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Test This Mode!" />
