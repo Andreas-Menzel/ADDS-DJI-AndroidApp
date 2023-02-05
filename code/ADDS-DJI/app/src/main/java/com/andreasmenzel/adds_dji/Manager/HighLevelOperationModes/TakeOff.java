@@ -8,8 +8,8 @@ public class TakeOff extends HighLevelOperationMode {
         super(new Hovering());
         mode = Modes.start;
     }
-    public TakeOff(HighLevelOperationMode nextHightLevelOperationMode) {
-        super(nextHightLevelOperationMode);
+    public TakeOff(HighLevelOperationMode nextHighLevelOperationModetrafficControl) {
+        super(nextHighLevelOperationModetrafficControl);
         mode = Modes.start;
     }
 

@@ -12,6 +12,12 @@ import com.andreasmenzel.adds_dji.Events.DJIManager.UIUpdated;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
 import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.HighLevelOperationMode;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.Hovering;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.Landing;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.OnGround;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.StartVirtualStick;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.TakeOff;
+import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.UseVirtualStick;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,7 +52,15 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
     // 8: left -> right
     // 9: pause
     // 10: right -> center
-    private int progress = 0;
+    private int crossProgress = 0;
+
+    // -1: Only cross performance active. Not the entire performance.
+    // 0: TakeOff
+    // 1: pause
+    // 2: cross performance
+    // 3: pause
+    // 4: Landing
+    private int performanceProgress = -1;
 
 
     @Override
@@ -149,8 +163,21 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_startVirtualStickCrossMode).setOnClickListener((View view) -> {
-            progress = 0;
+            if(djiManager.getHighLevelOperationMode() instanceof StartVirtualStick || djiManager.getHighLevelOperationMode() instanceof UseVirtualStick) {
+                performanceProgress = -1;
+                crossProgress = 0;
+                nextProgressState();
+            } else {
+                bus.post(new ToastMessage("Virtual Stick must be started first."));
+            }
+        });
+
+        findViewById(R.id.btn_startCompleteVirtualStickCrossPerformance).setOnClickListener((View view) -> {
+            crossProgress = 0;
+            performanceProgress = 0;
+            sendStickData();
             nextProgressState();
+            bus.post(new UIUpdated());
         });
     }
 
@@ -167,6 +194,90 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
     private void nextProgressState() {
         nextProgressStateHandler.removeCallbacksAndMessages(null); // just in case
 
+        // -1: Only cross performance active. Not the entire performance.
+        // 0: TakeOff
+        // 1: pause
+        // 2: cross performance
+        // 3: pause
+        // 4: Landing
+        // 5: Stop performance
+        int delayToNextCall = 0;
+        HighLevelOperationMode highLevelOperationMode = null;
+        switch(performanceProgress) {
+            case 1:
+            case 3:
+                // Pause
+                delayToNextCall = 3000;
+                performanceProgress++;
+                break;
+            case 0:
+                // TakeOff
+                highLevelOperationMode = djiManager.getHighLevelOperationMode();
+
+                if(highLevelOperationMode instanceof TakeOff) {
+                    // wait
+                } else if(highLevelOperationMode instanceof Hovering) {
+                    // TakeOff complete
+                    performanceProgress++;
+                    delayToNextCall = 3000;
+                } else {
+                    djiManager.changeHighLevelOperationMode(new TakeOff());
+                }
+                break;
+            case 4:
+                // Landing
+                highLevelOperationMode = djiManager.getHighLevelOperationMode();
+
+                if(highLevelOperationMode instanceof Landing) {
+                    // wait
+                } else if(highLevelOperationMode instanceof OnGround) {
+                    // TakeOff complete
+                    performanceProgress = 5; // stop performance
+                } else {
+                    djiManager.changeHighLevelOperationMode(new Landing());
+                }
+                break;
+            case -1:
+                delayToNextCall = flyCrossManouvre();
+
+                if(crossProgress > 11) { // cross finished
+                    performanceProgress = 5; // stop performance
+                }
+                break;
+            case 2:
+                delayToNextCall = flyCrossManouvre();
+
+                if(crossProgress > 11) {
+                    performanceProgress++;
+                }
+                break;
+            case 5:
+                bus.post(new ToastMessage("Stopping Performance"));
+
+                // Stop performance
+                nextProgressStateHandler.removeCallbacksAndMessages(null); // just in case
+                stickDataSenderHandler.removeCallbacksAndMessages(null);
+                djiManager.cancel();
+
+                pitch = 0; // just in case
+                yaw = 0;   // just in case
+                roll = 0;  // just in case
+                verticalThrottle = 0; // just in case
+                bus.post(new UIUpdated());
+                return;
+        }
+
+        nextProgressStateHandler.postDelayed(this::nextProgressState, delayToNextCall);
+    }
+
+
+    private int flyCrossManouvre() {
+        HighLevelOperationMode highLevelOperationMode = djiManager.getHighLevelOperationMode();
+
+        if(!(highLevelOperationMode instanceof StartVirtualStick) && !(highLevelOperationMode instanceof UseVirtualStick)) {
+            djiManager.changeHighLevelOperationMode(new UseVirtualStick());
+        }
+
         // 0: center -> front
         // 1: pause
         // 2: front -> back
@@ -181,7 +292,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
         // 11: finished
 
         int delayToNextCall = 0;
-        switch(progress) {
+        switch(crossProgress) {
             case 1:
             case 3:
             case 5:
@@ -225,18 +336,9 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
                 break;
         }
 
-        progress++;
-        if(progress <= 11) {
-            nextProgressStateHandler.postDelayed(this::nextProgressState, delayToNextCall);
-        } else {
-            stickDataSenderHandler.removeCallbacksAndMessages(null);
-            pitch = 0;
-            yaw = 0;
-            roll = 0;
-            verticalThrottle = 0;
-            djiManager.cancel();
-            bus.post(new UIUpdated());
-        }
+        crossProgress++;
+
+        return delayToNextCall;
     }
 
 

@@ -51,13 +51,16 @@ public class HighLevelOperationMode {
     private int attempts = 0;
     int attemptsMax = 5;
 
-    HighLevelOperationMode nextHightLevelOperationMode = null;
+    HighLevelOperationMode nextHighLevelOperationMode = null;
+    Runnable runnableWhenFinished = null;
+    Runnable runnableWhenFailed = null;
+
 
     public HighLevelOperationMode() {
 
     }
-    public HighLevelOperationMode(HighLevelOperationMode nextHightLevelOperationMode) {
-        this.nextHightLevelOperationMode = nextHightLevelOperationMode;
+    public HighLevelOperationMode(HighLevelOperationMode nextHighLevelOperationMode) {
+        this.nextHighLevelOperationMode = nextHighLevelOperationMode;
     }
 
 
@@ -84,9 +87,25 @@ public class HighLevelOperationMode {
     public void setMode(Modes mode) {
         this.mode = mode;
         attempts = 0;
+
+        if(mode == Modes.finished) {
+            if(runnableWhenFailed != null) {
+                runnableWhenFinished.run();
+            }
+        } else if(mode == Modes.failed) {
+            if(runnableWhenFailed != null) {
+                runnableWhenFailed.run();
+            }
+        }
     }
-    public HighLevelOperationMode getNextHightLevelOperationMode() {
-        return nextHightLevelOperationMode;
+    public HighLevelOperationMode getNextHighLevelOperationMode() {
+        return nextHighLevelOperationMode;
+    }
+    public void setRunnableWhenFinished(Runnable runnableWhenFinished) {
+        this.runnableWhenFinished = runnableWhenFinished;
+    }
+    public void setRunnableWhenFailed(Runnable runnableWhenFailed) {
+        this.runnableWhenFailed = runnableWhenFailed;
     }
 
 }

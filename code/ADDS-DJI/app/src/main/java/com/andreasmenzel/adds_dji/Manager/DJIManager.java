@@ -502,7 +502,7 @@ public class DJIManager {
         if(currentSubmode == HighLevelOperationMode.Modes.restart) {
             highLevelOperationMode.setMode(HighLevelOperationMode.Modes.start);
         } else if(currentSubmode == HighLevelOperationMode.Modes.finished) {
-            HighLevelOperationMode newHighLevelOperationMode = highLevelOperationMode.getNextHightLevelOperationMode();
+            HighLevelOperationMode newHighLevelOperationMode = highLevelOperationMode.getNextHighLevelOperationMode();
 
             if(newHighLevelOperationMode == null) {
                 newHighLevelOperationMode = new None();
