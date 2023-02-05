@@ -81,7 +81,7 @@
                     android:id="@+id/txtView_label_descr_virtualStickBasic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test basic Virtual Stick modes." />
+                    android:text="@string/virtual_stick_basic_description" />
             </LinearLayout>
 
             <LinearLayout
@@ -96,6 +96,49 @@
                     android:text="Test This Mode!" />
             </LinearLayout>
         </LinearLayout> <!-- VirtualStickBasic -->
+
+        <!-- VirtualStickCross -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/txtView_label_virtualStickCross"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virtual Stick Cross"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/txtView_label_descr_virtualStickCross"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/virtual_stick_cross_description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_showVirtualStickCrossDemoActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test This Mode!" />
+            </LinearLayout>
+        </LinearLayout> <!-- VirtualStickCross -->
 
     </LinearLayout>
 

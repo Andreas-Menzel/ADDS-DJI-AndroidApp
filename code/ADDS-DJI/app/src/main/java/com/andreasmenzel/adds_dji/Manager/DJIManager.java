@@ -373,6 +373,27 @@ public class DJIManager {
         changeHighLevelOperationMode(new TakeOff(new Landing()));
     }
 
+    public void setVirtualSticks(float pitch, float yaw, float roll, float verticalThrottle) {
+        if(pitch < -1) pitch = -1;
+        else if(pitch > 1) pitch = 1;
+
+        if(yaw < -1) yaw = -1;
+        else if(yaw > 1) yaw = 1;
+
+        if(roll < -1) roll = -1;
+        else if(roll > 1) roll = 1;
+
+        if(verticalThrottle < -1) verticalThrottle = -1;
+        else if(verticalThrottle > 1) verticalThrottle = 1;
+
+        // Yes, that's correct. This is supposed to be switched
+        // TODO: Why DJI?!?
+        virtualStickFlightControlData.setPitch(roll);
+        virtualStickFlightControlData.setYaw(yaw);
+        virtualStickFlightControlData.setRoll(pitch);
+        virtualStickFlightControlData.setVerticalThrottle(verticalThrottle);
+    }
+
     // TODO: None mode
     public void cancel() {
         changeHighLevelOperationMode(new None());

@@ -37,6 +37,10 @@ public class TestFlightModesActivity extends AppCompatActivity {
             Intent switchActivityIntent = new Intent(this, VirtualStickBasicDemoActivity.class);
             startActivity(switchActivityIntent);
         });
+        findViewById(R.id.btn_showVirtualStickCrossDemoActivity).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, VirtualStickCrossDemoActivity.class);
+            startActivity(switchActivityIntent);
+        });
     }
 
 

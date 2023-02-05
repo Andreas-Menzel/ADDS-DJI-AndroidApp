@@ -92,28 +92,77 @@
         android:id="@+id/btn_startVirtualStick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Start Virtual Stick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_cancel"
+        app:layout_constraintHorizontal_bias="0.393"
+        app:layout_constraintStart_toStartOf="@+id/btn_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/btn_cancel" />
 
     <Button
-        android:id="@+id/btn_virtualStickLeft"
+        android:id="@+id/btn_virtualStickAddLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="ADD LEFT"
-        app:layout_constraintEnd_toStartOf="@+id/btn_startVirtualStick"
-        app:layout_constraintTop_toTopOf="@+id/btn_startVirtualStick" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickRollValue"
+        app:layout_constraintEnd_toStartOf="@+id/txtView_virtualStickRollValue"
+        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickRollValue" />
 
     <Button
-        android:id="@+id/btn_virtualStickRight"
+        android:id="@+id/btn_virtualStickAddRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="ADD RIGHT"
-        app:layout_constraintStart_toEndOf="@+id/btn_startVirtualStick"
-        app:layout_constraintTop_toTopOf="@+id/btn_startVirtualStick" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickRollValue"
+        app:layout_constraintStart_toEndOf="@+id/txtView_virtualStickRollValue"
+        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickRollValue" />
+
+    <TextView
+        android:id="@+id/txtView_virtualStickRollValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="350dp"
+        android:text="roll"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickPitchValue" />
+
+    <Button
+        android:id="@+id/btn_virtualStickAddFront"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="ADD FRONT"
+        app:layout_constraintBottom_toTopOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintEnd_toEndOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintStart_toStartOf="@+id/txtView_virtualStickPitchValue" />
+
+    <Button
+        android:id="@+id/btn_virtualStickAddBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="ADD BACK"
+        app:layout_constraintEnd_toEndOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintStart_toStartOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_virtualStickPitchValue" />
+
+    <TextView
+        android:id="@+id/txtView_virtualStickPitchValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="80dp"
+        android:text="pitch"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

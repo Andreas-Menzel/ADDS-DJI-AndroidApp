@@ -1,6 +1,7 @@
 package com.andreasmenzel.adds_dji;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.HighLevelOpera
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 
 public class VirtualStickBasicDemoActivity extends AppCompatActivity {
@@ -22,6 +24,13 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
     private EventBus bus = EventBus.getDefault();
 
     private DJIManager djiManager;
+
+    private static final Handler stickDataSenderHandler = new Handler();
+
+    private float pitch = 0;
+    private float yaw = 0;
+    private float roll = 0;
+    private float verticalThrottle = 0;
 
 
     @Override
@@ -39,17 +48,42 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
         findViewById(R.id.btn_land).setOnClickListener((View view) -> {
             djiManager.land();
         });
+
         findViewById(R.id.btn_cancel).setOnClickListener((View view) -> {
+            stickDataSenderHandler.removeCallbacksAndMessages(null);
+            pitch = 0;
+            yaw = 0;
+            roll = 0;
+            verticalThrottle = 0;
             djiManager.cancel();
+            bus.post(new UIUpdated());
         });
+
         findViewById(R.id.btn_startVirtualStick).setOnClickListener((View view) -> {
             djiManager.virtualStick();
+            sendStickData();
+            bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_virtualStickLeft).setOnClickListener((View view) -> {
-            djiManager.virtualStickAddLeft();
+
+        findViewById(R.id.btn_virtualStickAddLeft).setOnClickListener((View view) -> {
+            roll = roll - (float)0.1;
+            if(roll < -1) roll = 1;
+            bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_virtualStickRight).setOnClickListener((View view) -> {
-            djiManager.virtualStickAddRight();
+        findViewById(R.id.btn_virtualStickAddRight).setOnClickListener((View view) -> {
+            roll = roll + (float)0.1;
+            if(roll > 1) roll = 1;
+            bus.post(new UIUpdated());
+        });
+        findViewById(R.id.btn_virtualStickAddFront).setOnClickListener((View view) -> {
+            pitch = pitch + (float)0.1;
+            if(pitch > 1) pitch = 1;
+            bus.post(new UIUpdated());
+        });
+        findViewById(R.id.btn_virtualStickAddBack).setOnClickListener((View view) -> {
+            pitch = pitch - (float)0.1;
+            if(pitch < -1) pitch = -1;
+            bus.post(new UIUpdated());
         });
     }
 
@@ -78,6 +112,22 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
 
         txtView_highLevelFlightMode.setText(highLevelOperationMode.toString());
         txtView_flightModeState.setText(highLevelOperationMode.getMode().toString());
+
+
+        TextView txtView_roll = findViewById(R.id.txtView_virtualStickRollValue);
+        TextView txtView_pitch = findViewById(R.id.txtView_virtualStickPitchValue);
+
+        txtView_roll.setText(String.valueOf(Math.round(roll * 10) / 10.0));
+        txtView_pitch.setText(String.valueOf(Math.round(pitch * 10) / 10.0));
+    }
+
+
+    private void sendStickData() {
+        stickDataSenderHandler.removeCallbacksAndMessages(null);
+
+        djiManager.setVirtualSticks(pitch, yaw, roll, verticalThrottle);
+
+        stickDataSenderHandler.postDelayed(this::sendStickData, 50);
     }
 
 

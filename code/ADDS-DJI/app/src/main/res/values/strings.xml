@@ -70,6 +70,13 @@
     <string name="label_remaining_flight_radius">Remaining Flight Radius:</string>
 
 
+    <!--
+        activity_test_flight_modes
+    -->
+    <string name="virtual_stick_basic_description">Test the Virtual Stick mode! Manually control the pitch and roll of the drone.</string>
+
+    <string name="virtual_stick_cross_description">Select flight speed and duration. The drone will autonomously fly a simple cross.</string>
+
 
 
 
@@ -80,17 +87,4 @@
     <string name="button_test_flight_modes">Test Flight Modes</string>
 
     <string name="label_drone_id">Drone ID:</string>
-
-    <string name="virtual_stick">Virtual Stick</string>
-    <string name="virtual_stick_description">With this mode the app can simulate a pilot and control the drone through a virtual controller (Virtual Stick).
-
-Click the button below start the Virtual Stick demonstration. The drone will then fly left->right->left->…
-    </string>
-    <string name="virtual_stick_button">Test Virtual Stick</string>
-
-    <string name="waypoint_mission">Waypoint Mission</string>
-    <string name="waypoint_mission_description">With this mode the app can fly simple waypoint missions.
-
-Click the button below start the waypoint mission demonstration. You can then manually add waypoints (record your flight) and start the automatic flight.</string>
-    <string name="waypoint_mission_button">Test Waypoint Mission</string>
 </resources>

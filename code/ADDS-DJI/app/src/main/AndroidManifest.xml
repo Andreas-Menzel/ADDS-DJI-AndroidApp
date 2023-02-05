@@ -101,6 +101,11 @@
             android:screenOrientation="landscape">
         </activity>
 
+        <activity android:name=".VirtualStickCrossDemoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
+        </activity>
+
         <activity android:name=".WaypointMissionDemoActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
