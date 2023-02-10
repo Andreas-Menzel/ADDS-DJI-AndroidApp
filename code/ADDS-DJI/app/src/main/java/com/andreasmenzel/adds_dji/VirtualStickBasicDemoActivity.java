@@ -11,12 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.andreasmenzel.adds_dji.Events.DJIManager.UIUpdated;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.HighLevelOperationMode;
+import com.andreasmenzel.adds_dji.OperationModes.OperationMode;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 
 public class VirtualStickBasicDemoActivity extends AppCompatActivity {
@@ -108,10 +107,10 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
         TextView txtView_highLevelFlightMode = findViewById(R.id.txtView_highLevelFlightMode);
         TextView txtView_flightModeState = findViewById(R.id.txtView_flightModeState);
 
-        HighLevelOperationMode highLevelOperationMode = djiManager.getHighLevelOperationMode();
+        OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        txtView_highLevelFlightMode.setText(highLevelOperationMode.toString());
-        txtView_flightModeState.setText(highLevelOperationMode.getMode().toString());
+        txtView_highLevelFlightMode.setText(operationMode.toString());
+        txtView_flightModeState.setText(operationMode.getState().toString());
 
 
         TextView txtView_roll = findViewById(R.id.txtView_virtualStickRollValue);

@@ -7,9 +7,9 @@ help you to understand how everything is connected and how the app works from a
 very high-level point of view. Have a look at the detailed java documentation
 for implementation-specific information.
 
-### High-Level Operation Modes
+### Operation Modes
 
-A *High-Level Operation Mode* is the (flying) mode the drone is currently in.
+An *Operation Mode* is the (flying) mode the drone is currently in.
 This is higher-level than the modes provided by DJI [1], because the
 `DJIManager` (inside the `Managers` package) will check if the currently selected
 mode can be executed. If so, it will work through the states `start` ->
@@ -25,8 +25,7 @@ issuing landing, waypoint missions, ... do not have to worry about these things.
 
 #### Mode States
 
-As mentioned above, a High-Level Operation Mode can be in one of the following
-states:
+As mentioned above, an Operation Mode can be in one of the following states:
 
 - `start`: The mode was just started and no command was sent yet.
 - `attempting`: The desired command was issued to the DJI MSDK and is currently

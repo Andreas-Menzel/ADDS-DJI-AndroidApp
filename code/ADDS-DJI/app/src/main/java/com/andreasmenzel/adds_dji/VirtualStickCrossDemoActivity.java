@@ -11,13 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.andreasmenzel.adds_dji.Events.DJIManager.UIUpdated;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Manager.DJIManager;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.HighLevelOperationMode;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.Hovering;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.Landing;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.OnGround;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.StartVirtualStick;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.TakeOff;
-import com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes.UseVirtualStick;
+import com.andreasmenzel.adds_dji.OperationModes.OperationMode;
+import com.andreasmenzel.adds_dji.OperationModes.Hovering;
+import com.andreasmenzel.adds_dji.OperationModes.Landing;
+import com.andreasmenzel.adds_dji.OperationModes.OnGround;
+import com.andreasmenzel.adds_dji.OperationModes.StartVirtualStick;
+import com.andreasmenzel.adds_dji.OperationModes.TakeOff;
+import com.andreasmenzel.adds_dji.OperationModes.UseVirtualStick;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -94,10 +94,10 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
         TextView txtView_highLevelFlightMode = findViewById(R.id.txtView_highLevelFlightMode);
         TextView txtView_flightModeState = findViewById(R.id.txtView_flightModeState);
 
-        HighLevelOperationMode highLevelOperationMode = djiManager.getHighLevelOperationMode();
+        OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        txtView_highLevelFlightMode.setText(highLevelOperationMode.toString());
-        txtView_flightModeState.setText(highLevelOperationMode.getMode().toString());
+        txtView_highLevelFlightMode.setText(operationMode.toString());
+        txtView_flightModeState.setText(operationMode.getState().toString());
 
 
         TextView txtView_roll = findViewById(R.id.txtView_virtualStickRollValue);
@@ -202,7 +202,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
         // 4: Landing
         // 5: Stop performance
         int delayToNextCall = 0;
-        HighLevelOperationMode highLevelOperationMode = null;
+        OperationMode operationMode = null;
         switch(performanceProgress) {
             case 1:
             case 3:
@@ -212,29 +212,29 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
                 break;
             case 0:
                 // TakeOff
-                highLevelOperationMode = djiManager.getHighLevelOperationMode();
+                operationMode = djiManager.getHighLevelOperationMode();
 
-                if(highLevelOperationMode instanceof TakeOff) {
+                if(operationMode instanceof TakeOff) {
                     // wait
-                } else if(highLevelOperationMode instanceof Hovering) {
+                } else if(operationMode instanceof Hovering) {
                     // TakeOff complete
                     performanceProgress++;
                     delayToNextCall = 3000;
                 } else {
-                    djiManager.changeHighLevelOperationMode(new TakeOff());
+                    djiManager.changeOperationMode(new TakeOff());
                 }
                 break;
             case 4:
                 // Landing
-                highLevelOperationMode = djiManager.getHighLevelOperationMode();
+                operationMode = djiManager.getHighLevelOperationMode();
 
-                if(highLevelOperationMode instanceof Landing) {
+                if(operationMode instanceof Landing) {
                     // wait
-                } else if(highLevelOperationMode instanceof OnGround) {
+                } else if(operationMode instanceof OnGround) {
                     // TakeOff complete
                     performanceProgress = 5; // stop performance
                 } else {
-                    djiManager.changeHighLevelOperationMode(new Landing());
+                    djiManager.changeOperationMode(new Landing());
                 }
                 break;
             case -1:
@@ -272,10 +272,10 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
 
 
     private int flyCrossManouvre() {
-        HighLevelOperationMode highLevelOperationMode = djiManager.getHighLevelOperationMode();
+        OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        if(!(highLevelOperationMode instanceof StartVirtualStick) && !(highLevelOperationMode instanceof UseVirtualStick)) {
-            djiManager.changeHighLevelOperationMode(new UseVirtualStick());
+        if(!(operationMode instanceof StartVirtualStick) && !(operationMode instanceof UseVirtualStick)) {
+            djiManager.changeOperationMode(new UseVirtualStick());
         }
 
         // 0: center -> front
