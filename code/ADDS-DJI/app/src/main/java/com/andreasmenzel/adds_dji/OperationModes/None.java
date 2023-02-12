@@ -2,6 +2,8 @@ package com.andreasmenzel.adds_dji.OperationModes;
 
 import androidx.annotation.NonNull;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * This Operation Mode is used if the current Operation Mode is not known. This mode tries to infer
  * the correct Operation Mode and change it accordingly.
@@ -16,6 +18,12 @@ public class None extends OperationMode {
     public None() {
         super();
         state = States.active;
+    }
+
+
+    @Override
+    public void perform(@NonNull EventBus bus) {
+
     }
 
 

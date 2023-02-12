@@ -86,11 +86,7 @@ public abstract class OperationMode {
     Runnable runnableWhenFailed = null;
 
 
-    /**
-     * Sets the next Operation Mode to "None".
-     */
     public OperationMode() {
-        this.nextOperationMode = new None();
     }
 
     /**
