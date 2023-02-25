@@ -13,7 +13,6 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChange
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnectivityChange;
 import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
-import com.andreasmenzel.adds_dji.Events.ToastMessage;
 
 // Information Holder
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
@@ -25,10 +24,8 @@ import com.andreasmenzel.adds_dji.MainActivity;
 import com.andreasmenzel.adds_dji.OperationModes.CancelLanding;
 import com.andreasmenzel.adds_dji.OperationModes.CancelTakeOff;
 import com.andreasmenzel.adds_dji.OperationModes.OperationMode;
-import com.andreasmenzel.adds_dji.OperationModes.Hovering;
 import com.andreasmenzel.adds_dji.OperationModes.Landing;
 import com.andreasmenzel.adds_dji.OperationModes.None;
-import com.andreasmenzel.adds_dji.OperationModes.OnGround;
 import com.andreasmenzel.adds_dji.OperationModes.StopVirtualStick;
 import com.andreasmenzel.adds_dji.OperationModes.TakeOff;
 import com.andreasmenzel.adds_dji.OperationModes.TurnOffMotors;
@@ -42,16 +39,14 @@ import org.greenrobot.eventbus.Subscribe;
 import dji.common.battery.BatteryState;
 import dji.common.flightcontroller.Attitude;
 import dji.common.flightcontroller.FlightControllerState;
-import dji.common.flightcontroller.FlightMode;
 import dji.common.flightcontroller.GoHomeAssessment;
 import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
-import dji.common.flightcontroller.virtualstick.FlightCoordinateSystem;
-import dji.common.flightcontroller.virtualstick.RollPitchControlMode;
-import dji.common.flightcontroller.virtualstick.VerticalControlMode;
-import dji.common.flightcontroller.virtualstick.YawControlMode;
+import dji.common.product.Model;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.battery.Battery;
+import dji.sdk.camera.VideoFeeder;
+import dji.sdk.codec.DJICodecManager;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
@@ -78,6 +73,9 @@ public class DJIManager {
 
     private static final FlightControlData virtualStickFlightControlData = new FlightControlData(0, 0, 0, 0);
 
+    private static VideoFeeder.VideoDataListener videoDataListener = null;
+    private static DJICodecManager codecManager = null;
+
 
     /**
      * Initializes the DJIManager: Registers to the event bus and gets the information holders.
@@ -87,6 +85,20 @@ public class DJIManager {
 
         aircraftLocation = new AircraftLocation();
         aircraftPower = new AircraftPower();
+
+
+        //codecManager = new DJICodecManager(this, surface, width, height);
+
+        // The callback for receiving the raw H264 video data for camera live view
+        videoDataListener = (videoBuffer, size) -> {
+            if(codecManager != null) {
+                codecManager.sendDataToDecoder(videoBuffer, size);
+            }
+        };
+
+        if(getProductInstance() != null && getProductInstance().isConnected()) {
+            setupVideoDataListener();
+        }
     }
 
     /**
@@ -104,7 +116,9 @@ public class DJIManager {
      */
     @Subscribe
     public void productConnected(ProductConnected event) {
+        // TODO: necessary? Isn't this already called in productChanged?
         setupCallbacks();
+        setupVideoDataListener();
     }
 
     /**
@@ -113,8 +127,19 @@ public class DJIManager {
      */
     @Subscribe
     public void productChanged(ProductChanged event) {
-        if(getProductInstance().isConnected()) {
+        if(getProductInstance() != null && getProductInstance().isConnected()) {
             setupCallbacks();
+            setupVideoDataListener();
+        }
+    }
+
+    private void setupVideoDataListener() {
+        BaseProduct product = getProductInstance();
+
+        if(product != null) {
+            if(product.getModel() != null && !product.getModel().equals(Model.UNKNOWN_AIRCRAFT)) {
+                VideoFeeder.getInstance().getPrimaryVideoFeed().addVideoDataListener(videoDataListener);
+            }
         }
     }
 
@@ -130,7 +155,8 @@ public class DJIManager {
     /**
      * Gets the instance of the specific product connected.
      */
-    private static synchronized BaseProduct getProductInstance() {
+    public static synchronized BaseProduct getProductInstance() {
+        //return null;
         return DJISDKManager.getInstance().getProduct();
     }
 

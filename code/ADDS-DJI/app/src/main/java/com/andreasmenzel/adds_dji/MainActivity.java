@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 // Events
+import com.andreasmenzel.adds_dji.Events.DJIManager.CreatedDJIManager;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ComponentChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
@@ -92,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler(Looper.getMainLooper());
 
-        // Get custom managers
-        djiManager = MApplication.getDjiManager();
         trafficControlManager = MApplication.getTrafficControlManager();
 
         // Make sure that the app has all required permissions. This also starts the DJI SDK
@@ -107,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_showTestFlightModesActivity).setOnClickListener((View view) -> {
             Intent switchActivityIntent = new Intent(this, TestFlightModesActivity.class);
+            startActivity(switchActivityIntent);
+        });
+        findViewById(R.id.btn_showFPVDemoActivity).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, FPVDemoActivity.class);
             startActivity(switchActivityIntent);
         });
     }
@@ -128,7 +131,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         updateUITrafficControlConnectionState(null);
-        updateUIProductModelName(null);
+        if(djiManager != null) {
+            updateUIProductModelName(null);
+        }
     }
 
     /**
@@ -138,6 +143,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         bus.unregister(this);
+    }
+
+
+    @Subscribe
+    public void createdDJIManager(CreatedDJIManager event) {
+        djiManager = MApplication.getDjiManager();
+
+        updateUIProductModelName(null);
     }
 
 
@@ -316,7 +329,10 @@ public class MainActivity extends AppCompatActivity {
     public void updateUIProductModelName(ProductModelChanged event) {
         TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
 
-        String modelName = djiManager.getModelName();
+        String modelName = djiManager.getModelName();;
+        if(djiManager != null) {
+            //modelName =
+        }
 
         if(modelName != null) {
             txtView_productModelName.setText(modelName);

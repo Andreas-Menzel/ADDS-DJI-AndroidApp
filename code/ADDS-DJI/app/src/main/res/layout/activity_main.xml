@@ -141,4 +141,14 @@
         app:layout_constraintStart_toEndOf="@+id/txtView_label_msdkRegistrationState"
         app:layout_constraintTop_toTopOf="@+id/txtView_label_msdkRegistrationState" />
 
+    <Button
+        android:id="@+id/btn_showFPVDemoActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="FPV Demo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
