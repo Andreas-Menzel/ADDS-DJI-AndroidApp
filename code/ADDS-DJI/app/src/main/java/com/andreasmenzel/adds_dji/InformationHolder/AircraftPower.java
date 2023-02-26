@@ -1,5 +1,8 @@
 package com.andreasmenzel.adds_dji.InformationHolder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AircraftPower {
 
     /*
@@ -52,6 +55,23 @@ public class AircraftPower {
     }
     public float getRemainingFlightRadius() {
         return remainingFlightRadius;
+    }
+
+    public JSONObject getDatasetAsJSONObject() {
+        JSONObject datasetAsJsonObject = new JSONObject();
+
+        try {
+            datasetAsJsonObject.put("battery_remaining", batteryRemaining);
+            datasetAsJsonObject.put("battery_remaining_percent", batteryRemainingPercent);
+
+            datasetAsJsonObject.put("remaining_flight_time", remainingFlightTime);
+            datasetAsJsonObject.put("remaining_flight_radius", remainingFlightRadius);
+        } catch (JSONException e) {
+            // TODO: error handling
+            datasetAsJsonObject = null;
+        }
+
+        return datasetAsJsonObject;
     }
 
 }

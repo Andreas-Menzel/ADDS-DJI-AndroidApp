@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 // Events
-import com.andreasmenzel.adds_dji.Events.DJIManager.CreatedDJIManager;
+import com.andreasmenzel.adds_dji.Events.DJIManager.CreatedManagers;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ComponentChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductChanged;
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnected;
@@ -93,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler(Looper.getMainLooper());
 
-        trafficControlManager = MApplication.getTrafficControlManager();
-
         // Make sure that the app has all required permissions. This also starts the DJI SDK
         // registration afterwards (if all permissions were granted).
         checkAndRequestPermissions();
@@ -110,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.btn_showFPVDemoActivity).setOnClickListener((View view) -> {
             Intent switchActivityIntent = new Intent(this, FPVDemoActivity.class);
+            startActivity(switchActivityIntent);
+        });
+        findViewById(R.id.btn_showBlackboxInfoActivity).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, BlackboxInfoActivity.class);
             startActivity(switchActivityIntent);
         });
     }
@@ -130,9 +132,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        updateUITrafficControlConnectionState(null);
         if(djiManager != null) {
             updateUIProductModelName(null);
+        }
+        if(trafficControlManager != null) {
+            updateUITrafficControlConnectionState(null);
         }
     }
 
@@ -147,10 +151,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Subscribe
-    public void createdDJIManager(CreatedDJIManager event) {
+    public void createdManagers(CreatedManagers event) {
         djiManager = MApplication.getDjiManager();
+        trafficControlManager = MApplication.getTrafficControlManager();
 
         updateUIProductModelName(null);
+        updateUITrafficControlConnectionState(null);
     }
 
 
@@ -312,33 +318,37 @@ public class MainActivity extends AppCompatActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUITrafficControlConnectionState(ConnectionEvent event) {
-        TextView txtView_trafficControl = findViewById(R.id.txtView_trafficControlConnectionState);
+        runOnUiThread(() -> {
+            TextView txtView_trafficControl = findViewById(R.id.txtView_trafficControlConnectionState);
 
-        String version = trafficControlManager.getTrafficControlVersion();
+            String version = trafficControlManager.getTrafficControlVersion();
 
-        if(version != null) {
-            txtView_trafficControl.setText(version);
-        } else {
-            txtView_trafficControl.setText(R.string.trafficControl_not_connected);
-        }
+            if(version != null) {
+                txtView_trafficControl.setText(version);
+            } else {
+                txtView_trafficControl.setText(R.string.trafficControl_not_connected);
+            }
+        });
     }
 
 
     // TODO: change to productConnectionStateCHanged
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe()
     public void updateUIProductModelName(ProductModelChanged event) {
-        TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
+        runOnUiThread(() -> {
+            TextView txtView_productModelName = findViewById(R.id.txtView_productModelNameConnectionState);
 
-        String modelName = djiManager.getModelName();;
-        if(djiManager != null) {
-            //modelName =
-        }
+            String modelName = djiManager.getModelName();;
+            if(djiManager != null) {
+                //modelName =
+            }
 
-        if(modelName != null) {
-            txtView_productModelName.setText(modelName);
-        } else {
-            txtView_productModelName.setText(R.string.product_not_connected);
-        }
+            if(modelName != null) {
+                txtView_productModelName.setText(modelName);
+            } else {
+                txtView_productModelName.setText(R.string.product_not_connected);
+            }
+        });
     }
 
 
@@ -347,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showToast(ToastMessage toastMessage) {
-        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), toastMessage.message, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -151,4 +151,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/btn_showBlackboxInfoActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Show Blackbox Info"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_showFPVDemoActivity"
+        app:layout_constraintStart_toEndOf="@+id/btn_showFPVDemoActivity"
+        app:layout_constraintTop_toTopOf="@+id/btn_showFPVDemoActivity" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

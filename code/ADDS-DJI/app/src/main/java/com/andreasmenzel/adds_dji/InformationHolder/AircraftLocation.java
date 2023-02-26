@@ -1,5 +1,10 @@
 package com.andreasmenzel.adds_dji.InformationHolder;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class AircraftLocation {
 
     /*
@@ -44,7 +49,6 @@ public class AircraftLocation {
 
 
 
-
     // TODO: Potential pitfall: altitude and attitude are 0 on default!
     public AircraftLocation() {
         this.gpsSignalLevel = 0;
@@ -79,7 +83,9 @@ public class AircraftLocation {
 
         this.gpsValid = gpsValid;
         this.gpsLat = gpsLat;
+        if(Double.isNaN(this.gpsLat)) this.gpsLat = 0;
         this.gpsLon = gpsLon;
+        if(Double.isNaN(this.gpsLon)) this.gpsLon = 0;
 
         this.altitude = altitude;
 
@@ -131,6 +137,34 @@ public class AircraftLocation {
     }
     public double getRoll() {
         return roll;
+    }
+
+    public JSONObject getDatasetAsJSONObject() {
+        JSONObject datasetAsJsonObject = new JSONObject();
+
+        try {
+            datasetAsJsonObject.put("gps_signal_level", gpsSignalLevel);
+            datasetAsJsonObject.put("gps_satellites_connected", gpsSatellitesConnected);
+
+            datasetAsJsonObject.put("gps_valid", gpsValid);
+            datasetAsJsonObject.put("gps_lat", gpsLat);
+            datasetAsJsonObject.put("gps_lon", gpsLon);
+
+            datasetAsJsonObject.put("altitude", altitude);
+
+            datasetAsJsonObject.put("velocity_x", velocityX);
+            datasetAsJsonObject.put("velocity_y", velocityY);
+            datasetAsJsonObject.put("velocity_z", velocityZ);
+
+            datasetAsJsonObject.put("pitch", pitch);
+            datasetAsJsonObject.put("yaw", yaw);
+            datasetAsJsonObject.put("roll", roll);
+        } catch (JSONException e) {
+            // TODO: error handling
+            datasetAsJsonObject = null;
+        }
+
+        return datasetAsJsonObject;
     }
 
 }

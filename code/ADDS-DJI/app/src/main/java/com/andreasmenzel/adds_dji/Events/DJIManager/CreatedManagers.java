@@ -1,4 +1,4 @@
 package com.andreasmenzel.adds_dji.Events.DJIManager;
 
-public class CreatedDJIManager {
+public class CreatedManagers {
 }
