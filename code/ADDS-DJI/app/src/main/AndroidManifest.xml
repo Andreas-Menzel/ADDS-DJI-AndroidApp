@@ -66,7 +66,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name=".InitializeAppActivity"
             android:exported="true"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
@@ -79,6 +79,11 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+        </activity>
+
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
         </activity>
 
         <activity android:name=".DroneInfoActivity"

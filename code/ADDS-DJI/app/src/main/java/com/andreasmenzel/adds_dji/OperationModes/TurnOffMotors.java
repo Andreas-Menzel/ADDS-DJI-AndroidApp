@@ -7,7 +7,7 @@ import static com.andreasmenzel.adds_dji.OperationModes.OperationMode.States.inP
 import androidx.annotation.NonNull;
 
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Manager.DJIManager;
+import com.andreasmenzel.adds_dji.Managers.DJIManager;
 
 import org.greenrobot.eventbus.EventBus;
 

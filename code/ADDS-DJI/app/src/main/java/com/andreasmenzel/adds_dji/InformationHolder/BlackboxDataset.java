@@ -12,7 +12,10 @@ public class BlackboxDataset {
 
 
     public BlackboxDataset() {
-
+        aircraftLocation = new AircraftLocation();
+        aircraftPower = new AircraftPower();
+        aircraftHealth = new AircraftHealth();
+        flightMission = new FlightMission();
     }
 
 

@@ -1,4 +1,4 @@
-package com.andreasmenzel.adds_dji.Manager;
+package com.andreasmenzel.adds_dji.Managers;
 
 import android.os.Handler;
 import android.util.Log;

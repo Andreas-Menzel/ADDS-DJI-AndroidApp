@@ -10,7 +10,7 @@ import com.andreasmenzel.adds_dji.Events.DJIManager.CreatedManagers;
 import com.andreasmenzel.adds_dji.Events.InformationHolder.BlackboxDatasetChanged;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.InformationHolder.BlackboxDataset;
-import com.andreasmenzel.adds_dji.Manager.BlackboxManager;
+import com.andreasmenzel.adds_dji.Managers.BlackboxManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

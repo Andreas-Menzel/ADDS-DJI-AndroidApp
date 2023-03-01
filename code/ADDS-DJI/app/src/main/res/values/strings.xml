@@ -1,15 +1,21 @@
 <resources>
     <string name="app_name">ADDS-DJI</string>
+    <string name="app_version">version 0.0.1-alpha</string>
+
+    <string name="project_name">Autonomous Drone Delivery System</string>
 
     <!--
-        activity_main
+        activity_initialize_app
     -->
-    <string name="label_msdkRegistration">DJI MSDK:</string>
+    <string name="label_msdkRegistration">DJI Mobile SDK:</string>
     <string name="msdkRegistration_not_registered_yet">not registered yet</string>
     <string name="msdkRegistration_missing_permissions">FAILED: MISSING PERMISSIONS</string>
-    <string name="msdkRegistration_registration_in_progress">registration in progress...</string>
+    <string name="msdkRegistration_registration_in_progress">registration in progress…</string>
     <string name="msdkRegistration_registered">OK</string>
     <string name="msdkRegistration_registration_failed">REGISTRATION FAILED</string>
+
+    <string name="button_go_fly">Go Fly!</string>
+
 
     <string name="label_productModelName">Model:</string>
     <string name="product_not_connected">not connected</string>

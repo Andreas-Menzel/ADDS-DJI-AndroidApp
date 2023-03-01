@@ -3,19 +3,16 @@ package com.andreasmenzel.adds_dji;
 import android.app.Application;
 import android.content.Context;
 
-import com.andreasmenzel.adds_dji.Events.DJIManager.CreatedManagers;
-import com.andreasmenzel.adds_dji.Events.SdkRegistered;
-import com.andreasmenzel.adds_dji.Manager.BlackboxManager;
-import com.andreasmenzel.adds_dji.Manager.DJIManager;
-import com.andreasmenzel.adds_dji.Manager.TrafficControlManager;
+import com.andreasmenzel.adds_dji.Managers.BlackboxManager;
+import com.andreasmenzel.adds_dji.Managers.DJIManager;
+import com.andreasmenzel.adds_dji.Managers.TrafficControlManager;
 import com.secneo.sdk.Helper;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
+/**
+ * The Main Application. All globally required variables are stored here.
+ */
 public class MApplication extends Application {
-
-    private static final EventBus bus = EventBus.getDefault();
 
     private static DJIManager djiManager;
     private static TrafficControlManager trafficControlManager;
@@ -26,29 +23,39 @@ public class MApplication extends Application {
     protected void attachBaseContext(Context paramContext) {
         super.attachBaseContext(paramContext);
         Helper.install(MApplication.this);
-
-        bus.register(this);
     }
 
 
-    @Subscribe
-    public void sdkRegistered(SdkRegistered event) {
+    /**
+     * Initializes all managers (see "Managers" package).
+     */
+    public static void initializeManagers() {
         djiManager = new DJIManager();
         trafficControlManager = new TrafficControlManager();
         blackboxManager = new BlackboxManager();
-
-        bus.post(new CreatedManagers());
     }
 
 
+    /**
+     * Returns the DJIManager.
+     * @return djiManager.
+     */
     public static DJIManager getDjiManager() {
         return djiManager;
     }
 
+    /**
+     * Returns the TrafficControlManager.
+     * @return trafficControlManager.
+     */
     public static TrafficControlManager getTrafficControlManager() {
         return trafficControlManager;
     }
 
+    /**
+     * Returns the BlackboxManager.
+     * @return blackboxManager.
+     */
     public static BlackboxManager getBlackboxManager() {
         return blackboxManager;
     }

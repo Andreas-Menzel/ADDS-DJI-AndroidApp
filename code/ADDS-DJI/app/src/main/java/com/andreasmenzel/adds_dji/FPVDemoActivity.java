@@ -6,22 +6,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Manager.DJIManager;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import dji.common.product.Model;
-import dji.sdk.base.BaseProduct;
-import dji.sdk.camera.Camera;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 

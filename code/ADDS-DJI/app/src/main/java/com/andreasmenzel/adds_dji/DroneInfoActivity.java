@@ -20,7 +20,7 @@ import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 
 // Manager
-import com.andreasmenzel.adds_dji.Manager.DJIManager;
+import com.andreasmenzel.adds_dji.Managers.DJIManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

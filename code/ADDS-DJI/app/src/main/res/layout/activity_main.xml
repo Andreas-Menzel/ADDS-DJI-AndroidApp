@@ -1,164 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/txtView_label_productModelNameConnectionState"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/label_productModelName"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdkRegistrationState"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_msdkRegistrationState" />
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="16dp">
 
-    <TextView
-        android:id="@+id/txtView_productModelNameConnectionState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/product_not_connected"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_productModelNameConnectionState"
-        app:layout_constraintStart_toStartOf="@+id/txtView_msdkRegistrationState"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_productModelNameConnectionState" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_activationChange"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/label_activate_drone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/txtView_label_productModelNameConnectionState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_productModelName"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/txtView_label_droneID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="@string/label_drone_id"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_activationChange"
-        app:layout_constraintEnd_toStartOf="@+id/txtView_droneID"
-        app:layout_constraintTop_toTopOf="@+id/btn_activationChange" />
+            <TextView
+                android:id="@+id/txtView_productModelNameConnectionState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/product_not_connected"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/txtView_droneID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="testdrone1"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_activationChange"
-        app:layout_constraintEnd_toStartOf="@+id/btn_activationChange"
-        app:layout_constraintTop_toTopOf="@+id/btn_activationChange" />
+        </LinearLayout> <!-- product model name -->
 
-    <TextView
-        android:id="@+id/txtView_tmp_droneIDFixedForNow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="fixed for now"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_droneID"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_droneID" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
 
-    <TextView
-        android:id="@+id/txtView_label_trafficControlConnectionState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/label_trafficControl"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_msdkRegistrationState"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_productModelNameConnectionState" />
+            <TextView
+                android:id="@+id/txtView_label_trafficControlConnectionState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_trafficControl"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/txtView_trafficControlConnectionState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/trafficControl_not_checked_yet"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_trafficControlConnectionState"
-        app:layout_constraintStart_toStartOf="@+id/txtView_productModelNameConnectionState"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_trafficControlConnectionState" />
+            <TextView
+                android:id="@+id/txtView_trafficControlConnectionState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trafficControl_not_checked_yet"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"/>
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/drone_id_not_registered"
-        android:textColor="#F44336"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btn_activationChange"
-        app:layout_constraintEnd_toEndOf="@+id/btn_activationChange"
-        app:layout_constraintStart_toStartOf="@+id/btn_activationChange" />
+        </LinearLayout> <!-- traffic control connection state -->
 
-    <Button
-        android:id="@+id/btn_showDroneInfoActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/button_show_drone_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp">
 
-    <Button
-        android:id="@+id/btn_showTestFlightModesActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/button_test_flight_modes"
-        app:layout_constraintEnd_toEndOf="@+id/btn_showDroneInfoActivity"
-        app:layout_constraintTop_toBottomOf="@+id/btn_showDroneInfoActivity" />
+            <Button
+                android:id="@+id/btn_showDroneInfoActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_show_drone_info" />
 
-    <TextView
-        android:id="@+id/txtView_label_msdkRegistrationState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/label_msdkRegistration"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/btn_showBlackboxInfoActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Show Blackbox Info" />
 
-    <TextView
-        android:id="@+id/txtView_msdkRegistrationState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:text="@string/msdkRegistration_not_registered_yet"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_msdkRegistrationState"
-        app:layout_constraintStart_toEndOf="@+id/txtView_label_msdkRegistrationState"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_msdkRegistrationState" />
+        </LinearLayout> <!-- show info activities -->
 
-    <Button
-        android:id="@+id/btn_showFPVDemoActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="FPV Demo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp">
 
-    <Button
-        android:id="@+id/btn_showBlackboxInfoActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Show Blackbox Info"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_showFPVDemoActivity"
-        app:layout_constraintStart_toEndOf="@+id/btn_showFPVDemoActivity"
-        app:layout_constraintTop_toTopOf="@+id/btn_showFPVDemoActivity" />
+            <Button
+                android:id="@+id/btn_showTestFlightModesActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_test_flight_modes"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btn_showFPVDemoActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="FPV Demo" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

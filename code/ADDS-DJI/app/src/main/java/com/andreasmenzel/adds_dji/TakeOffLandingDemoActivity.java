@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.andreasmenzel.adds_dji.Events.DJIManager.UIUpdated;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Manager.DJIManager;
+import com.andreasmenzel.adds_dji.Managers.DJIManager;
 import com.andreasmenzel.adds_dji.OperationModes.OperationMode;
 
 import org.greenrobot.eventbus.EventBus;
