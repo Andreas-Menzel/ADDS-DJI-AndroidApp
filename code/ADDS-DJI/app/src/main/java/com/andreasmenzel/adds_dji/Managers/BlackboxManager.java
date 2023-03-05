@@ -107,7 +107,7 @@ public class BlackboxManager {
 
             bus.post(new BlackboxDatasetChanged());
 
-            Log.d("MY_DEBUG", aircraftLocation.getDatasetAsJSONObject().toString());
+            Log.d("MY_DEBUG", aircraftLocation.getDatasetAsJsonObject().toString());
 
             dataRecordingHandler.postDelayed(this::recordData, dataRecordingDelay);
         }

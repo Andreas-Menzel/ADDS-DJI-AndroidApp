@@ -1,6 +1,7 @@
 package com.andreasmenzel.adds_dji.Managers;
 
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -20,8 +21,7 @@ import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NotConnecte
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowConnected;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowDisconnected;
 
-import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
-import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
+import com.andreasmenzel.adds_dji.InformationHolder.InformationHolder;
 import com.andreasmenzel.adds_dji.MApplication;
 
 import org.greenrobot.eventbus.EventBus;
@@ -42,57 +42,48 @@ import okhttp3.Response;
 
 /**
  * The Traffic Control Manager. This provides a high-level interface to send data to and request
- * data from the Traffic Control. This manager handles connection failures, tries resending failed
+ * data from Traffic Control. This manager handles connection failures, tries resending failed
  * requests and automatically sends data that the Traffic Control requests.
  */
 public class TrafficControlManager {
 
     private static final EventBus bus = EventBus.getDefault();
 
-    /*
-     * Manager
-     */
-    private DJIManager djiManager;
+    private final DJIManager djiManager;
 
     /*
-     * Information Holder
-     */
-    private AircraftLocation aircraftLocation;
-    private AircraftPower aircraftPower;
-
-    /*
-     * Base information for Traffic System connection
+     * Base information for Traffic Control connection
      */
     private final OkHttpClient client = new OkHttpClient();
     private final String trafficControlUrl = "http://adds-demo.an-men.de/";
 
     /*
-     * Periodically check the connection to the Traffic System
+     * Periodically check the connection to the Traffic Control
      * (every <checkConnectionUntilConnectedDelay> seconds) until a connection can be established.
      */
     private final Handler connectivityCheckHandler = new Handler();
-    private int connectivityCheckDelay = 1000;
+    private final int connectivityCheckDelay = 1000;
 
     /*
      *
      */
-    private LinkedList<String> tellsToSend = new LinkedList<>();
+    private final LinkedList<String> tellsToSend = new LinkedList<>();
     private final ReentrantLock processingTellsToSend = new ReentrantLock();
 
     /*
      * Automatically send TELLs in specified intervals. Periodically check the connection
      * (/how_are_you) and server preferences, resend data on error and send data requested from
-     * Traffic System.
+     * Traffic Control.
      */
     private boolean autoCommunicationActive = false;
 
-    // Auto communication: here_i_am
-    private final Handler autoCommunicationHereIAmHandler = new Handler();
-    private int autoCommunicationHereIAmDelay = 2000;
+    // Auto communication: aircraft_location
+    private final Handler autoCommunicationHandlerAircraftLocation = new Handler();
+    private final int autoCommunicationDelayAircraftLocation = 1000;
 
-    // Auto communication: my_health
-    private final Handler autoCommunicationMyHealthHandler = new Handler();
-    private int autoCommunicationMyHealthDelay = 10_000;
+    // Auto communication: aircraft_power
+    private final Handler autoCommunicationHandlerAircraftPower = new Handler();
+    private final int autoCommunicationDelayAircraftPower = 10000;
 
     /*
      * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
@@ -134,7 +125,7 @@ public class TrafficControlManager {
 
 
     /**
-     * Checks the connection to the Traffic Control by sending a how_are_you and checking for the
+     * Checks the connection to Traffic Control by sending a /how_are_you and checking for the
      * version field in the (JSON) response.
      */
     public void checkConnection() {
@@ -173,7 +164,7 @@ public class TrafficControlManager {
                             bus.post(new NowConnected());
                         }
                     } catch (JSONException e) {
-                        // TODO: invalid response
+                        // TODO: exception handling for invalid response
                         if(trafficControlVersion == null) {
                             // Was already not connected
                             bus.post(new NotConnected());
@@ -202,14 +193,15 @@ public class TrafficControlManager {
      * Sends an asynchronous request to the Traffic Control.
      *
      * @param requestGroup The request group, e.g. &quot;tell&quot; or &quot;ask&quot;.
-     * @param requestType  The request type, e.g. &quot;here_i_am&quot; in request group
+     * @param requestType  The request type, e.g. &quot;aircraft_location&quot; in request group
      *                     &quot;tell&quot;.
-     * @param requestData  The request data, e.g. &quot;drone_id=demo_drone&amp;i_say=hello&quot;
+     * @param payload      The payload as a JSON-string.
      */
-    private void sendAsynchronousRequest(String requestGroup, String requestType, String requestData) {
+    private void sendAsynchronousRequest(String requestGroup, String requestType, String payload) {
         Request request = new Request.Builder()
-                .url(trafficControlUrl + requestGroup + "/" + requestType + "?" + requestData)
+                .url(trafficControlUrl + requestGroup + "/" + requestType + "?payload=" + payload)
                 .build();
+        // TODO: Encrypt data and send via POST
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -269,7 +261,7 @@ public class TrafficControlManager {
     }
 
     /**
-     * Periodically checks the connection to the Traffic Control. This method is executed whenever
+     * Periodically checks the connection to Traffic Control. This method is executed whenever
      * the NotConnected event was sent.
      */
     @Subscribe
@@ -322,8 +314,8 @@ public class TrafficControlManager {
     public void startAutoCommunicationTell() {
         autoCommunicationActive = true;
 
-        addTellToSend("here_i_am");
-        addTellToSend("my_health");
+        addTellToSend("aircraft_location");
+        addTellToSend("aircraft_power");
     }
     /**
      * Stops the automatic communication for TELLs.
@@ -331,8 +323,8 @@ public class TrafficControlManager {
     public void stopAutoCommunicationTell() {
         autoCommunicationActive = false;
 
-        autoCommunicationHereIAmHandler.removeCallbacksAndMessages(null);
-        autoCommunicationMyHealthHandler.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
     }
 
 
@@ -340,10 +332,10 @@ public class TrafficControlManager {
      * Adds a new TELL to the buffer list.
      */
     private void addTellToSend(String tell) {
-        if(tell.equals("here_i_am")) {
-            autoCommunicationHereIAmHandler.removeCallbacksAndMessages(null);
-        } else if(tell.equals("my_health")) {
-            autoCommunicationMyHealthHandler.removeCallbacksAndMessages(null);
+        if(tell.equals("aircraft_location")) {
+            autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
+        } else if(tell.equals("aircraft_power")) {
+            autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
         }
 
         processingTellsToSend.lock();
@@ -352,6 +344,7 @@ public class TrafficControlManager {
             // Only add if is new
             for(String tmp_tell : tellsToSend) {
                 if(tmp_tell.equals(tell)) {
+                    processingTellsToSend.unlock();
                     return;
                 }
             }
@@ -386,46 +379,40 @@ public class TrafficControlManager {
     /**
      * Gathers the necessary information and sends the TELL request.
      */
-    private void sendTell(@NonNull String tell) {
-        String requestData = "";
+    private void sendTell(@NonNull String requestType) {
+        JSONObject payload = new JSONObject();
 
-        if(tell.equals("here_i_am")) {
-            AircraftLocation aircraftLocation = djiManager.getAircraftLocation();
+        try {
+            payload.put("drone_id", "demo_drone"); // TODO: set correct drone id
+            payload.put("data_type", requestType);
 
-            requestData += "&drone_id=" + "testdrone1"; // TODO: get correct drone id
-            requestData += "&gps_signal_level=" + aircraftLocation.getGpsSignalLevel();
-            requestData += "&gps_satellites_connected=" + aircraftLocation.getGpsSatellitesConnected();
-            requestData += "&gps_valid=" + aircraftLocation.getGpsValid();
-            requestData += "&gps_lat=" + aircraftLocation.getGpsLat();
-            requestData += "&gps_lon=" + aircraftLocation.getGpsLon();
-            requestData += "&altitude=" + aircraftLocation.getAltitude();
-            requestData += "&velocity_x=" + aircraftLocation.getVelocityX();
-            requestData += "&velocity_Y=" + aircraftLocation.getVelocityY();
-            requestData += "&velocity_Z=" + aircraftLocation.getVelocityZ();
-            requestData += "&pitch=" + aircraftLocation.getPitch();
-            requestData += "&yaw=" + aircraftLocation.getYaw();
-            requestData += "&roll=" + aircraftLocation.getRoll();
-        } if(tell.equals("my_health")) {
-            AircraftPower aircraftPower = djiManager.getAircraftPower();
+            InformationHolder informationHolder = null;
+            if(requestType.equals("aircraft_location")) {
+                informationHolder = djiManager.getAircraftLocation();
+            } else if(requestType.equals("aircraft_power")) {
+                informationHolder = djiManager.getAircraftPower();
+            }
 
-            requestData += "&drone_id=" + "dummy_drone"; // TODO: get correct drone id
-            requestData += "&health=" + "ok"; // TODO: get correct value
-            requestData += "&battery_remaining=" + aircraftPower.getBatteryRemaining();
-            requestData += "&battery_remaining_percent=" + aircraftPower.getBatteryRemainingPercent();
-            requestData += "&remaining_flight_time=" + aircraftPower.getRemainingFlightTime();
-            requestData += "&remaining_flight_radius=" + aircraftPower.getRemainingFlightRadius();
+            if(informationHolder != null) {
+                Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
+                Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
+
+                payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO: SmallJsonObject (?)
+            } else {
+                // TODO: error handling
+            }
+        } catch (JSONException e) {
+            // TODO: error handling
         }
 
-        // Remove first '&' character and send request
-        if(requestData.length() > 0 && requestData.charAt(0) == '&') requestData = requestData.substring(1);
-        sendAsynchronousRequest("tell", tell, requestData);
+        sendAsynchronousRequest("tell", requestType, payload.toString());
     }
 
 
     /**
      * Handles the response from a TELL request.
      */
-    @Subscribe()
+    @Subscribe
     public void gotTellResponse(@NonNull GotTellResponse event) {
         try {
             JSONObject json = new JSONObject(event.getResponse());
@@ -440,7 +427,7 @@ public class TrafficControlManager {
             }
 
             if(!executed) {
-                // TODO
+                // TODO: error handling
             }
 
             // TODO: Handle errors and warnings
@@ -457,14 +444,14 @@ public class TrafficControlManager {
         }
 
         if(autoCommunicationActive) {
-            if(event.getTell().equals("here_i_am")) {
-                autoCommunicationHereIAmHandler.postDelayed(() -> {
-                    addTellToSend("here_i_am");
-                }, autoCommunicationHereIAmDelay);
-            } else if(event.getTell().equals("my_health")) {
-                autoCommunicationMyHealthHandler.postDelayed(() -> {
-                    addTellToSend("my_health");
-                }, autoCommunicationMyHealthDelay);
+            if(event.getTell().equals("aircraft_location")) {
+                autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
+                    addTellToSend("aircraft_location");
+                }, autoCommunicationDelayAircraftLocation);
+            } else if(event.getTell().equals("aircraft_power")) {
+                autoCommunicationHandlerAircraftPower.postDelayed(() -> {
+                    addTellToSend("aircraft_power");
+                }, autoCommunicationDelayAircraftPower);
             }
         }
     }
@@ -474,21 +461,21 @@ public class TrafficControlManager {
      */
     @Subscribe
     public void tellFailed(TellFailed event) {
-        // TODO
+        // TODO: error handling
         // Check which tell was sent.
         // Log error.
         // Retry?
 
         // This currently ignores that the TELL failed.
         if(autoCommunicationActive) {
-            if(event.getTell().equals("here_i_am")) {
-                autoCommunicationHereIAmHandler.postDelayed(() -> {
-                    addTellToSend("here_i_am");
-                }, autoCommunicationHereIAmDelay);
-            } else if(event.getTell().equals("my_health")) {
-                autoCommunicationMyHealthHandler.postDelayed(() -> {
-                    addTellToSend("my_health");
-                }, autoCommunicationMyHealthDelay);
+            if(event.getTell().equals("aircraft_location")) {
+                autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
+                    addTellToSend("aircraft_location");
+                }, autoCommunicationDelayAircraftLocation);
+            } else if(event.getTell().equals("aircraft_power")) {
+                autoCommunicationHandlerAircraftPower.postDelayed(() -> {
+                    addTellToSend("aircraft_power");
+                }, autoCommunicationDelayAircraftPower);
             }
         }
     }
@@ -501,12 +488,9 @@ public class TrafficControlManager {
     /***************************** END - automatic communication: ask *****************************/
 
 
-
-
-
-    /*
-     * Getter methods
-     */
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                    GETTERS AND SETTERS                                     //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Gets the Traffic Control version.

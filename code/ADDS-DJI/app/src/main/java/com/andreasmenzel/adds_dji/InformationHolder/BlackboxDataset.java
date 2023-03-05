@@ -23,8 +23,8 @@ public class BlackboxDataset {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
-            datasetAsJsonObject.put("aircraft_location", aircraftLocation.getDatasetAsJSONObject());
-            datasetAsJsonObject.put("aircraft_power", aircraftPower.getDatasetAsJSONObject());
+            datasetAsJsonObject.put("aircraft_location", aircraftLocation.getDatasetAsJsonObject());
+            datasetAsJsonObject.put("aircraft_power", aircraftPower.getDatasetAsJsonObject());
             datasetAsJsonObject.put("aircraft_health", aircraftHealth.getDatasetAsJSONObject());
             datasetAsJsonObject.put("flight_mission", flightMission.getDatasetAsJSONObject());
         } catch (JSONException e) {

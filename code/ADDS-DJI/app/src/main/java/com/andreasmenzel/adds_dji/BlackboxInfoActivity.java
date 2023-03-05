@@ -28,7 +28,7 @@ public class BlackboxInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blackbox_info);
 
-        blackboxManager = MApplication.getBlackboxManager();
+        //blackboxManager = MApplication.getBlackboxManager();
     }
 
     /**
@@ -62,7 +62,7 @@ public class BlackboxInfoActivity extends AppCompatActivity {
 
     @Subscribe
     public void createdManagers(CreatedManagers event) {
-        blackboxManager = MApplication.getBlackboxManager();
+        //blackboxManager = MApplication.getBlackboxManager();
 
         updateUI();
     }

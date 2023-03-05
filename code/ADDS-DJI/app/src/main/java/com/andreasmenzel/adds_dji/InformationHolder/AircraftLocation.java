@@ -1,11 +1,9 @@
 package com.andreasmenzel.adds_dji.InformationHolder;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AircraftLocation {
+public class AircraftLocation implements InformationHolder {
 
     /*
      * NOTE: This differs from the DJI specification!
@@ -99,6 +97,15 @@ public class AircraftLocation {
     }
 
 
+    private double roundDouble(double val, int decimals) {
+        return Math.round(val * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    }
+
+    private float roundFloat(float val, int decimals) {
+        return (float) (Math.round(val * Math.pow(10, decimals)) / Math.pow(10, decimals));
+    }
+
+
     /*
      * Getter methods
      */
@@ -139,14 +146,20 @@ public class AircraftLocation {
         return roll;
     }
 
-    public JSONObject getDatasetAsJSONObject() {
+
+    /**
+     * Returns a JSON-object containing the aircraft location data.
+     *
+     * @return The aircraft location data as a JSON-object.
+     */
+    public JSONObject getDatasetAsJsonObject() {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
             datasetAsJsonObject.put("gps_signal_level", gpsSignalLevel);
             datasetAsJsonObject.put("gps_satellites_connected", gpsSatellitesConnected);
 
-            datasetAsJsonObject.put("gps_valid", gpsValid);
+            datasetAsJsonObject.put("gps_valid", String.valueOf(gpsValid));
             datasetAsJsonObject.put("gps_lat", gpsLat);
             datasetAsJsonObject.put("gps_lon", gpsLon);
 
@@ -165,6 +178,61 @@ public class AircraftLocation {
         }
 
         return datasetAsJsonObject;
+    }
+
+    /**
+     * Returns a JSON-object containing the aircraft location data. This function removes
+     * extremely unnecessary accuracy while still keeping the accuracy better than needed in this
+     * application.
+     *
+     * @return The aircraft location data as a JSON-object.
+     */
+    public JSONObject getDatasetAsSmallJsonObject() {
+        JSONObject datasetAsJsonObject = new JSONObject();
+
+        try {
+            datasetAsJsonObject.put("lvl", gpsSignalLevel);                     // gps_signal_level
+            datasetAsJsonObject.put("con", gpsSatellitesConnected);             // gps_satellites_connected
+
+            datasetAsJsonObject.put("gok", String.valueOf(gpsValid));           // gps_valid
+            datasetAsJsonObject.put("lat", roundDouble(gpsLat, 8));     // gps_lat (accuracy: approx. 1mm)
+            datasetAsJsonObject.put("lon", roundDouble(gpsLon, 8));     // gps_lon (accuracy: approx. 1mm)
+
+            datasetAsJsonObject.put("alt", roundFloat(altitude, 3));    // altitude (accuracy: approx. 1mm)
+
+            datasetAsJsonObject.put("v_x", roundFloat(velocityX, 2));   // velocity_x (accuracy: approx. 0.01m/s ~= 0.036km/h)
+            datasetAsJsonObject.put("v_y", roundFloat(velocityY, 2));   // velocity_y (accuracy: approx. 0.01m/s ~= 0.036km/h)
+            datasetAsJsonObject.put("v_z", roundFloat(velocityZ, 2));   // velocity_z (accuracy: approx. 0.01m/s ~= 0.036km/h)
+
+            datasetAsJsonObject.put("pit", pitch);  // pitch
+            datasetAsJsonObject.put("yaw", yaw);    // yaw
+            datasetAsJsonObject.put("rol", roll);   // roll
+        } catch (JSONException e) {
+            // TODO: error handling
+            datasetAsJsonObject = null;
+        }
+
+        return datasetAsJsonObject;
+    }
+
+    /**
+     * Returns a JSON-string containing the aircraft location data.
+     *
+     * @return The aircraft location data as a JSON-string.
+     */
+    public String getDatasetAsJsonString() {
+        return getDatasetAsJsonObject().toString();
+    }
+
+    /**
+     * Returns a JSON-string containing the aircraft location data. This function removes
+     * extremely unnecessary accuracy while still keeping the accuracy better than needed in this
+     * application.
+     *
+     * @return The aircraft location data as a JSON-string.
+     */
+    public String getDatasetAsSmallJsonString() {
+        return getDatasetAsSmallJsonObject().toString();
     }
 
 }

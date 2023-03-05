@@ -16,7 +16,6 @@ public class MApplication extends Application {
 
     private static DJIManager djiManager;
     private static TrafficControlManager trafficControlManager;
-    private static BlackboxManager blackboxManager;
 
 
     @Override
@@ -32,7 +31,6 @@ public class MApplication extends Application {
     public static void initializeManagers() {
         djiManager = new DJIManager();
         trafficControlManager = new TrafficControlManager();
-        blackboxManager = new BlackboxManager();
     }
 
 
@@ -50,14 +48,6 @@ public class MApplication extends Application {
      */
     public static TrafficControlManager getTrafficControlManager() {
         return trafficControlManager;
-    }
-
-    /**
-     * Returns the BlackboxManager.
-     * @return blackboxManager.
-     */
-    public static BlackboxManager getBlackboxManager() {
-        return blackboxManager;
     }
 
 }
