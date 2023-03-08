@@ -63,6 +63,7 @@ public class AircraftPower implements InformationHolder {
      *
      * @return The aircraft power data as a JSON-object.
      */
+    @Override
     public JSONObject getDatasetAsJsonObject() {
         JSONObject datasetAsJsonObject = new JSONObject();
 
@@ -86,6 +87,7 @@ public class AircraftPower implements InformationHolder {
      *
      * @return The aircraft power data as a JSON-object.
      */
+    @Override
     public JSONObject getDatasetAsSmallJsonObject() {
         JSONObject datasetAsJsonObject = new JSONObject();
 
@@ -108,6 +110,7 @@ public class AircraftPower implements InformationHolder {
      *
      * @return The aircraft power data as a JSON-string.
      */
+    @Override
     public String getDatasetAsJsonString() {
         return getDatasetAsJsonObject().toString();
     }
@@ -118,6 +121,7 @@ public class AircraftPower implements InformationHolder {
      *
      * @return The aircraft power data as a JSON-string.
      */
+    @Override
     public String getDatasetAsSmallJsonString() {
         return getDatasetAsSmallJsonObject().toString();
     }

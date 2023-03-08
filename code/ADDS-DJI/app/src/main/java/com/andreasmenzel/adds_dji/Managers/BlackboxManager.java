@@ -13,7 +13,7 @@ import com.andreasmenzel.adds_dji.InformationHolder.AircraftHealth;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 import com.andreasmenzel.adds_dji.InformationHolder.BlackboxDataset;
-import com.andreasmenzel.adds_dji.InformationHolder.FlightMission;
+import com.andreasmenzel.adds_dji.InformationHolder.FlightData;
 import com.andreasmenzel.adds_dji.MApplication;
 
 import org.greenrobot.eventbus.EventBus;
@@ -95,13 +95,13 @@ public class BlackboxManager {
             AircraftLocation aircraftLocation = djiManager.getAircraftLocation();
             AircraftPower aircraftPower = djiManager.getAircraftPower();
             AircraftHealth aircraftHealth = djiManager.getAircraftHealth();
-            FlightMission flightMission = djiManager.getFlightMission();
+            FlightData flightData = djiManager.getFlightData();
 
             // Collect data
             blackboxDataset.setAircraftLocation(aircraftLocation);
             blackboxDataset.setAircraftPower(aircraftPower);
             blackboxDataset.setAircraftHealth(aircraftHealth);
-            blackboxDataset.setFlightMission(flightMission);
+            blackboxDataset.setFlightMission(flightData);
 
             recordedDatasetsCounter++;
 

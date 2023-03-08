@@ -8,14 +8,14 @@ public class BlackboxDataset {
     private AircraftLocation aircraftLocation;
     private AircraftPower aircraftPower;
     private AircraftHealth aircraftHealth;
-    private FlightMission flightMission;
+    private FlightData flightData;
 
 
     public BlackboxDataset() {
         aircraftLocation = new AircraftLocation();
         aircraftPower = new AircraftPower();
         aircraftHealth = new AircraftHealth();
-        flightMission = new FlightMission();
+        flightData = new FlightData();
     }
 
 
@@ -26,7 +26,7 @@ public class BlackboxDataset {
             datasetAsJsonObject.put("aircraft_location", aircraftLocation.getDatasetAsJsonObject());
             datasetAsJsonObject.put("aircraft_power", aircraftPower.getDatasetAsJsonObject());
             datasetAsJsonObject.put("aircraft_health", aircraftHealth.getDatasetAsJSONObject());
-            datasetAsJsonObject.put("flight_mission", flightMission.getDatasetAsJSONObject());
+            datasetAsJsonObject.put("flight_data", flightData.getDatasetAsJsonObject());
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;
@@ -62,8 +62,8 @@ public class BlackboxDataset {
         this.aircraftHealth = aircraftHealth;
     }
 
-    public void setFlightMission(FlightMission flightMission) {
-        this.flightMission = flightMission;
+    public void setFlightMission(FlightData flightData) {
+        this.flightData = flightData;
     }
 
 }

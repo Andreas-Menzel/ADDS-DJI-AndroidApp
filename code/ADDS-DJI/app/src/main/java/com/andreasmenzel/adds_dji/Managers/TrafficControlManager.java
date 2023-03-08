@@ -85,6 +85,10 @@ public class TrafficControlManager {
     private final Handler autoCommunicationHandlerAircraftPower = new Handler();
     private final int autoCommunicationDelayAircraftPower = 10000;
 
+    // Auto communication: flight_data
+    private final Handler autoCommunicationHandlerFlightData = new Handler();
+    private final int autoCommunicationDelayFlightData = 3000;
+
     /*
      * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
      * Consider the device disconnected when the requests failed multiple times consecutively.
@@ -316,6 +320,7 @@ public class TrafficControlManager {
 
         addTellToSend("aircraft_location");
         addTellToSend("aircraft_power");
+        addTellToSend("flight_data");
     }
     /**
      * Stops the automatic communication for TELLs.
@@ -325,6 +330,7 @@ public class TrafficControlManager {
 
         autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
         autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerFlightData.removeCallbacksAndMessages(null);
     }
 
 
@@ -336,6 +342,8 @@ public class TrafficControlManager {
             autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
         } else if(tell.equals("aircraft_power")) {
             autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
+        } else if(tell.equals("flight_data")) {
+            autoCommunicationHandlerFlightData.removeCallbacksAndMessages(null);
         }
 
         processingTellsToSend.lock();
@@ -391,13 +399,15 @@ public class TrafficControlManager {
                 informationHolder = djiManager.getAircraftLocation();
             } else if(requestType.equals("aircraft_power")) {
                 informationHolder = djiManager.getAircraftPower();
+            } else if(requestType.equals("flight_data")) {
+                informationHolder = djiManager.getFlightData();
             }
 
             if(informationHolder != null) {
                 Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
                 Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
 
-                payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO: SmallJsonObject (?)
+                payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
             } else {
                 // TODO: error handling
             }
@@ -452,6 +462,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerAircraftPower.postDelayed(() -> {
                     addTellToSend("aircraft_power");
                 }, autoCommunicationDelayAircraftPower);
+            } else if(event.getTell().equals("flight_data")) {
+                autoCommunicationHandlerFlightData.postDelayed(() -> {
+                    addTellToSend("flight_data");
+                }, autoCommunicationDelayFlightData);
             }
         }
     }
@@ -476,6 +490,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerAircraftPower.postDelayed(() -> {
                     addTellToSend("aircraft_power");
                 }, autoCommunicationDelayAircraftPower);
+            } else if(event.getTell().equals("flight_data")) {
+                autoCommunicationHandlerFlightData.postDelayed(() -> {
+                    addTellToSend("flight_data");
+                }, autoCommunicationDelayFlightData);
             }
         }
     }

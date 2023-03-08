@@ -19,7 +19,8 @@ import com.andreasmenzel.adds_dji.InformationHolder.AircraftHealth;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 
-import com.andreasmenzel.adds_dji.InformationHolder.FlightMission;
+import com.andreasmenzel.adds_dji.InformationHolder.FlightData;
+import com.andreasmenzel.adds_dji.MApplication;
 import com.andreasmenzel.adds_dji.MainActivity;
 
 // High-Level Operation Modes
@@ -71,7 +72,7 @@ public class DJIManager {
     private static AircraftLocation aircraftLocation;
     private static AircraftPower aircraftPower;
     private static AircraftHealth aircraftHealth;
-    private static FlightMission flightMission;
+    private static FlightData flightData;
 
     private static OperationMode operationMode = new None();
 
@@ -90,7 +91,7 @@ public class DJIManager {
         aircraftLocation = new AircraftLocation();
         aircraftPower = new AircraftPower();
         aircraftHealth = new AircraftHealth();
-        flightMission = new FlightMission();
+        flightData = new FlightData();
 
 
         //codecManager = new DJICodecManager(this, surface, width, height);
@@ -493,6 +494,8 @@ public class DJIManager {
                 operationMode = newOperationMode;
             }
         }
+
+        flightData.updateOperationMode(operationMode.toString());
     }
 
 
@@ -572,12 +575,12 @@ public class DJIManager {
     }
 
     /**
-     * Returns the FlightMission.
+     * Returns the FlightData.
      *
-     * @return The FlightMission.
+     * @return The FlightData.
      */
-    public FlightMission getFlightMission() {
-        return flightMission;
+    public FlightData getFlightData() {
+        return flightData;
     }
 
     /**

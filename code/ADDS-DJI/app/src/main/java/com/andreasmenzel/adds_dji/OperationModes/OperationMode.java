@@ -123,7 +123,7 @@ public abstract class OperationMode {
 
     @NonNull
     public String toString() {
-        return "HighLevelFlightMode";
+        return "OperationMode";
     }
 
 

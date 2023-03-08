@@ -8,6 +8,8 @@ import static com.andreasmenzel.adds_dji.OperationModes.OperationMode.States.sta
 import androidx.annotation.NonNull;
 
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
+import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
+import com.andreasmenzel.adds_dji.MApplication;
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -120,6 +122,9 @@ public class TakeOff extends OperationMode {
 
                 break;
             case finished:
+                AircraftLocation aircraftLocation = MApplication.getDjiManager().getAircraftLocation();
+                MApplication.getDjiManager().getFlightData().updateTakeOffData(System.currentTimeMillis() / 1000L, aircraftLocation.getGpsValid(), aircraftLocation.getGpsLat(), aircraftLocation.getGpsLon());
+
                 DJIManager.changeOperationMode(nextOperationMode);
                 break;
         }
