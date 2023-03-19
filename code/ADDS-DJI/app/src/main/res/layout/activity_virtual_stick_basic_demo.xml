@@ -12,115 +12,115 @@
         android:text="Virtual Stick Basic Demo"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_vsbd_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
-        app:layout_constraintTop_toTopOf="@+id/btn_cancel" />
+        app:layout_constraintStart_toEndOf="@+id/btn_vsbd_cancel"
+        app:layout_constraintTop_toTopOf="@+id/btn_vsbd_cancel" />
 
     <Button
-        android:id="@+id/btn_takeOff"
+        android:id="@+id/btn_vsbd_takeOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Take Off"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_vsbd_operationModeState"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_vsbd_operationModeState" />
 
     <Button
-        android:id="@+id/btn_land"
+        android:id="@+id/btn_vsbd_land"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Land"
-        app:layout_constraintEnd_toEndOf="@+id/btn_takeOff"
-        app:layout_constraintStart_toStartOf="@+id/btn_takeOff"
-        app:layout_constraintTop_toBottomOf="@+id/btn_takeOff" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_vsbd_takeOff"
+        app:layout_constraintStart_toStartOf="@+id/btn_vsbd_takeOff"
+        app:layout_constraintTop_toBottomOf="@+id/btn_vsbd_takeOff" />
 
     <TextView
-        android:id="@+id/txtView_label_highLevelFlightMode"
+        android:id="@+id/txtView_label_vsbd_operationMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:text="Flight Mode:"
+        android:text="Operation Mode:"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtView_highLevelFlightMode"
+        android:id="@+id/txtView_vsbd_operationMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintStart_toEndOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_vsbd_operationMode"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_vsbd_operationMode"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_vsbd_operationMode" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtView_label_vsbd_operationModeState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="State:"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_vsbd_operationMode"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_vsbd_operationMode" />
 
     <TextView
-        android:id="@+id/txtView_flightModeState"
+        android:id="@+id/txtView_vsbd_operationModeState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/txtView_highLevelFlightMode"
-        app:layout_constraintTop_toTopOf="@+id/textView5" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_vsbd_operationModeState"
+        app:layout_constraintStart_toStartOf="@+id/txtView_vsbd_operationMode"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_vsbd_operationModeState" />
 
     <Button
-        android:id="@+id/btn_cancel"
+        android:id="@+id/btn_vsbd_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="300dp"
         android:text="Cancel Mode"
-        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_vsbd_operationModeState"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_vsbd_operationMode" />
 
     <Button
-        android:id="@+id/btn_startVirtualStick"
+        android:id="@+id/btn_vsbd_startVirtualStick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Start Virtual Stick"
-        app:layout_constraintEnd_toEndOf="@+id/btn_cancel"
+        app:layout_constraintEnd_toEndOf="@+id/btn_vsbd_cancel"
         app:layout_constraintHorizontal_bias="0.393"
-        app:layout_constraintStart_toStartOf="@+id/btn_cancel"
-        app:layout_constraintTop_toBottomOf="@+id/btn_cancel" />
+        app:layout_constraintStart_toStartOf="@+id/btn_vsbd_cancel"
+        app:layout_constraintTop_toBottomOf="@+id/btn_vsbd_cancel" />
 
     <Button
-        android:id="@+id/btn_virtualStickAddLeft"
+        android:id="@+id/btn_vsbd_virtualStickAddLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="ADD LEFT"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickRollValue"
-        app:layout_constraintEnd_toStartOf="@+id/txtView_virtualStickRollValue"
-        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickRollValue" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_vsbd_virtualStickRollValue"
+        app:layout_constraintEnd_toStartOf="@+id/txtView_vsbd_virtualStickRollValue"
+        app:layout_constraintTop_toTopOf="@+id/txtView_vsbd_virtualStickRollValue" />
 
     <Button
-        android:id="@+id/btn_virtualStickAddRight"
+        android:id="@+id/btn_vsbd_virtualStickAddRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="ADD RIGHT"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickRollValue"
-        app:layout_constraintStart_toEndOf="@+id/txtView_virtualStickRollValue"
-        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickRollValue" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_vsbd_virtualStickRollValue"
+        app:layout_constraintStart_toEndOf="@+id/txtView_vsbd_virtualStickRollValue"
+        app:layout_constraintTop_toTopOf="@+id/txtView_vsbd_virtualStickRollValue" />
 
     <TextView
-        android:id="@+id/txtView_virtualStickRollValue"
+        android:id="@+id/txtView_vsbd_virtualStickRollValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="350dp"
@@ -128,32 +128,32 @@
         android:textAlignment="center"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_virtualStickPitchValue"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_vsbd_virtualStickPitchValue"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtView_virtualStickPitchValue" />
+        app:layout_constraintTop_toTopOf="@+id/txtView_vsbd_virtualStickPitchValue" />
 
     <Button
-        android:id="@+id/btn_virtualStickAddFront"
+        android:id="@+id/btn_vsbd_virtualStickAddFront"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="ADD FRONT"
-        app:layout_constraintBottom_toTopOf="@+id/txtView_virtualStickPitchValue"
-        app:layout_constraintEnd_toEndOf="@+id/txtView_virtualStickPitchValue"
-        app:layout_constraintStart_toStartOf="@+id/txtView_virtualStickPitchValue" />
+        app:layout_constraintBottom_toTopOf="@+id/txtView_vsbd_virtualStickPitchValue"
+        app:layout_constraintEnd_toEndOf="@+id/txtView_vsbd_virtualStickPitchValue"
+        app:layout_constraintStart_toStartOf="@+id/txtView_vsbd_virtualStickPitchValue" />
 
     <Button
-        android:id="@+id/btn_virtualStickAddBack"
+        android:id="@+id/btn_vsbd_virtualStickAddBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="ADD BACK"
-        app:layout_constraintEnd_toEndOf="@+id/txtView_virtualStickPitchValue"
-        app:layout_constraintStart_toStartOf="@+id/txtView_virtualStickPitchValue"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_virtualStickPitchValue" />
+        app:layout_constraintEnd_toEndOf="@+id/txtView_vsbd_virtualStickPitchValue"
+        app:layout_constraintStart_toStartOf="@+id/txtView_vsbd_virtualStickPitchValue"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_vsbd_virtualStickPitchValue" />
 
     <TextView
-        android:id="@+id/txtView_virtualStickPitchValue"
+        android:id="@+id/txtView_vsbd_virtualStickPitchValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="70dp"

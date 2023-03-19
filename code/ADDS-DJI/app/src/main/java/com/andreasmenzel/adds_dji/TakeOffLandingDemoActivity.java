@@ -33,13 +33,13 @@ public class TakeOffLandingDemoActivity extends AppCompatActivity {
         djiManager = MApplication.getDjiManager();
 
 
-        findViewById(R.id.btn_takeOff).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_tld_takeOff).setOnClickListener((View view) -> {
             djiManager.takeOff();
         });
-        findViewById(R.id.btn_land).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_tld_land).setOnClickListener((View view) -> {
             djiManager.land();
         });
-        findViewById(R.id.btn_takeOffLand).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_tld_takeOffLand).setOnClickListener((View view) -> {
             djiManager.takeOffLand();
         });
     }
@@ -62,13 +62,13 @@ public class TakeOffLandingDemoActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUI(UIUpdated event) {
-        TextView txtView_highLevelFlightMode = findViewById(R.id.txtView_highLevelFlightMode);
-        TextView txtView_flightModeState = findViewById(R.id.txtView_flightModeState);
+        TextView txtView_operationMode = findViewById(R.id.txtView_tld_operationMode);
+        TextView txtView_operationModeState = findViewById(R.id.txtView_tld_operationModeState);
 
         OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        txtView_highLevelFlightMode.setText(operationMode.toString());
-        txtView_flightModeState.setText(operationMode.getState().toString());
+        txtView_operationMode.setText(operationMode.toString());
+        txtView_operationModeState.setText(operationMode.getState().toString());
     }
 
 

@@ -41,14 +41,14 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
         djiManager = MApplication.getDjiManager();
 
 
-        findViewById(R.id.btn_takeOff).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_takeOff).setOnClickListener((View view) -> {
             djiManager.takeOff();
         });
-        findViewById(R.id.btn_land).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_land).setOnClickListener((View view) -> {
             djiManager.land();
         });
 
-        findViewById(R.id.btn_cancel).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_cancel).setOnClickListener((View view) -> {
             stickDataSenderHandler.removeCallbacksAndMessages(null);
             pitch = 0;
             yaw = 0;
@@ -58,28 +58,28 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_startVirtualStick).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_startVirtualStick).setOnClickListener((View view) -> {
             djiManager.virtualStick();
             sendStickData();
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_virtualStickAddLeft).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_virtualStickAddLeft).setOnClickListener((View view) -> {
             roll = roll - (float)0.1;
             if(roll < -1) roll = 1;
             bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_virtualStickAddRight).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_virtualStickAddRight).setOnClickListener((View view) -> {
             roll = roll + (float)0.1;
             if(roll > 1) roll = 1;
             bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_virtualStickAddFront).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_virtualStickAddFront).setOnClickListener((View view) -> {
             pitch = pitch + (float)0.1;
             if(pitch > 1) pitch = 1;
             bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_virtualStickAddBack).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vsbd_virtualStickAddBack).setOnClickListener((View view) -> {
             pitch = pitch - (float)0.1;
             if(pitch < -1) pitch = -1;
             bus.post(new UIUpdated());
@@ -104,17 +104,17 @@ public class VirtualStickBasicDemoActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUI(UIUpdated event) {
-        TextView txtView_highLevelFlightMode = findViewById(R.id.txtView_highLevelFlightMode);
-        TextView txtView_flightModeState = findViewById(R.id.txtView_flightModeState);
+        TextView txtView_OperationMode = findViewById(R.id.txtView_vsbd_operationMode);
+        TextView txtView_operationModeState = findViewById(R.id.txtView_vsbd_operationModeState);
 
         OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        txtView_highLevelFlightMode.setText(operationMode.toString());
-        txtView_flightModeState.setText(operationMode.getState().toString());
+        txtView_OperationMode.setText(operationMode.toString());
+        txtView_operationModeState.setText(operationMode.getState().toString());
 
 
-        TextView txtView_roll = findViewById(R.id.txtView_virtualStickRollValue);
-        TextView txtView_pitch = findViewById(R.id.txtView_virtualStickPitchValue);
+        TextView txtView_roll = findViewById(R.id.txtView_vsbd_virtualStickRollValue);
+        TextView txtView_pitch = findViewById(R.id.txtView_vsbd_virtualStickPitchValue);
 
         txtView_roll.setText(String.valueOf(Math.round(roll * 10) / 10.0));
         txtView_pitch.setText(String.valueOf(Math.round(pitch * 10) / 10.0));

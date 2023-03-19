@@ -91,24 +91,24 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateUI(UIUpdated event) {
-        TextView txtView_highLevelFlightMode = findViewById(R.id.txtView_highLevelFlightMode);
-        TextView txtView_flightModeState = findViewById(R.id.txtView_flightModeState);
+        TextView txtView_operationMode = findViewById(R.id.txtView_vscd_operationMode);
+        TextView txtView_operationModeState = findViewById(R.id.txtView_vscd_operationModeState);
 
         OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
-        txtView_highLevelFlightMode.setText(operationMode.toString());
-        txtView_flightModeState.setText(operationMode.getState().toString());
+        txtView_operationMode.setText(operationMode.toString());
+        txtView_operationModeState.setText(operationMode.getState().toString());
 
 
-        TextView txtView_roll = findViewById(R.id.txtView_virtualStickRollValue);
-        TextView txtView_pitch = findViewById(R.id.txtView_virtualStickPitchValue);
+        TextView txtView_roll = findViewById(R.id.txtView_vscd_virtualStickRollValue);
+        TextView txtView_pitch = findViewById(R.id.txtView_vscd_virtualStickPitchValue);
 
         txtView_roll.setText(String.valueOf(Math.round(roll * 10) / 10.0));
         txtView_pitch.setText(String.valueOf(Math.round(pitch * 10) / 10.0));
 
 
-        TextView txtView_activeValue = findViewById(R.id.txtView_activeValue);
-        TextView txtView_activeDuration = findViewById(R.id.txtView_activeDuration);
+        TextView txtView_activeValue = findViewById(R.id.txtView_vscd_activeValue);
+        TextView txtView_activeDuration = findViewById(R.id.txtView_vscd_activeDuration);
 
         txtView_activeValue.setText(String.valueOf(Math.round(activeValue * 10) / 10.0));
         txtView_activeDuration.setText(String.valueOf(activeDuration));
@@ -116,14 +116,14 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
 
 
     private void setupOnClickListeners() {
-        findViewById(R.id.btn_takeOff).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_takeOff).setOnClickListener((View view) -> {
             djiManager.takeOff();
         });
-        findViewById(R.id.btn_land).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_land).setOnClickListener((View view) -> {
             djiManager.land();
         });
 
-        findViewById(R.id.btn_cancel).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_cancel).setOnClickListener((View view) -> {
             nextProgressStateHandler.removeCallbacksAndMessages(null);
             stickDataSenderHandler.removeCallbacksAndMessages(null);
             pitch = 0;
@@ -134,35 +134,35 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_startVirtualStick).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_startVirtualStick).setOnClickListener((View view) -> {
             djiManager.virtualStick();
             sendStickData();
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_decreaseActiveValue).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_decreaseActiveValue).setOnClickListener((View view) -> {
             activeValue -= 0.1;
             if(activeValue < 0) activeValue = 0;
             bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_increaseActiveValue).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_increaseActiveValue).setOnClickListener((View view) -> {
             activeValue += 0.1;
             if(activeValue > 1) activeValue = 1;
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_decreaseActiveDuration).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_decreaseActiveDuration).setOnClickListener((View view) -> {
             activeDuration -= 100;
             if(activeDuration < 100) activeDuration = 100;
             bus.post(new UIUpdated());
         });
-        findViewById(R.id.btn_increaseActiveDuration).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_increaseActiveDuration).setOnClickListener((View view) -> {
             activeDuration += 100;
             if(activeDuration > 10000) activeDuration = 10000;
             bus.post(new UIUpdated());
         });
 
-        findViewById(R.id.btn_startVirtualStickCrossMode).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_startVirtualStickCrossMode).setOnClickListener((View view) -> {
             if(djiManager.getHighLevelOperationMode() instanceof StartVirtualStick || djiManager.getHighLevelOperationMode() instanceof UseVirtualStick) {
                 performanceProgress = -1;
                 crossProgress = 0;
@@ -172,7 +172,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btn_startCompleteVirtualStickCrossPerformance).setOnClickListener((View view) -> {
+        findViewById(R.id.btn_vscd_startCompleteVirtualStickCrossPerformance).setOnClickListener((View view) -> {
             crossProgress = 0;
             performanceProgress = 0;
             sendStickData();
@@ -221,7 +221,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
                     performanceProgress++;
                     delayToNextCall = 3000;
                 } else {
-                    djiManager.changeOperationMode(new TakeOff());
+                    DJIManager.changeOperationMode(new TakeOff());
                 }
                 break;
             case 4:
@@ -234,7 +234,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
                     // TakeOff complete
                     performanceProgress = 5; // stop performance
                 } else {
-                    djiManager.changeOperationMode(new Landing());
+                    DJIManager.changeOperationMode(new Landing());
                 }
                 break;
             case -1:
@@ -275,7 +275,7 @@ public class VirtualStickCrossDemoActivity extends AppCompatActivity {
         OperationMode operationMode = djiManager.getHighLevelOperationMode();
 
         if(!(operationMode instanceof StartVirtualStick) && !(operationMode instanceof UseVirtualStick)) {
-            djiManager.changeOperationMode(new UseVirtualStick());
+            DJIManager.changeOperationMode(new UseVirtualStick());
         }
 
         // 0: center -> front

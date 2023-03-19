@@ -6,75 +6,75 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/btn_takeOff"
+        android:id="@+id/btn_tld_takeOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Take Off"
-        app:layout_constraintStart_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_tld_operationModeState"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_tld_operationModeState" />
 
     <Button
-        android:id="@+id/btn_land"
+        android:id="@+id/btn_tld_land"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Land"
-        app:layout_constraintEnd_toEndOf="@+id/btn_takeOff"
-        app:layout_constraintStart_toStartOf="@+id/btn_takeOff"
-        app:layout_constraintTop_toBottomOf="@+id/btn_takeOff" />
+        app:layout_constraintEnd_toEndOf="@+id/btn_tld_takeOff"
+        app:layout_constraintStart_toStartOf="@+id/btn_tld_takeOff"
+        app:layout_constraintTop_toBottomOf="@+id/btn_tld_takeOff" />
 
     <TextView
-        android:id="@+id/txtView_label_highLevelFlightMode"
+        android:id="@+id/txtView_label_tld_operationMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:text="Flight Mode:"
+        android:text="Operation Mode:"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtView_highLevelFlightMode"
+        android:id="@+id/txtView_tld_operationMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintStart_toEndOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_tld_operationMode"
+        app:layout_constraintStart_toEndOf="@+id/txtView_label_tld_operationMode"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_tld_operationMode" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtView_label_tld_operationModeState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="State:"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/txtView_label_highLevelFlightMode"
-        app:layout_constraintTop_toBottomOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintStart_toStartOf="@+id/txtView_label_tld_operationMode"
+        app:layout_constraintTop_toBottomOf="@+id/txtView_label_tld_operationMode" />
 
     <TextView
-        android:id="@+id/txtView_flightModeState"
+        android:id="@+id/txtView_tld_operationModeState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="unknown"
-        app:layout_constraintBottom_toBottomOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/txtView_highLevelFlightMode"
-        app:layout_constraintTop_toTopOf="@+id/textView5" />
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_tld_operationModeState"
+        app:layout_constraintStart_toStartOf="@+id/txtView_tld_operationMode"
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_tld_operationModeState" />
 
     <Button
-        android:id="@+id/btn_cancel"
+        android:id="@+id/btn_tld_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="300dp"
         android:text="Cancel Mode"
-        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintBottom_toBottomOf="@+id/txtView_label_tld_operationModeState"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtView_label_highLevelFlightMode" />
+        app:layout_constraintTop_toTopOf="@+id/txtView_label_tld_operationMode" />
 
     <TextView
         android:id="@+id/txtView_label_takeOffLandingDemo"
@@ -83,19 +83,19 @@
         android:text="TakeOff / Landing Demo"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_tld_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_cancel"
-        app:layout_constraintTop_toTopOf="@+id/btn_cancel" />
+        app:layout_constraintStart_toEndOf="@+id/btn_tld_cancel"
+        app:layout_constraintTop_toTopOf="@+id/btn_tld_cancel" />
 
     <Button
-        android:id="@+id/btn_takeOffLand"
+        android:id="@+id/btn_tld_takeOffLand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Take Off -> Land"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_land"
-        app:layout_constraintStart_toEndOf="@+id/btn_takeOff"
-        app:layout_constraintTop_toTopOf="@+id/btn_takeOff" />
+        app:layout_constraintBottom_toBottomOf="@+id/btn_tld_land"
+        app:layout_constraintStart_toEndOf="@+id/btn_tld_takeOff"
+        app:layout_constraintTop_toTopOf="@+id/btn_tld_takeOff" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
