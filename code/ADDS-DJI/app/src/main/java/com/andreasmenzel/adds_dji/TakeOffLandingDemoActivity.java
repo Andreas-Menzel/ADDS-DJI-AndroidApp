@@ -42,6 +42,9 @@ public class TakeOffLandingDemoActivity extends AppCompatActivity {
         findViewById(R.id.btn_tld_takeOffLand).setOnClickListener((View view) -> {
             djiManager.takeOffLand();
         });
+        findViewById(R.id.btn_tld_cancel).setOnClickListener((View view) -> {
+            djiManager.cancel();
+        });
     }
 
     @Override
