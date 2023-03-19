@@ -55,21 +55,20 @@ public class WaypointMissionUpload extends OperationMode {
     public void perform(@NonNull EventBus bus)  {
         switch(state) {
             case start:
-                setState(attempting);
-
                 DJIError djiErrorBuild = DJIManager.getWaypointMissionOperator().loadMission(DJIManager.getWaypointMissionBuilder().build());
                 if(djiErrorBuild != null) {
-                    bus.post(new ToastMessage("WaypointMissionUpload / start failed: ..."));
+                    bus.post(new ToastMessage("WaypointMissionUpload / start / build failed: ..."));
                     bus.post(new ToastMessage(djiErrorBuild.getDescription()));
                     attemptFailed();
                     break;
                 }
 
+                setState(attempting);
                 DJIManager.getWaypointMissionOperator().uploadMission(djiError -> {
                     if(djiError == null) {
                         setState(finished);
                     } else {
-                        bus.post(new ToastMessage("WaypointMissionUpload / start failed: ..."));
+                        bus.post(new ToastMessage("WaypointMissionUpload / start / upload failed: ..."));
                         bus.post(new ToastMessage(djiError.getDescription()));
                         attemptFailed();
                     }

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtView_label_bwpmd_operationMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:text="Operation Mode:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtView_bwpmd_operationMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="unknown"
+            app:layout_constraintBottom_toBottomOf="@+id/txtView_label_bwpmd_operationMode"
+            app:layout_constraintStart_toEndOf="@+id/txtView_label_bwpmd_operationMode"
+            app:layout_constraintTop_toTopOf="@+id/txtView_label_bwpmd_operationMode" />
+
+        <TextView
+            android:id="@+id/txtView_label_bwpmd_operationModeState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="State:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/txtView_label_bwpmd_operationMode"
+            app:layout_constraintTop_toBottomOf="@+id/txtView_label_bwpmd_operationMode" />
+
+        <TextView
+            android:id="@+id/txtView_bwpmd_operationModeState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="unknown"
+            app:layout_constraintBottom_toBottomOf="@+id/txtView_label_bwpmd_operationModeState"
+            app:layout_constraintStart_toStartOf="@+id/txtView_bwpmd_operationMode"
+            app:layout_constraintTop_toTopOf="@+id/txtView_label_bwpmd_operationModeState" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Add Waypoint"
+            app:layout_constraintStart_toStartOf="@+id/txtView_label_bwpmd_operationModeState"
+            app:layout_constraintTop_toBottomOf="@+id/txtView_label_bwpmd_operationModeState" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_resume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Resume"
+            app:layout_constraintStart_toEndOf="@+id/btn_bwpmd_start"
+            app:layout_constraintTop_toTopOf="@+id/btn_bwpmd_start" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Stop"
+            app:layout_constraintEnd_toEndOf="@+id/btn_bwpmd_start"
+            app:layout_constraintTop_toBottomOf="@+id/btn_bwpmd_start" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
+            android:text="Start"
+            app:layout_constraintStart_toEndOf="@+id/btn_bwpmd_add"
+            app:layout_constraintTop_toBottomOf="@+id/btn_bwpmd_upload" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Mission"
+            app:layout_constraintEnd_toEndOf="@+id/btn_bwpmd_resume"
+            app:layout_constraintStart_toStartOf="@+id/btn_bwpmd_start"
+            app:layout_constraintTop_toTopOf="@+id/btn_bwpmd_add" />
+
+        <Button
+            android:id="@+id/btn_bwpmd_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            app:layout_constraintStart_toStartOf="@+id/btn_bwpmd_resume"
+            app:layout_constraintTop_toTopOf="@+id/btn_bwpmd_stop" />
+
+        <TextView
+            android:id="@+id/txtView_label_bwpmd_nowp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="# Waypoints:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/btn_bwpm_clearWaypoints"
+            app:layout_constraintTop_toBottomOf="@+id/btn_bwpm_clearWaypoints" />
+
+        <TextView
+            android:id="@+id/txtView_bwpmd_nowp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="unknown"
+            app:layout_constraintBottom_toBottomOf="@+id/txtView_label_bwpmd_nowp"
+            app:layout_constraintStart_toEndOf="@+id/txtView_label_bwpmd_nowp"
+            app:layout_constraintTop_toTopOf="@+id/txtView_label_bwpmd_nowp" />
+
+        <Button
+            android:id="@+id/btn_bwpm_clearWaypoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Clear waypoints"
+            app:layout_constraintStart_toStartOf="@+id/btn_bwpmd_add"
+            app:layout_constraintTop_toBottomOf="@+id/btn_bwpmd_add" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

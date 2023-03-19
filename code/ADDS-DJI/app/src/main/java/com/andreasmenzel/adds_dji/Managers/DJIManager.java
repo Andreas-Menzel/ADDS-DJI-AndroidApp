@@ -473,6 +473,11 @@ public class DJIManager {
     }
 
 
+    public static void waypointMissionClearWaypoints() {
+        waypointMissionBuilder = null;
+        waypointMissionBuilder = getWaypointMissionBuilder();
+    }
+
     public static void waypointMissionAddWaypoint(double gpsLat, double gpsLon, float altitude) {
         // TODO: Check that distance is high enough
 
