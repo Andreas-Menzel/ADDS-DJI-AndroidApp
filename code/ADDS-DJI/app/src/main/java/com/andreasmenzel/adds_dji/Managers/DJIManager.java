@@ -20,7 +20,6 @@ import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
 
 import com.andreasmenzel.adds_dji.InformationHolder.FlightData;
-import com.andreasmenzel.adds_dji.MApplication;
 import com.andreasmenzel.adds_dji.MainActivity;
 
 // High-Level Operation Modes
@@ -45,12 +44,18 @@ import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.GoHomeAssessment;
 import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.flightcontroller.virtualstick.FlightControlData;
+import dji.common.mission.waypoint.Waypoint;
+import dji.common.mission.waypoint.WaypointMission;
+import dji.common.mission.waypoint.WaypointMissionFinishedAction;
+import dji.common.mission.waypoint.WaypointMissionFlightPathMode;
+import dji.common.mission.waypoint.WaypointMissionHeadingMode;
 import dji.common.product.Model;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.battery.Battery;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 import dji.sdk.flightcontroller.FlightController;
+import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
@@ -76,7 +81,18 @@ public class DJIManager {
 
     private static OperationMode operationMode = new None();
 
+    // OperationMode: UseVirtualStick
     private static final FlightControlData virtualStickFlightControlData = new FlightControlData(0, 0, 0, 0);
+
+    // OperationMode: WaypointMission
+    //List<Intersection> flightPathApproved = new LinkedList<>(); // current waypoint mission
+    //List<Intersection> flightPathPending = new LinkedList<>();  // clearance pending -> move to approved
+    // upload to drone
+    // get() -> changed? -> repeat
+
+    //private List<Waypoint> waypointList = new ArrayList<>();
+    private static WaypointMission.Builder waypointMissionBuilder = null;
+    private static WaypointMissionOperator waypointMissionOperator = null;
 
     private static VideoFeeder.VideoDataListener videoDataListener = null;
     private static DJICodecManager codecManager = null;
@@ -457,6 +473,14 @@ public class DJIManager {
     }
 
 
+    public static void waypointMissionAddWaypoint(double gpsLat, double gpsLon, float altitude) {
+        // TODO: Check that distance is high enough
+
+        Waypoint newWaypoint = new Waypoint(gpsLat, gpsLon, altitude);
+        waypointMissionBuilder.addWaypoint(newWaypoint);
+    }
+
+
     /**
      * Changes the high-level operation mode. This also performs some checks and potential cleanup
      * depending on the mode currently active.
@@ -542,7 +566,6 @@ public class DJIManager {
         controlDroneHandler.postDelayed(this::controlDrone, 50);
     }
 
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                    GETTERS AND SETTERS                                     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -599,6 +622,28 @@ public class DJIManager {
      */
     public static FlightControlData getVirtualStickFlightControlData() {
         return virtualStickFlightControlData;
+    }
+
+    public static WaypointMission.Builder getWaypointMissionBuilder() {
+        if(waypointMissionBuilder == null) {
+            waypointMissionBuilder = new WaypointMission.Builder();
+
+            waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.NO_ACTION)
+                    .headingMode(WaypointMissionHeadingMode.AUTO)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL)
+                    .autoFlightSpeed(5) // TODO: set correct speeds
+                    .maxFlightSpeed(5);
+        }
+
+        return waypointMissionBuilder;
+    }
+
+    public static WaypointMissionOperator getWaypointMissionOperator() {
+        if(waypointMissionOperator == null) {
+            waypointMissionOperator = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+        }
+
+        return waypointMissionOperator;
     }
 
 }
