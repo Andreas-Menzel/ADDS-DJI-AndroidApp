@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.Communication;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotTellResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotAskResponse;
+import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.InvalidAskResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.InvalidTellResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestFailed;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestSucceeded;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -70,24 +72,32 @@ public class TrafficControlManager {
     private final LinkedList<String> tellsToSend = new LinkedList<>();
     private final ReentrantLock processingTellsToSend = new ReentrantLock();
 
+    private final LinkedList<String> asksToSend = new LinkedList<>();
+    private final ReentrantLock processingAsksToSend = new ReentrantLock();
+
     /*
-     * Automatically send TELLs in specified intervals. Periodically check the connection
+     * Automatically send TELLs or ASKs in specified intervals. Periodically check the connection
      * (/how_are_you) and server preferences, resend data on error and send data requested from
      * Traffic Control.
      */
-    private boolean autoCommunicationActive = false;
+    private boolean autoCommunicationTellActive = false;
+    private boolean autoCommunicationAskActive = false;
 
-    // Auto communication: aircraft_location
+    // Auto communication: tell/aircraft_location
     private final Handler autoCommunicationHandlerAircraftLocation = new Handler();
     private final int autoCommunicationDelayAircraftLocation = 1000;
 
-    // Auto communication: aircraft_power
+    // Auto communication: tell/aircraft_power
     private final Handler autoCommunicationHandlerAircraftPower = new Handler();
     private final int autoCommunicationDelayAircraftPower = 10000;
 
-    // Auto communication: flight_data
+    // Auto communication: tell/flight_data
     private final Handler autoCommunicationHandlerFlightData = new Handler();
     private final int autoCommunicationDelayFlightData = 3000;
+
+    // Auto communication: ask/infrastructure (controls intersection_list and corridor_list)
+    private final Handler autoCommunicationHandlerInfrastructure = new Handler();
+    private final int autoCommunicationDelayInfrastructure = 3000;
 
     /*
      * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
@@ -198,7 +208,7 @@ public class TrafficControlManager {
      *
      * @param requestGroup The request group, e.g. &quot;tell&quot; or &quot;ask&quot;.
      * @param requestType  The request type, e.g. &quot;aircraft_location&quot; in request group
-     *                     &quot;tell&quot;.
+     *                     &quot;tell&quot; or &quot;infrastructure&quot; in &quot;ask&quot;.
      * @param payload      The payload as a JSON-string.
      */
     private void sendAsynchronousRequest(String requestGroup, String requestType, String payload) {
@@ -246,22 +256,24 @@ public class TrafficControlManager {
 
 
     /**
-     * Executes the startAutoCommunicationTell() method. This method is executed whenever a
+     * Executes the startAutoCommunication{Tell|Ask}() methods. This method is executed whenever a
      * connection to the Traffic Control could be established.
      */
     @Subscribe
     public void nowConnected(NowConnected event) {
         startAutoCommunicationTell();
+        startAutoCommunicationAsk();
     }
 
     /**
-     * Executes the stopAutoCommunicationTell() method. This method is executed whenever the
+     * Executes the stopAutoCommunication{Tell|Ask}() methods. This method is executed whenever the
      * connection to the Traffic Control was lost.
      */
     @Subscribe
     public void nowDisconnected(NowDisconnected event) {
         trafficControlVersion = null; // Just in case it is missing somewhere else.
         stopAutoCommunicationTell();
+        stopAutoCommunicationAsk();
     }
 
     /**
@@ -316,7 +328,7 @@ public class TrafficControlManager {
      * Traffic System.
      */
     public void startAutoCommunicationTell() {
-        autoCommunicationActive = true;
+        autoCommunicationTellActive = true;
 
         addTellToSend("aircraft_location");
         addTellToSend("aircraft_power");
@@ -326,7 +338,7 @@ public class TrafficControlManager {
      * Stops the automatic communication for TELLs.
      */
     public void stopAutoCommunicationTell() {
-        autoCommunicationActive = false;
+        autoCommunicationTellActive = false;
 
         autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
         autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
@@ -404,8 +416,8 @@ public class TrafficControlManager {
             }
 
             if(informationHolder != null) {
-                Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
-                Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
+                //Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
+                //Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
 
                 payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
             } else {
@@ -453,7 +465,7 @@ public class TrafficControlManager {
             bus.post(new InvalidTellResponse(event.getTell()));
         }
 
-        if(autoCommunicationActive) {
+        if(autoCommunicationTellActive) {
             if(event.getTell().equals("aircraft_location")) {
                 autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
                     addTellToSend("aircraft_location");
@@ -481,7 +493,7 @@ public class TrafficControlManager {
         // Retry?
 
         // This currently ignores that the TELL failed.
-        if(autoCommunicationActive) {
+        if(autoCommunicationTellActive) {
             if(event.getTell().equals("aircraft_location")) {
                 autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
                     addTellToSend("aircraft_location");
@@ -502,13 +514,190 @@ public class TrafficControlManager {
     /**********************************************************************************************/
     /******************************* AUTOMATIC COMMUNICATION: ASK  ********************************/
     /**********************************************************************************************/
-    // TODO
+    /**
+     * Starts the automatic communication for all ASKs. This will send periodic ASK requests to the
+     * Traffic System.
+     */
+    public void startAutoCommunicationAsk() {
+        autoCommunicationAskActive = true;
+
+        addAskToSend("infrastructure");
+    }
+    /**
+     * Stops the automatic communication for ASKs.
+     */
+    public void stopAutoCommunicationAsk() {
+        autoCommunicationAskActive = false;
+
+        autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
+    }
+
+
+    /**
+     * Adds a new ASK to the buffer list.
+     */
+    private void addAskToSend(String ask) {
+        if(ask.equals("infrastructure")) {
+            autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
+        }
+
+        processingAsksToSend.lock();
+
+        try {
+            // Only add if is new
+            for(String tmp_ask : asksToSend) {
+                if(tmp_ask.equals(ask)) {
+                    processingAsksToSend.unlock();
+                    return;
+                }
+            }
+
+            asksToSend.add(ask);
+
+            processingAsksToSend.unlock();
+
+            processAsksToSend();
+        } finally {
+            if(processingAsksToSend.isLocked()) {
+                processingAsksToSend.unlock();
+            }
+        }
+    }
+
+    /**
+     * Executes the sendAsk() method for all ASKs currently in the buffer list.
+     */
+    private void processAsksToSend() {
+        processingAsksToSend.lock();
+
+        try {
+            while(!asksToSend.isEmpty()) {
+                sendAsk(asksToSend.removeFirst());
+            }
+        } finally {
+            processingAsksToSend.unlock();
+        }
+    }
+
+    /**
+     * Gathers the necessary information and sends the ASK request.
+     */
+    private void sendAsk(@NonNull String requestType) {
+        if(requestType.equals("infrastructure")) {
+            JSONObject payloadIntersectionList = new JSONObject();
+            JSONObject payloadCorridorList = new JSONObject();
+
+            try {
+                payloadIntersectionList.put("intersection_id", "%");
+                payloadIntersectionList.put("data_type", "intersection_list");
+
+                payloadCorridorList.put("corridor_id", "%");
+                payloadCorridorList.put("data_type", "corridor_list");
+            } catch (JSONException e) {
+                // TODO: error handling
+            }
+
+            sendAsynchronousRequest("ask", "intersection_list", payloadIntersectionList.toString());
+            sendAsynchronousRequest("ask", "corridor_list", payloadCorridorList.toString());
+        }
+    }
+
+
+    /**
+     * Handles the response from a ASK request.
+     */
+    @Subscribe
+    public void gotAskResponse(@NonNull GotAskResponse event) {
+        try {
+            JSONObject json = new JSONObject(event.getResponse());
+
+            // Extract values from response
+            boolean executed = json.getBoolean("executed");
+            JSONArray errors = json.getJSONArray("errors");
+            JSONArray warnings = json.getJSONArray("warnings");
+            JSONArray requestingValues = null;
+            JSONObject responseData = null;
+
+            if(json.has("requesting_values")) {
+                requestingValues = json.getJSONArray("requesting_values");
+            }
+            if(json.has("response_data")) {
+                responseData = json.getJSONObject("response_data");
+            }
+
+            if(!executed) {
+                // TODO: error handling
+            }
+
+            // TODO: Handle errors and warnings
+
+            // Add requested values to tellsToSend
+            if(requestingValues != null) {
+                for(int i = 0; i < requestingValues.length(); i++) {
+                    addTellToSend(requestingValues.getString(i));
+                }
+            }
+
+            InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
+            // For the first response the InfrastructureManager may not have been initialized yet
+            if(infrastructureManager != null) {
+                if(event.getAsk().equals("intersection_list")) {
+                    MApplication.getInfrastructureManager().updateIntersectionList(responseData);
+                } else if(event.getAsk().equals("corridor_list")) {
+                    MApplication.getInfrastructureManager().updateCorridorList(responseData);
+                }
+            }
+
+        } catch (JSONException e) {
+            // Invalid response
+            bus.post(new InvalidAskResponse(event.getAsk()));
+        }
+
+        if(autoCommunicationAskActive) {
+            if(event.getAsk().equals("intersection_list")) {
+                // Assume that the response for corridor_list comes more or less at the same time
+                autoCommunicationHandlerInfrastructure.postDelayed(() -> {
+                    addAskToSend("infrastructure");
+                }, autoCommunicationDelayInfrastructure);
+            }
+        }
+    }
+
+    /**
+     * Handles a failed ASK request.
+     */
+    @Subscribe
+    public void askFailed(AskFailed event) {
+        // TODO: error handling
+        // Check which ask was sent.
+        // Log error.
+        // Retry?
+
+        // This currently ignores that the ask failed.
+        if(autoCommunicationAskActive) {
+            if(event.getAsk().equals("intersection_list")) {
+                // Assume that the response for corridor_list comes more or less at the same time
+                autoCommunicationHandlerInfrastructure.postDelayed(() -> {
+                    addAskToSend("infrastructure");
+                }, autoCommunicationDelayInfrastructure);
+            }
+        }
+    }
     /***************************** END - automatic communication: ask *****************************/
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //                                    GETTERS AND SETTERS                                     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Gets the TrafficControl URL.
+     *
+     * @return The trafficControlUrl.
+     */
+    public String getTrafficControlUrl() {
+        return trafficControlUrl;
+    }
 
     /**
      * Gets the Traffic Control version.
