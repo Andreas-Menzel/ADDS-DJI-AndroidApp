@@ -160,7 +160,7 @@ public class AircraftLocation implements InformationHolder {
             datasetAsJsonObject.put("gps_signal_level", gpsSignalLevel);
             datasetAsJsonObject.put("gps_satellites_connected", gpsSatellitesConnected);
 
-            datasetAsJsonObject.put("gps_valid", String.valueOf(gpsValid));
+            datasetAsJsonObject.put("gps_valid", gpsValid);
             datasetAsJsonObject.put("gps_lat", gpsLat);
             datasetAsJsonObject.put("gps_lon", gpsLon);
 
@@ -196,7 +196,7 @@ public class AircraftLocation implements InformationHolder {
             datasetAsJsonObject.put("lvl", gpsSignalLevel);                     // gps_signal_level
             datasetAsJsonObject.put("con", gpsSatellitesConnected);             // gps_satellites_connected
 
-            datasetAsJsonObject.put("gok", String.valueOf(gpsValid));           // gps_valid
+            datasetAsJsonObject.put("gok", gpsValid);                           // gps_valid
             datasetAsJsonObject.put("lat", roundDouble(gpsLat, 8));     // gps_lat (accuracy: approx. 1mm)
             datasetAsJsonObject.put("lon", roundDouble(gpsLon, 8));     // gps_lon (accuracy: approx. 1mm)
 
