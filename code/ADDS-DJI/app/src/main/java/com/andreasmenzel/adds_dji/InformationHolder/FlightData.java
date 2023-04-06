@@ -8,6 +8,8 @@ import java.util.LinkedList;
 
 public class FlightData implements InformationHolder {
 
+    private double timeRecorded;
+
     private long takeOffTime;
     private boolean takeOffGpsValid;
     private double takeOffGpsLat;
@@ -24,6 +26,8 @@ public class FlightData implements InformationHolder {
 
 
     public FlightData() {
+        timeRecorded = 0;
+
         takeOffTime = 0;
         takeOffGpsValid = false;
         takeOffGpsLat = 0;
@@ -39,6 +43,8 @@ public class FlightData implements InformationHolder {
 
 
     public void updateTakeOffData(long takeOffTime, boolean takeOffGpsValid, double takeOffGpsLat, double takeOffGpsLon) {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
         this.takeOffTime = takeOffTime;
         this.takeOffGpsValid = takeOffGpsValid;
         this.takeOffGpsLat = takeOffGpsLat;
@@ -48,6 +54,8 @@ public class FlightData implements InformationHolder {
     }
 
     public void updateLandingData(long landingTime, boolean landingGpsValid, double landingGpsLat, double landingGpsLon) {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
         this.landingTime = landingTime;
         this.landingGpsValid = landingGpsValid;
         this.landingGpsLat = landingGpsLat;
@@ -59,6 +67,8 @@ public class FlightData implements InformationHolder {
     public void updateOperationMode(String operationMode) {
         // Only add Operation Mode if has changed
         if(operationModes.size() == 0 || !operationModes.getLast().equals(operationMode)) {
+            this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
             operationModes.addLast(operationMode);
         }
         if(operationModes.size() > operationModesHistoryLength) operationModes.removeFirst();
@@ -69,6 +79,10 @@ public class FlightData implements InformationHolder {
         return Math.round(val * Math.pow(10, decimals)) / Math.pow(10, decimals);
     }
 
+
+    public double getTimeRecorded() {
+        return timeRecorded;
+    }
 
     public long getTakeOffTime() {
         return takeOffTime;
@@ -108,6 +122,8 @@ public class FlightData implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
+
             datasetAsJsonObject.put("takeoff_time", takeOffTime);
             datasetAsJsonObject.put("takeoff_gps_valid", takeOffGpsValid);
             datasetAsJsonObject.put("takeoff_gps_lat", takeOffGpsLat);
@@ -134,6 +150,8 @@ public class FlightData implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("rec", timeRecorded);                           // time_recorded
+
             datasetAsJsonObject.put("tti", takeOffTime);
             datasetAsJsonObject.put("tgv", takeOffGpsValid);
             datasetAsJsonObject.put("tla", roundDouble(takeOffGpsLat, 8)); // takeoff_lat

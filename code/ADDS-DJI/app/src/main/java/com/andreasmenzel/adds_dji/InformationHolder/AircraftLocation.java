@@ -1,9 +1,13 @@
 package com.andreasmenzel.adds_dji.InformationHolder;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AircraftLocation implements InformationHolder {
+
+    private double timeRecorded;
 
     /*
      * NOTE: This differs from the DJI specification!
@@ -49,6 +53,8 @@ public class AircraftLocation implements InformationHolder {
 
     // TODO: Potential pitfall: altitude and attitude are 0 on default!
     public AircraftLocation() {
+        this.timeRecorded = 0;
+
         this.gpsSignalLevel = 0;
         this.gpsSatellitesConnected = 0;
 
@@ -76,6 +82,8 @@ public class AircraftLocation implements InformationHolder {
                            float altitude,
                            float velocityX, float velocityY, float velocityZ,
                            double pitch, double yaw, double roll) {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
         this.gpsSignalLevel = gpsSignalLevel;
         this.gpsSatellitesConnected = gpsSatellitesConnected;
 
@@ -109,6 +117,10 @@ public class AircraftLocation implements InformationHolder {
     /*
      * Getter methods
      */
+
+    public double getTimeRecorded() {
+        return timeRecorded;
+    }
     public int getGpsSignalLevel() {
         return gpsSignalLevel;
     }
@@ -157,6 +169,8 @@ public class AircraftLocation implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
+
             datasetAsJsonObject.put("gps_signal_level", gpsSignalLevel);
             datasetAsJsonObject.put("gps_satellites_connected", gpsSatellitesConnected);
 
@@ -193,6 +207,8 @@ public class AircraftLocation implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("rec", timeRecorded);                       // time_recorded
+
             datasetAsJsonObject.put("lvl", gpsSignalLevel);                     // gps_signal_level
             datasetAsJsonObject.put("con", gpsSatellitesConnected);             // gps_satellites_connected
 

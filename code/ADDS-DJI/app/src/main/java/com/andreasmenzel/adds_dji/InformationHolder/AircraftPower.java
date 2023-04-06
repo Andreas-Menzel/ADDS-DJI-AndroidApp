@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 public class AircraftPower implements InformationHolder {
 
+    private double timeRecorded;
+
     /*
      * Remaining battery energy in mAh.
      */
@@ -22,6 +24,8 @@ public class AircraftPower implements InformationHolder {
 
 
     public AircraftPower() {
+        this.timeRecorded = 0;
+
         this.batteryRemaining = 0;
         this.batteryRemainingPercent = 0;
 
@@ -31,11 +35,15 @@ public class AircraftPower implements InformationHolder {
 
 
     public void updateFromBatteryState(int batteryRemaining, int batteryRemainingPercent) {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
         this.batteryRemaining = batteryRemaining;
         this.batteryRemainingPercent = batteryRemainingPercent;
     }
 
     public void updateFromFlightControllerState(int remainingFlightTime, float remainingFlightRadius) {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+
         this.remainingFlightTime = remainingFlightTime;
         this.remainingFlightRadius = remainingFlightRadius;
     }
@@ -44,6 +52,10 @@ public class AircraftPower implements InformationHolder {
     /*
      * Getter methods
      */
+
+    public double getTimeRecorded() {
+        return timeRecorded;
+    }
     public int getBatteryRemaining() {
         return batteryRemaining;
     }
@@ -68,6 +80,8 @@ public class AircraftPower implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
+
             datasetAsJsonObject.put("battery_remaining", batteryRemaining);
             datasetAsJsonObject.put("battery_remaining_percent", batteryRemainingPercent);
 
@@ -92,6 +106,8 @@ public class AircraftPower implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
+            datasetAsJsonObject.put("rec", timeRecorded);                   // time_recorded
+
             datasetAsJsonObject.put("rem", batteryRemaining);               // battery_remaining
             datasetAsJsonObject.put("rep", batteryRemainingPercent);        // battery_remaining_percent
 
