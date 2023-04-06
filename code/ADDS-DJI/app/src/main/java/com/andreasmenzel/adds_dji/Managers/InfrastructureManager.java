@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -99,6 +101,21 @@ public class InfrastructureManager {
 
     public Corridor getCorridor(String corridorId) {
         return corridors.get(corridorId);
+    }
+
+    public List<Corridor> getCorridorsConnectedAtIntersection(String intersectionId) {
+        Intersection intersection = intersections.get(intersectionId);
+        if(intersection == null) return null;
+
+        List<Corridor> cors = new LinkedList<>();
+
+        for (Map.Entry<String, Corridor> set : corridors.entrySet()) {
+            if(set.getValue().getIntersectionAId().equals(intersectionId) || set.getValue().getIntersectionBId().equals(intersectionId)) {
+                cors.add(set.getValue());
+            }
+        }
+
+        return cors;
     }
 
 }
