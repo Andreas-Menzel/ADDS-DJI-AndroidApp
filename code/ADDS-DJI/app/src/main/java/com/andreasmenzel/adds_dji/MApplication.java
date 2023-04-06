@@ -3,7 +3,7 @@ package com.andreasmenzel.adds_dji;
 import android.app.Application;
 import android.content.Context;
 
-import com.andreasmenzel.adds_dji.Managers.BlackboxManager;
+import com.andreasmenzel.adds_dji.Managers.InfrastructureManager;
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
 import com.andreasmenzel.adds_dji.Managers.TrafficControlManager;
 import com.secneo.sdk.Helper;
@@ -14,8 +14,12 @@ import com.secneo.sdk.Helper;
  */
 public class MApplication extends Application {
 
+    private static String droneId = "";
+    private static boolean droneActive = false;
+
     private static DJIManager djiManager;
     private static TrafficControlManager trafficControlManager;
+    private static InfrastructureManager infrastructureManager;
 
 
     @Override
@@ -31,8 +35,33 @@ public class MApplication extends Application {
     public static void initializeManagers() {
         djiManager = new DJIManager();
         trafficControlManager = new TrafficControlManager();
+        infrastructureManager = new InfrastructureManager();
     }
 
+
+    /**
+     * Returns the drone id.
+     * @return droneId.
+     */
+    public static String getDroneId() {
+        return droneId;
+    }
+
+    /**
+     * Sets a new drone id.
+     * @param newDroneId The new drone id.
+     */
+    public static void setDroneId(String newDroneId) {
+        droneId = newDroneId;
+    }
+
+    public static boolean getDroneActive() {
+        return droneActive;
+    }
+
+    public static void setDroneActive(boolean newDroneActive) {
+        droneActive = newDroneActive;
+    }
 
     /**
      * Returns the DJIManager.
@@ -50,4 +79,11 @@ public class MApplication extends Application {
         return trafficControlManager;
     }
 
+    /**
+     * Returns the InfrastructureManager.
+     * @return infrastructureManager.
+     */
+    public static InfrastructureManager getInfrastructureManager() {
+        return infrastructureManager;
+    }
 }

@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!-- TakeOff / Landing -->
@@ -29,7 +29,7 @@
                     android:id="@+id/txtView_label_takeOffLanding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TakeOff / Landing"
+                    android:text="@string/takeoff_landing_title"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
@@ -38,7 +38,7 @@
                     android:id="@+id/txtView_label_descr_TakeOffLanding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test the TakeOff and Landing modes." />
+                    android:text="@string/takeoff_landing_description" />
             </LinearLayout>
 
             <LinearLayout
@@ -50,7 +50,7 @@
                     android:id="@+id/btn_showTakeOffLandingDemoActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test This Mode!" />
+                    android:text="@string/test_this_mode_button_text" />
             </LinearLayout>
         </LinearLayout> <!-- TakeOff / Landing -->
 
@@ -72,7 +72,7 @@
                     android:id="@+id/txtView_label_virtualStickBasic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Virtual Stick Basic"
+                    android:text="@string/virtual_stick_basic_title"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
@@ -93,7 +93,7 @@
                     android:id="@+id/btn_showVirtualStickBasicDemoActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test This Mode!" />
+                    android:text="@string/test_this_mode_button_text" />
             </LinearLayout>
         </LinearLayout> <!-- VirtualStickBasic -->
 
@@ -115,7 +115,7 @@
                     android:id="@+id/txtView_label_virtualStickCross"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Virtual Stick Cross"
+                    android:text="@string/virtual_stick_cross_title"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
@@ -136,9 +136,95 @@
                     android:id="@+id/btn_showVirtualStickCrossDemoActivity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Test This Mode!" />
+                    android:text="@string/test_this_mode_button_text" />
             </LinearLayout>
         </LinearLayout> <!-- VirtualStickCross -->
+
+        <!-- BasicWaypointMission -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/txtView_label_basicWaypointMission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basic_waypoint_mission_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/txtView_label_descr_basicWaypointMission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basic_waypoint_mission_description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_showBasicWaypointMissionDemoActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/test_this_mode_button_text" />
+            </LinearLayout>
+        </LinearLayout> <!-- BasicWaypointMission -->
+
+        <!-- InfrastructureWaypointMission -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="2">
+
+                <TextView
+                    android:id="@+id/txtView_label_infrastructureWaypointMission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/infrastructure_waypoint_mission_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/txtView_label_descr_infrastructureWaypointMission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/infrastructure_waypoint_mission_description" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_showInfrastructureWaypointMissionDemoActivity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/test_this_mode_button_text" />
+            </LinearLayout>
+        </LinearLayout> <!-- InfrastructureWaypointMission -->
 
     </LinearLayout>
 

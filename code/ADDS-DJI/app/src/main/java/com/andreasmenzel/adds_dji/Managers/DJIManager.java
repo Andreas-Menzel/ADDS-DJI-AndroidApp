@@ -15,6 +15,7 @@ import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnec
 import com.andreasmenzel.adds_dji.Events.ProductModelChanged;
 
 // Information Holder
+import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftHealth;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftLocation;
 import com.andreasmenzel.adds_dji.InformationHolder.AircraftPower;
@@ -481,8 +482,12 @@ public class DJIManager {
     public static void waypointMissionAddWaypoint(double gpsLat, double gpsLon, float altitude) {
         // TODO: Check that distance is high enough
 
+        if(waypointMissionBuilder == null) waypointMissionBuilder = getWaypointMissionBuilder();
+
         Waypoint newWaypoint = new Waypoint(gpsLat, gpsLon, altitude);
         waypointMissionBuilder.addWaypoint(newWaypoint);
+
+        bus.post(new ToastMessage("Added waypoint"));
     }
 
 

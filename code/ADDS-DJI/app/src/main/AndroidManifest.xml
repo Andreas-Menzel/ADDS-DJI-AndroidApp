@@ -111,7 +111,12 @@
             android:screenOrientation="landscape">
         </activity>
 
-        <activity android:name=".WaypointMissionDemoActivity"
+        <activity android:name=".BasicWaypointMissionDemoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
+        </activity>
+
+        <activity android:name=".InfrastructureWaypointMissionDemoActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
         </activity>

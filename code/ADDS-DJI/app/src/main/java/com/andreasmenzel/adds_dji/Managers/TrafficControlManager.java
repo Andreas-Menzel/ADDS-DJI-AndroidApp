@@ -358,6 +358,25 @@ public class TrafficControlManager {
             autoCommunicationHandlerFlightData.removeCallbacksAndMessages(null);
         }
 
+        // Do nothing and retry in 1 second when drone is not active
+        if(!MApplication.getDroneActive()) {
+            if(tell.equals("aircraft_location")) {
+                autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
+                    addTellToSend("aircraft_location");
+                }, 1000);
+            } else if(tell.equals("aircraft_power")) {
+                autoCommunicationHandlerAircraftPower.postDelayed(() -> {
+                    addTellToSend("aircraft_power");
+                }, 1000);
+            } else if(tell.equals("flight_data")) {
+                autoCommunicationHandlerFlightData.postDelayed(() -> {
+                    addTellToSend("flight_data");
+                }, 1000);
+            }
+
+            return;
+        }
+
         processingTellsToSend.lock();
 
         try {
@@ -403,8 +422,9 @@ public class TrafficControlManager {
         JSONObject payload = new JSONObject();
 
         try {
-            payload.put("drone_id", "demo_drone"); // TODO: set correct drone id
+            payload.put("drone_id", MApplication.getDroneId());
             payload.put("data_type", requestType);
+            payload.put("time_sent", System.currentTimeMillis() / 1000.0);
 
             InformationHolder informationHolder = null;
             if(requestType.equals("aircraft_location")) {
@@ -539,6 +559,17 @@ public class TrafficControlManager {
     private void addAskToSend(String ask) {
         if(ask.equals("infrastructure")) {
             autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
+        }
+
+        // Do nothing and retry in 1 second when drone is not active
+        if(!MApplication.getDroneActive()) {
+            if(ask.equals("infrastructure")) {
+                autoCommunicationHandlerInfrastructure.postDelayed(() -> {
+                    addAskToSend("infrastructure");
+                }, 1000);
+            }
+
+            return;
         }
 
         processingAsksToSend.lock();

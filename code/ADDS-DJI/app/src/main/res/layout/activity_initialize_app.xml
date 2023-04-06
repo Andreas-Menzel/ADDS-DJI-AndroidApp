@@ -49,7 +49,35 @@
                 android:layout_height="wrap_content"
                 android:text="@string/msdkRegistration_not_registered_yet"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp" />
+                android:layout_marginStart="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/txtView_label_droneId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_drone_id"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/editTxt_droneId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="text"
+                android:text=""
+                android:hint="REGISTERED drone id"
+                android:layout_marginStart="16dp" />
+
 
         </LinearLayout>
 

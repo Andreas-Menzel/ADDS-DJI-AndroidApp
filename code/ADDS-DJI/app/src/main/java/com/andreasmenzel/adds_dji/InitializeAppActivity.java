@@ -1,13 +1,16 @@
 package com.andreasmenzel.adds_dji;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +82,8 @@ public class InitializeAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initialize_app);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("MyDronePrefs", Context.MODE_PRIVATE);
+        MApplication.setDroneId(sharedPreferences.getString("droneId", ""));
         setupCallbacks();
 
         // Make sure that the app has all required permissions. This also starts the DJI SDK
@@ -86,14 +91,33 @@ public class InitializeAppActivity extends AppCompatActivity {
         checkAndRequestPermissions();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        MApplication.setDroneActive(false);
+
+        EditText editText_droneId = findViewById(R.id.editTxt_droneId);
+        editText_droneId.setText(MApplication.getDroneId());
+    }
 
     /**
      * Sets up all the callbacks. E.g. onClickListeners
      */
     private void setupCallbacks() {
-        Button btn_goFly = findViewById(R.id.btn_goFly);
+        findViewById(R.id.btn_goFly).setOnClickListener((View v) -> {
+            EditText editText_droneId = findViewById(R.id.editTxt_droneId);
 
-        btn_goFly.setOnClickListener((View v) -> {
+            MApplication.setDroneId(String.valueOf(editText_droneId.getText()));
+
+            // Save drone id persistently
+            SharedPreferences sharedPreferences = getSharedPreferences("MyDronePrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("droneId", MApplication.getDroneId());
+            editor.apply();
+
+            MApplication.setDroneActive(true);
+
             Intent switchActivityIntent = new Intent(this, MainActivity.class);
             startActivity(switchActivityIntent);
         });
