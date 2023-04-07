@@ -487,7 +487,7 @@ public class DJIManager {
         Waypoint newWaypoint = new Waypoint(gpsLat, gpsLon, altitude);
         waypointMissionBuilder.addWaypoint(newWaypoint);
 
-        bus.post(new ToastMessage("Added waypoint"));
+        //bus.post(new ToastMessage("Added waypoint"));
     }
 
 

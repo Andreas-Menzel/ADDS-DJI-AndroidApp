@@ -64,13 +64,6 @@
                     android:layout_gravity="center_vertical"/>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_iswpmd_upload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Upload Mission"
-                android:layout_gravity="center_horizontal"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,6 +136,26 @@
                 android:text="Add corridor to mission"
                 android:layout_gravity="center_horizontal"/>
 
+            <TextView
+                android:id="@+id/txtView_label_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="NOTE: The drone will land after completing the mission. To avoid this, stop the mission or change to 'Sport Mode'."
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtView_label_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="WARNING: Make sure to restart the app before clicking 'START' a second time or after clicking 'STOP'! The mission will be discarded!"
+                android:textAlignment="center"
+                android:textColor="#FF0000"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"/>
         </LinearLayout>
 
     </LinearLayout>

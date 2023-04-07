@@ -1,7 +1,5 @@
 package com.andreasmenzel.adds_dji.OperationModes;
 
-import static com.andreasmenzel.adds_dji.OperationModes.OperationMode.States.attempting;
-
 import androidx.annotation.NonNull;
 
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
