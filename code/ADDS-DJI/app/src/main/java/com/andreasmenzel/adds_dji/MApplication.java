@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.andreasmenzel.adds_dji.Managers.InfrastructureManager;
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
+import com.andreasmenzel.adds_dji.Managers.MissionManager;
 import com.andreasmenzel.adds_dji.Managers.TrafficControlManager;
 import com.secneo.sdk.Helper;
 
@@ -20,6 +21,7 @@ public class MApplication extends Application {
     private static DJIManager djiManager;
     private static TrafficControlManager trafficControlManager;
     private static InfrastructureManager infrastructureManager;
+    private static MissionManager missionManager;
 
 
     @Override
@@ -36,6 +38,7 @@ public class MApplication extends Application {
         djiManager = new DJIManager();
         trafficControlManager = new TrafficControlManager();
         infrastructureManager = new InfrastructureManager();
+        missionManager = new MissionManager();
     }
 
 
@@ -85,5 +88,13 @@ public class MApplication extends Application {
      */
     public static InfrastructureManager getInfrastructureManager() {
         return infrastructureManager;
+    }
+
+    /**
+     * Returns the MissionManager.
+     * @return missionManager.
+     */
+    public static MissionManager getMissionManager() {
+        return missionManager;
     }
 }
