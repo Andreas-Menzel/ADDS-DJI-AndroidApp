@@ -10,6 +10,8 @@ import com.andreasmenzel.adds_dji.Managers.DJIManager;
 
 import org.greenrobot.eventbus.EventBus;
 
+import dji.common.mission.waypoint.WaypointMissionState;
+
 /**
  * This Operation Mode stops the currently running waypoint mission.
  *
@@ -45,6 +47,12 @@ public class WaypointMissionStop extends OperationMode {
     public void perform(@NonNull EventBus bus)  {
         switch(state) {
             case start:
+                WaypointMissionState missionState = DJIManager.getWaypointMissionOperator().getCurrentState();
+                if (!WaypointMissionState.EXECUTING.equals(missionState)) {
+                    setState(finished);
+                    return;
+                }
+
                 setState(attempting);
 
                 DJIManager.getWaypointMissionOperator().stopMission(djiError -> {
