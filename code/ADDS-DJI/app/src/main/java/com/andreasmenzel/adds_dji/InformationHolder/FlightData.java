@@ -5,8 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FlightData implements InformationHolder {
+
+    AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
 
     private double timeRecorded;
 
@@ -43,35 +46,44 @@ public class FlightData implements InformationHolder {
 
 
     public void updateTakeOffData(long takeOffTime, boolean takeOffGpsValid, double takeOffGpsLat, double takeOffGpsLon) {
-        this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
         this.takeOffTime = takeOffTime;
         this.takeOffGpsValid = takeOffGpsValid;
         this.takeOffGpsLat = takeOffGpsLat;
         if(Double.isNaN(this.takeOffGpsLat)) this.takeOffGpsLat = 0;
         this.takeOffGpsLon = takeOffGpsLon;
         if(Double.isNaN(this.takeOffGpsLon)) this.takeOffGpsLon = 0;
+
+        dataUpdated();
     }
 
     public void updateLandingData(long landingTime, boolean landingGpsValid, double landingGpsLat, double landingGpsLon) {
-        this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
         this.landingTime = landingTime;
         this.landingGpsValid = landingGpsValid;
         this.landingGpsLat = landingGpsLat;
         if(Double.isNaN(this.landingGpsLat)) this.landingGpsLat = 0;
         this.landingGpsLon = landingGpsLon;
         if(Double.isNaN(this.landingGpsLon)) this.landingGpsLon = 0;
+
+        dataUpdated();
     }
 
     public void updateOperationMode(String operationMode) {
         // Only add Operation Mode if has changed
         if(operationModes.size() == 0 || !operationModes.getLast().equals(operationMode)) {
-            this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
             operationModes.addLast(operationMode);
+
+            dataUpdated();
         }
         if(operationModes.size() > operationModesHistoryLength) operationModes.removeFirst();
+    }
+
+
+    public void dataUpdated() {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+        dataUpdatedSinceLastTrafficControlUpdate.set(true);
+    }
+    public boolean getAndSetDataUpdatedSinceLastTrafficControlUpdate() {
+        return dataUpdatedSinceLastTrafficControlUpdate.getAndSet(false);
     }
 
 

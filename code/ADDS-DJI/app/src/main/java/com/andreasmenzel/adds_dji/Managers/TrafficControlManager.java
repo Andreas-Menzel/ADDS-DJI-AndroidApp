@@ -52,6 +52,7 @@ public class TrafficControlManager {
     private static final EventBus bus = EventBus.getDefault();
 
     private final DJIManager djiManager;
+    private final MissionManager missionManager;
 
     /*
      * Base information for Traffic Control connection
@@ -95,6 +96,10 @@ public class TrafficControlManager {
     private final Handler autoCommunicationHandlerFlightData = new Handler();
     private final int autoCommunicationDelayFlightData = 3000;
 
+    // Auto communication: tell/mission_data
+    private final Handler autoCommunicationHandlerMissionData = new Handler();
+    private final int autoCommunicationDelayMissionData = 1000; // Note: Nothing will be sent if nothing has changed
+
     // Auto communication: ask/infrastructure (controls intersection_list and corridor_list)
     private final Handler autoCommunicationHandlerInfrastructure = new Handler();
     private final int autoCommunicationDelayInfrastructure = 3000;
@@ -122,6 +127,7 @@ public class TrafficControlManager {
         bus.register(this);
 
         djiManager = MApplication.getDjiManager();
+        missionManager = MApplication.getMissionManager();
 
         checkConnection();
     }
@@ -333,6 +339,7 @@ public class TrafficControlManager {
         addTellToSend("aircraft_location");
         addTellToSend("aircraft_power");
         addTellToSend("flight_data");
+        addTellToSend("mission_data");
     }
     /**
      * Stops the automatic communication for TELLs.
@@ -343,6 +350,7 @@ public class TrafficControlManager {
         autoCommunicationHandlerAircraftLocation.removeCallbacksAndMessages(null);
         autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
         autoCommunicationHandlerFlightData.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerMissionData.removeCallbacksAndMessages(null);
     }
 
 
@@ -356,6 +364,8 @@ public class TrafficControlManager {
             autoCommunicationHandlerAircraftPower.removeCallbacksAndMessages(null);
         } else if(tell.equals("flight_data")) {
             autoCommunicationHandlerFlightData.removeCallbacksAndMessages(null);
+        } else if(tell.equals("mission_data")) {
+            autoCommunicationHandlerMissionData.removeCallbacksAndMessages(null);
         }
 
         // Do nothing and retry in 1 second when drone is not active
@@ -371,6 +381,10 @@ public class TrafficControlManager {
             } else if(tell.equals("flight_data")) {
                 autoCommunicationHandlerFlightData.postDelayed(() -> {
                     addTellToSend("flight_data");
+                }, 1000);
+            } else if(tell.equals("mission_data")) {
+                autoCommunicationHandlerMissionData.postDelayed(() -> {
+                    addTellToSend("mission_data");
                 }, 1000);
             }
 
@@ -433,18 +447,27 @@ public class TrafficControlManager {
                 informationHolder = djiManager.getAircraftPower();
             } else if(requestType.equals("flight_data")) {
                 informationHolder = djiManager.getFlightData();
+            } else if(requestType.equals("mission_data")) {
+                informationHolder = missionManager.getMissionData();
             }
 
             if(informationHolder != null) {
                 //Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
                 //Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
 
-                payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
+                if(informationHolder.getAndSetDataUpdatedSinceLastTrafficControlUpdate()) {
+                    payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
+                } else {
+                    // Nothing changed since last update.
+                    return;
+                }
             } else {
                 // TODO: error handling
+                return;
             }
         } catch (JSONException e) {
             // TODO: error handling
+            return;
         }
 
         sendAsynchronousRequest("tell", requestType, payload.toString());
@@ -498,6 +521,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerFlightData.postDelayed(() -> {
                     addTellToSend("flight_data");
                 }, autoCommunicationDelayFlightData);
+            } else if(event.getTell().equals("mission_data")) {
+                autoCommunicationHandlerMissionData.postDelayed(() -> {
+                    addTellToSend("mission_data");
+                }, autoCommunicationDelayMissionData);
             }
         }
     }
@@ -526,6 +553,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerFlightData.postDelayed(() -> {
                     addTellToSend("flight_data");
                 }, autoCommunicationDelayFlightData);
+            } else if(event.getTell().equals("mission_data")) {
+                autoCommunicationHandlerMissionData.postDelayed(() -> {
+                    addTellToSend("mission_data");
+                }, autoCommunicationDelayMissionData);
             }
         }
     }

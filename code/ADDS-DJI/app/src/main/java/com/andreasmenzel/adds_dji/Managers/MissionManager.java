@@ -5,6 +5,7 @@ import android.os.Handler;
 import com.andreasmenzel.adds_dji.Datasets.Corridor;
 import com.andreasmenzel.adds_dji.Datasets.Intersection;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
+import com.andreasmenzel.adds_dji.InformationHolder.MissionData;
 import com.andreasmenzel.adds_dji.MApplication;
 import com.andreasmenzel.adds_dji.OperationModes.Hovering;
 import com.andreasmenzel.adds_dji.OperationModes.OnGround;
@@ -36,21 +37,7 @@ public class MissionManager {
 
     private final EventBus bus = EventBus.getDefault();
 
-    private Intersection startIntersection = null;
-    private boolean landAfterMissionFinished = false;
-
-    // Complete path: finished-uploaded-approved-pending
-    // Corridor path with no clearance from Traffic Control yet.
-    private LinkedList<Corridor> corridorsPending = new LinkedList<>();
-    // Corridor path with clearance from Traffic Control not uploaded to the drone or finished.
-    private LinkedList<Corridor> corridorsApproved = new LinkedList<>();
-    // Corridor path (with clearance) uploaded to the drone.
-    private LinkedList<Corridor> corridorsUploaded = new LinkedList<>();
-    // Corridor path that was uploaded to the drone and finished (no longer uploaded to the drone).
-    private LinkedList<Corridor> corridorsFinished = new LinkedList<>();
-
-    // Last intersection that was uploaded to the drone.
-    private Intersection lastUploadedIntersection = null;
+    private final MissionData missionData = new MissionData();
 
     private final AtomicBoolean uploadInProgress = new AtomicBoolean(false);
 
@@ -87,17 +74,18 @@ public class MissionManager {
 
 
     public void setLandAfterMissionFinished(boolean landAfterMissionFinished) {
-        this.landAfterMissionFinished = landAfterMissionFinished;
+        missionData.setLandAfterMissionFinished(landAfterMissionFinished);
     }
 
     public void setStartIntersection(Intersection startIntersection) {
-        this.startIntersection = startIntersection;
+        missionData.setStartIntersection(startIntersection);
     }
 
     public void addCorridor(Corridor corridor) {
         //corridorsPending.addLast(corridor);
         // TODO: REMOVE THIS TEST
-        corridorsApproved.addLast(corridor);
+        missionData.getCorridorsApproved().addLast(corridor);
+        missionData.dataUpdated();
     }
 
     /**
@@ -113,20 +101,20 @@ public class MissionManager {
                     || MApplication.getDjiManager().getHighLevelOperationMode() instanceof UseVirtualStick
                     || MApplication.getDjiManager().getHighLevelOperationMode() instanceof WaypointMissionReady) {
                 // If startIntersection is null, lastUploadedIntersection is also null
-                if(startIntersection == null) {
+                if(missionData.getStartIntersection() == null) {
                     bus.post(new ToastMessage("ERROR: MissionManager: Cannot create mission: startIntersection is null."));
 
                     uploadInProgress.set(false);
                     return;
                 }
-                if(corridorsApproved.isEmpty() && !corridorsPending.isEmpty()) {
+                if(missionData.getCorridorsApproved().isEmpty() && !missionData.getCorridorsPending().isEmpty()) {
                     //bus.post(new ToastMessage("MissionManager: Cannot create mission: Waiting for corridors to be approved."));
                     uploadMissionHandler.postDelayed(this::createAndUploadNewWaypoints, uploadMissionHandlerDelay);
 
                     uploadInProgress.set(false);
                     return;
                 }
-                if(corridorsApproved.isEmpty() && corridorsPending.isEmpty()) {
+                if(missionData.getCorridorsApproved().isEmpty() && missionData.getCorridorsPending().isEmpty()) {
                     //bus.post(new ToastMessage("MissionManager: (Cannot create mission:) Mission already finished."));
 
                     uploadInProgress.set(false);
@@ -134,33 +122,37 @@ public class MissionManager {
                 }
 
                 // Move "uploaded" corridors to "finished".
-                while(!corridorsUploaded.isEmpty()) {
-                    corridorsFinished.addLast(corridorsUploaded.removeFirst());
+                while(!missionData.getCorridorsUploaded().isEmpty()) {
+                    missionData.getCorridorsFinished().addLast(missionData.getCorridorsUploaded().removeFirst());
+                    missionData.dataUpdated();
                 }
 
                 DJIManager.waypointMissionClearWaypoints();
 
-                if(lastUploadedIntersection == null) {
+                if(missionData.getLastUploadedIntersection() == null) {
                     // Completely new mission
+                    Intersection startIntersection = missionData.getStartIntersection();
                     DJIManager.waypointMissionAddWaypoint(startIntersection.getGpsLat(), startIntersection.getGpsLon(), (float)(startIntersection.getAltitude()));
-                    lastUploadedIntersection = startIntersection;
+                    missionData.setLastUploadedIntersection(startIntersection);
                 } else {
                     // Mission extension
+                    Intersection lastUploadedIntersection = missionData.getLastUploadedIntersection();
                     DJIManager.waypointMissionAddWaypoint(lastUploadedIntersection.getGpsLat(), lastUploadedIntersection.getGpsLon(), (float)(lastUploadedIntersection.getAltitude()));
                 }
 
                 // Move "approved" corridors to "uploaded" and upload to drone.
-                while(!corridorsApproved.isEmpty()) {
-                    Corridor cor = corridorsApproved.removeFirst();
-                    corridorsUploaded.addLast(cor);
+                while(!missionData.getCorridorsApproved().isEmpty()) {
+                    Corridor cor = missionData.getCorridorsApproved().removeFirst();
+                    missionData.getCorridorsUploaded().addLast(cor);
+                    missionData.dataUpdated();
 
                     Intersection intersectionA = MApplication.getInfrastructureManager().getIntersection(cor.getIntersectionAId());
                     Intersection intersectionB = MApplication.getInfrastructureManager().getIntersection(cor.getIntersectionBId());
 
                     Intersection nextIntersection;
-                    if(intersectionA != lastUploadedIntersection) {
+                    if(intersectionA != missionData.getLastUploadedIntersection()) {
                         nextIntersection = intersectionA;
-                    } else if(intersectionB != lastUploadedIntersection) {
+                    } else if(intersectionB != missionData.getLastUploadedIntersection()) {
                         nextIntersection = intersectionB;
                     } else {
                         bus.post(new ToastMessage("MissionManager: Cannot create mission: path not connected?"));
@@ -170,12 +162,12 @@ public class MissionManager {
                     }
 
                     DJIManager.waypointMissionAddWaypoint(nextIntersection.getGpsLat(), nextIntersection.getGpsLon(), (float)(nextIntersection.getAltitude()));
-                    lastUploadedIntersection = nextIntersection;
+                    missionData.setLastUploadedIntersection(nextIntersection);
                 }
 
                 // Set landing? after finished.
                 WaypointMissionFinishedAction finishedAction;
-                if(landAfterMissionFinished && corridorsPending.isEmpty() && corridorsApproved.isEmpty()) {
+                if(missionData.getLandAfterMissionFinished() && missionData.getCorridorsPending().isEmpty() && missionData.getCorridorsApproved().isEmpty()) {
                     finishedAction = WaypointMissionFinishedAction.AUTO_LAND;
                 } else {
                     finishedAction = WaypointMissionFinishedAction.NO_ACTION;
@@ -194,4 +186,8 @@ public class MissionManager {
         }
     }
 
+
+    public MissionData getMissionData() {
+        return missionData;
+    }
 }

@@ -5,7 +5,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class AircraftLocation implements InformationHolder {
+
+    private final AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
 
     private double timeRecorded;
 
@@ -82,8 +86,6 @@ public class AircraftLocation implements InformationHolder {
                            float altitude,
                            float velocityX, float velocityY, float velocityZ,
                            double pitch, double yaw, double roll) {
-        this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
         this.gpsSignalLevel = gpsSignalLevel;
         this.gpsSatellitesConnected = gpsSatellitesConnected;
 
@@ -102,6 +104,16 @@ public class AircraftLocation implements InformationHolder {
         this.pitch = pitch;
         this.yaw = yaw;
         this.roll = roll;
+
+        dataUpdated();
+    }
+
+    public void dataUpdated() {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+        dataUpdatedSinceLastTrafficControlUpdate.set(true);
+    }
+    public boolean getAndSetDataUpdatedSinceLastTrafficControlUpdate() {
+        return dataUpdatedSinceLastTrafficControlUpdate.getAndSet(false);
     }
 
 

@@ -3,7 +3,11 @@ package com.andreasmenzel.adds_dji.InformationHolder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class AircraftPower implements InformationHolder {
+
+    private final AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
 
     private double timeRecorded;
 
@@ -35,17 +39,26 @@ public class AircraftPower implements InformationHolder {
 
 
     public void updateFromBatteryState(int batteryRemaining, int batteryRemainingPercent) {
-        this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
         this.batteryRemaining = batteryRemaining;
         this.batteryRemainingPercent = batteryRemainingPercent;
+
+        dataUpdated();
     }
 
     public void updateFromFlightControllerState(int remainingFlightTime, float remainingFlightRadius) {
-        this.timeRecorded = System.currentTimeMillis() / 1000.0;
-
         this.remainingFlightTime = remainingFlightTime;
         this.remainingFlightRadius = remainingFlightRadius;
+
+        dataUpdated();
+    }
+
+
+    public void dataUpdated() {
+        this.timeRecorded = System.currentTimeMillis() / 1000.0;
+        dataUpdatedSinceLastTrafficControlUpdate.set(true);
+    }
+    public boolean getAndSetDataUpdatedSinceLastTrafficControlUpdate() {
+        return dataUpdatedSinceLastTrafficControlUpdate.getAndSet(false);
     }
 
 

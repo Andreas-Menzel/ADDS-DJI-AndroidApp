@@ -10,4 +10,7 @@ public interface InformationHolder {
     String getDatasetAsJsonString();
     String getDatasetAsSmallJsonString();
 
+    void dataUpdated();
+    boolean getAndSetDataUpdatedSinceLastTrafficControlUpdate();
+
 }
