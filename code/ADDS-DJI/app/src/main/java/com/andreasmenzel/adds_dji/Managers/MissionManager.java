@@ -1,6 +1,7 @@
 package com.andreasmenzel.adds_dji.Managers;
 
 import android.os.Handler;
+import android.util.Log;
 
 import com.andreasmenzel.adds_dji.Datasets.Corridor;
 import com.andreasmenzel.adds_dji.Datasets.Intersection;
@@ -42,7 +43,7 @@ public class MissionManager {
     private final AtomicBoolean uploadInProgress = new AtomicBoolean(false);
 
     private final Handler uploadMissionHandler = new Handler();
-    private final int uploadMissionHandlerDelay = 1000;
+    private final int uploadMissionHandlerDelay = 5000;
 
 
     public MissionManager() {
@@ -79,13 +80,24 @@ public class MissionManager {
 
     public void setStartIntersection(Intersection startIntersection) {
         missionData.setStartIntersection(startIntersection);
+        missionData.setLastMissionIntersection(startIntersection);
     }
 
     public void addCorridor(Corridor corridor) {
-        //corridorsPending.addLast(corridor);
-        // TODO: REMOVE THIS TEST
-        missionData.getCorridorsApproved().addLast(corridor);
+        missionData.getCorridorsPending().addLast(corridor);
+
+        String corIntAId = corridor.getIntersectionAId();
+        String corIntBId = corridor.getIntersectionBId();
+        if(corIntAId.equals(missionData.getLastMissionIntersection().getId())) {
+            missionData.setLastMissionIntersection(MApplication.getInfrastructureManager().getIntersection(corIntBId));
+        } else {
+            missionData.setLastMissionIntersection(MApplication.getInfrastructureManager().getIntersection(corIntAId));
+        }
+
         missionData.dataUpdated();
+
+        // TODO: REMOVE THIS TEST
+        //missionData.getCorridorsApproved().addLast(corridor);
     }
 
     /**
@@ -108,7 +120,7 @@ public class MissionManager {
                     return;
                 }
                 if(missionData.getCorridorsApproved().isEmpty() && !missionData.getCorridorsPending().isEmpty()) {
-                    //bus.post(new ToastMessage("MissionManager: Cannot create mission: Waiting for corridors to be approved."));
+                    bus.post(new ToastMessage("MissionManager: Cannot create mission: Waiting for corridors to be approved."));
                     uploadMissionHandler.postDelayed(this::createAndUploadNewWaypoints, uploadMissionHandlerDelay);
 
                     uploadInProgress.set(false);

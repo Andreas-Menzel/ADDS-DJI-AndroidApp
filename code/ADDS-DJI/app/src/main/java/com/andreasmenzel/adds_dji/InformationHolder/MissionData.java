@@ -27,6 +27,8 @@ public class MissionData implements InformationHolder {
     // Corridor path that was uploaded to the drone and finished (no longer uploaded to the drone).
     private LinkedList<Corridor> corridorsFinished = new LinkedList<>();
 
+    // Last intersection that of the mission.
+    private Intersection lastMissionIntersection = null;
     // Last intersection that was uploaded to the drone.
     private Intersection lastUploadedIntersection = null;
 
@@ -57,6 +59,10 @@ public class MissionData implements InformationHolder {
         return corridorsFinished;
     }
 
+    public Intersection getLastMissionIntersection() {
+        return lastMissionIntersection;
+    }
+
     public Intersection getLastUploadedIntersection() {
         return lastUploadedIntersection;
     }
@@ -69,6 +75,11 @@ public class MissionData implements InformationHolder {
 
     public void setStartIntersection(Intersection startIntersection) {
         this.startIntersection = startIntersection;
+        dataUpdated();
+    }
+
+    public void setLastMissionIntersection(Intersection lastMissionIntersection) {
+        this.lastMissionIntersection = lastMissionIntersection;
         dataUpdated();
     }
 
@@ -91,10 +102,17 @@ public class MissionData implements InformationHolder {
     public JSONObject getDatasetAsJsonObject() {
         JSONObject datasetAsJsonObject = new JSONObject();
 
+        String startIntersectionId = null;
+        if(startIntersection != null) {
+            startIntersectionId = startIntersection.getId();
+        }
+
         try {
             datasetAsJsonObject.put("time_recorded", timeRecorded);
 
-            datasetAsJsonObject.put("start_intersection", startIntersection.getId());
+            datasetAsJsonObject.put("start_intersection", startIntersectionId);
+            datasetAsJsonObject.put("last_uploaded_intersection", lastUploadedIntersection);
+            datasetAsJsonObject.put("last_mission_intersection", lastMissionIntersection);
             datasetAsJsonObject.put("land_after_mission_finished", landAfterMissionFinished);
 
             JSONArray corridorsPendingJsonArray = new JSONArray();
@@ -120,8 +138,6 @@ public class MissionData implements InformationHolder {
                 corridorsUploadedJsonArray.put(corridorsFinished.get(i));
             }
             datasetAsJsonObject.put("corridors_finished", corridorsFinishedJsonArray);
-
-            datasetAsJsonObject.put("last_uploaded_intersection", lastUploadedIntersection);
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;

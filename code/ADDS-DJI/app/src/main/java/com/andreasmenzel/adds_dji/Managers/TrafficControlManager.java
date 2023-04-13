@@ -6,6 +6,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
+import com.andreasmenzel.adds_dji.Datasets.Corridor;
+import com.andreasmenzel.adds_dji.Datasets.Intersection;
+import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.Communication;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotTellResponse;
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotAskResponse;
@@ -23,6 +26,7 @@ import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowConnecte
 import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowDisconnected;
 
 import com.andreasmenzel.adds_dji.InformationHolder.InformationHolder;
+import com.andreasmenzel.adds_dji.InformationHolder.MissionData;
 import com.andreasmenzel.adds_dji.MApplication;
 
 import org.greenrobot.eventbus.EventBus;
@@ -103,6 +107,10 @@ public class TrafficControlManager {
     // Auto communication: ask/infrastructure (controls intersection_list and corridor_list)
     private final Handler autoCommunicationHandlerInfrastructure = new Handler();
     private final int autoCommunicationDelayInfrastructure = 3000;
+
+    // Auto communication: ask/request_clearance
+    private final Handler autoCommunicationHandlerRequestClearance = new Handler();
+    private final int autoCommunicationDelayRequestClearance = 2000; // Note: Nothing will be sent if no clearance is required
 
     /*
      * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
@@ -452,13 +460,27 @@ public class TrafficControlManager {
             }
 
             if(informationHolder != null) {
-                //Log.d("MY_DEBUG", informationHolder.getDatasetAsJsonString());
-                //Log.d("MY_DEBUG", informationHolder.getDatasetAsSmallJsonString());
-
                 if(informationHolder.getAndSetDataUpdatedSinceLastTrafficControlUpdate()) {
                     payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
                 } else {
-                    // Nothing changed since last update.
+                    // Nothing changed since last update. Check again later.
+                    if(requestType.equals("aircraft_location")) {
+                        autoCommunicationHandlerAircraftLocation.postDelayed(() -> {
+                            addTellToSend("aircraft_location");
+                        }, 1000);
+                    } else if(requestType.equals("aircraft_power")) {
+                        autoCommunicationHandlerAircraftPower.postDelayed(() -> {
+                            addTellToSend("aircraft_power");
+                        }, 1000);
+                    } else if(requestType.equals("flight_data")) {
+                        autoCommunicationHandlerFlightData.postDelayed(() -> {
+                            addTellToSend("flight_data");
+                        }, 1000);
+                    } else if(requestType.equals("mission_data")) {
+                        autoCommunicationHandlerMissionData.postDelayed(() -> {
+                            addTellToSend("mission_data");
+                        }, 1000);
+                    }
                     return;
                 }
             } else {
@@ -573,6 +595,7 @@ public class TrafficControlManager {
         autoCommunicationAskActive = true;
 
         addAskToSend("infrastructure");
+        addAskToSend("request_clearance");
     }
     /**
      * Stops the automatic communication for ASKs.
@@ -581,6 +604,7 @@ public class TrafficControlManager {
         autoCommunicationAskActive = false;
 
         autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerRequestClearance.removeCallbacksAndMessages(null);
     }
 
 
@@ -590,6 +614,8 @@ public class TrafficControlManager {
     private void addAskToSend(String ask) {
         if(ask.equals("infrastructure")) {
             autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
+        } else if(ask.equals("request_clearance")) {
+            autoCommunicationHandlerRequestClearance.removeCallbacksAndMessages(null);
         }
 
         // Do nothing and retry in 1 second when drone is not active
@@ -597,6 +623,10 @@ public class TrafficControlManager {
             if(ask.equals("infrastructure")) {
                 autoCommunicationHandlerInfrastructure.postDelayed(() -> {
                     addAskToSend("infrastructure");
+                }, 1000);
+            } else if(ask.equals("request_clearance")) {
+                autoCommunicationHandlerRequestClearance.postDelayed(() -> {
+                    addAskToSend("request_clearance");
                 }, 1000);
             }
 
@@ -661,6 +691,52 @@ public class TrafficControlManager {
 
             sendAsynchronousRequest("ask", "intersection_list", payloadIntersectionList.toString());
             sendAsynchronousRequest("ask", "corridor_list", payloadCorridorList.toString());
+        } else if(requestType.equals("request_clearance")) {
+            LinkedList<Corridor> corridorsPending = missionManager.getMissionData().getCorridorsPending();
+
+            if(!corridorsPending.isEmpty()) {
+
+                Corridor corridor = corridorsPending.getFirst();
+                String thisCorAId = corridor.getIntersectionAId();
+                String thisCorBId = corridor.getIntersectionBId();
+
+                String destIntersectionId = "";
+
+                if(corridorsPending.size() >= 2) {
+                    Corridor nextCor = corridorsPending.get(1);
+                    String nextCorAId = nextCor.getIntersectionAId();
+                    String nextCorBId = nextCor.getIntersectionBId();
+
+                    if(thisCorAId.equals(nextCorAId) || thisCorAId.equals(nextCorBId)) {
+                        destIntersectionId = thisCorAId;
+                    } else if(thisCorBId.equals(nextCorAId) || thisCorBId.equals(nextCorBId)) {
+                        destIntersectionId = thisCorBId;
+                    }
+                } else {
+                    destIntersectionId = missionManager.getMissionData().getLastMissionIntersection().getId();
+                }
+
+                JSONObject payload = new JSONObject();
+                try {
+                    payload.put("drone_id", MApplication.getDroneId());
+                    payload.put("data_type", requestType);
+                    //payload.put("time_sent", System.currentTimeMillis() / 1000.0);
+
+                    JSONObject payloadData = new JSONObject();
+                    payloadData.put("corridor", corridor.getId());
+                    payloadData.put("dest_intersection", destIntersectionId);
+                    payload.put("data", payloadData);
+                } catch (JSONException e) {
+                    // TODO: error handling
+                }
+
+                sendAsynchronousRequest("ask", "request_clearance", payload.toString());
+            } else {
+                // Don't send. Try again later.
+                autoCommunicationHandlerRequestClearance.postDelayed(() -> {
+                    addAskToSend("request_clearance");
+                }, 1000);
+            }
         }
     }
 
@@ -700,13 +776,33 @@ public class TrafficControlManager {
                 }
             }
 
-            InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
-            // For the first response the InfrastructureManager may not have been initialized yet
-            if(infrastructureManager != null) {
-                if(event.getAsk().equals("intersection_list")) {
-                    MApplication.getInfrastructureManager().updateIntersectionList(responseData);
-                } else if(event.getAsk().equals("corridor_list")) {
-                    MApplication.getInfrastructureManager().updateCorridorList(responseData);
+            if(event.getAsk().equals("intersection_list") || event.getAsk().equals("corridor_list")) {
+                InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
+                // For the first response the InfrastructureManager may not have been initialized yet
+                if(infrastructureManager != null) {
+                    if(event.getAsk().equals("intersection_list")) {
+                        MApplication.getInfrastructureManager().updateIntersectionList(responseData);
+                    } else if(event.getAsk().equals("corridor_list")) {
+                        MApplication.getInfrastructureManager().updateCorridorList(responseData);
+                    }
+                }
+            } else if(event.getAsk().equals("request_clearance")) {
+                String clearedCorridorId = responseData.getString("corridor");
+                String clearedDestIntersectionId = responseData.getString("dest_intersection");
+                boolean clearedStatus = responseData.getBoolean("cleared");
+
+                if(clearedStatus) {
+                    MissionData missionData = MApplication.getMissionManager().getMissionData();
+                    LinkedList<Corridor> corridorsPending = missionData.getCorridorsPending();
+                    LinkedList<Corridor> corridorsApproved = missionData.getCorridorsApproved();
+
+                    // TODO: Also check flying direction (dest_intersection)
+                    if(corridorsPending.getFirst().getId().equals(clearedCorridorId)) {
+                        corridorsApproved.addLast(corridorsPending.removeFirst());
+                        missionData.dataUpdated();
+                        bus.post(new ToastMessage("Got clearance for corridor \"" + clearedCorridorId + "\"."));
+                    }
+                } else {
                 }
             }
 
@@ -721,6 +817,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerInfrastructure.postDelayed(() -> {
                     addAskToSend("infrastructure");
                 }, autoCommunicationDelayInfrastructure);
+            } else if(event.getAsk().equals("request_clearance")) {
+                autoCommunicationHandlerRequestClearance.postDelayed(() -> {
+                    addAskToSend("request_clearance");
+                }, autoCommunicationDelayRequestClearance);
             }
         }
     }
@@ -742,6 +842,10 @@ public class TrafficControlManager {
                 autoCommunicationHandlerInfrastructure.postDelayed(() -> {
                     addAskToSend("infrastructure");
                 }, autoCommunicationDelayInfrastructure);
+            } else if(event.getAsk().equals("request_clearance")) {
+                autoCommunicationHandlerRequestClearance.postDelayed(() -> {
+                    addAskToSend("request_clearance");
+                }, autoCommunicationDelayRequestClearance);
             }
         }
     }

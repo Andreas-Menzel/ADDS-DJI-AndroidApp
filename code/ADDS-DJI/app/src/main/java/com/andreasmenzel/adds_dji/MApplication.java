@@ -36,9 +36,9 @@ public class MApplication extends Application {
      */
     public static void initializeManagers() {
         djiManager = new DJIManager();
+        missionManager = new MissionManager();
         trafficControlManager = new TrafficControlManager();
         infrastructureManager = new InfrastructureManager();
-        missionManager = new MissionManager();
     }
 
 
