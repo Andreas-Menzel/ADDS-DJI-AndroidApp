@@ -462,6 +462,7 @@ public class TrafficControlManager {
             if(informationHolder != null) {
                 if(informationHolder.getAndSetDataUpdatedSinceLastTrafficControlUpdate()) {
                     payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
+                    sendAsynchronousRequest("tell", requestType, payload.toString());
                 } else {
                     // Nothing changed since last update. Check again later.
                     if(requestType.equals("aircraft_location")) {
@@ -481,18 +482,13 @@ public class TrafficControlManager {
                             addTellToSend("mission_data");
                         }, 1000);
                     }
-                    return;
                 }
             } else {
                 // TODO: error handling
-                return;
             }
         } catch (JSONException e) {
             // TODO: error handling
-            return;
         }
-
-        sendAsynchronousRequest("tell", requestType, payload.toString());
     }
 
 

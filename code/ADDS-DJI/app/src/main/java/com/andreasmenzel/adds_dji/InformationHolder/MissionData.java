@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MissionData implements InformationHolder {
 
+    private AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
+    
     private double timeRecorded = 0;
 
     private Intersection startIntersection = null;
@@ -31,8 +33,6 @@ public class MissionData implements InformationHolder {
     private Intersection lastMissionIntersection = null;
     // Last intersection that was uploaded to the drone.
     private Intersection lastUploadedIntersection = null;
-
-    private AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
 
 
     public Intersection getStartIntersection() {
