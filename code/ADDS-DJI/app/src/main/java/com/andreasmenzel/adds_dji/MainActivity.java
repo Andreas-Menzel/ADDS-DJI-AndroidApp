@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
             Intent switchActivityIntent = new Intent(this, FPVDemoActivity.class);
             startActivity(switchActivityIntent);
         });
-        findViewById(R.id.btn_showBlackboxInfoActivity).setOnClickListener((View view) -> {
-            Intent switchActivityIntent = new Intent(this, BlackboxInfoActivity.class);
-            startActivity(switchActivityIntent);
-        });
     }
 
     /**

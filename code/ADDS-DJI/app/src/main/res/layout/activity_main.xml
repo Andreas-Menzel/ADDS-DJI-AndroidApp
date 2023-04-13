@@ -72,13 +72,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/button_show_drone_info" />
 
-            <Button
-                android:id="@+id/btn_showBlackboxInfoActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Show Blackbox Info" />
-
         </LinearLayout> <!-- show info activities -->
 
         <LinearLayout

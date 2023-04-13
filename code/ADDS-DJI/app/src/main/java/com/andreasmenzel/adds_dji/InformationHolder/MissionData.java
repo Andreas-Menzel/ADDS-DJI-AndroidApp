@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MissionData implements InformationHolder {
 
     private AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
-    
+
     private double timeRecorded = 0;
 
     private Intersection startIntersection = null;
