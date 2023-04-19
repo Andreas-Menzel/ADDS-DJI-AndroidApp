@@ -43,22 +43,22 @@
             android:layout_marginTop="16dp">
 
             <TextView
-                android:id="@+id/txtView_label_trafficControlConnectionState"
+                android:id="@+id/txtView_label_FlightControlConnectionState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_trafficControl"
+                android:text="@string/label_flightControl"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/txtView_trafficControlConnectionState"
+                android:id="@+id/txtView_flightControlConnectionState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/trafficControl_not_checked_yet"
+                android:text="@string/flightControl_not_checked_yet"
                 android:layout_marginStart="16dp"
                 android:layout_gravity="center_vertical"/>
 
-        </LinearLayout> <!-- traffic control connection state -->
+        </LinearLayout> <!-- flight control connection state -->
 
         <LinearLayout
             android:layout_width="match_parent"

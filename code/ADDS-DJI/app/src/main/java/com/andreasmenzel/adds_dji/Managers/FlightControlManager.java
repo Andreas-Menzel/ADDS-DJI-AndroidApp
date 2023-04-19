@@ -1,29 +1,27 @@
 package com.andreasmenzel.adds_dji.Managers;
 
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
 import com.andreasmenzel.adds_dji.Datasets.Corridor;
-import com.andreasmenzel.adds_dji.Datasets.Intersection;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.Communication;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.GotAskResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.InvalidAskResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.InvalidTellResponse;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.RequestSucceeded;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.TellFailed;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Communication.AskFailed;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.Communication;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.GotTellResponse;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.GotAskResponse;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.InvalidAskResponse;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.InvalidTellResponse;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.RequestFailed;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.RequestSucceeded;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.TellFailed;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.AskFailed;
 
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.Connected;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NotConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowConnected;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.NowDisconnected;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.Connected;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.NotConnected;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.NowConnected;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.NowDisconnected;
 
 import com.andreasmenzel.adds_dji.InformationHolder.InformationHolder;
 import com.andreasmenzel.adds_dji.InformationHolder.MissionData;
@@ -36,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,7 +48,7 @@ import okhttp3.Response;
  * data from Traffic Control. This manager handles connection failures, tries resending failed
  * requests and automatically sends data that the Traffic Control requests.
  */
-public class TrafficControlManager {
+public class FlightControlManager {
 
     private static final EventBus bus = EventBus.getDefault();
 
@@ -62,7 +59,7 @@ public class TrafficControlManager {
      * Base information for Traffic Control connection
      */
     private final OkHttpClient client = new OkHttpClient();
-    private final String trafficControlUrl = "http://adds-demo.an-men.de:2000/";
+    private final String flightControlUrl = "http://adds-demo.an-men.de:2000/";
 
     /*
      * Periodically check the connection to the Traffic Control
@@ -124,14 +121,14 @@ public class TrafficControlManager {
     /*
      * The Traffic System version. This is null if the Traffic System cannot be reached.
      */
-    private String trafficControlVersion = null;
+    private String flightControlVersion = null;
 
 
     /**
      * Initializes the Traffic Control Manager: Registers to the event bus, gets the djiManager and
      * starts checking the connection to the Traffic Control.
      */
-    public TrafficControlManager() {
+    public FlightControlManager() {
         bus.register(this);
 
         djiManager = MApplication.getDjiManager();
@@ -160,18 +157,18 @@ public class TrafficControlManager {
         bus.post(new ConnectionCheckInProgress());
 
         Request request = new Request.Builder()
-                .url(trafficControlUrl + "how_are_you")
+                .url(flightControlUrl + "how_are_you")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                if(trafficControlVersion == null) {
+                if(flightControlVersion == null) {
                     // Was already not connected
                     bus.post(new NotConnected());
                 } else {
                     // Was connected earlier
-                    trafficControlVersion = null;
+                    flightControlVersion = null;
                     bus.post(new NowDisconnected());
                 }
             }
@@ -185,30 +182,30 @@ public class TrafficControlManager {
                         JSONObject json = new JSONObject(myResponse);
                         String version = json.getString("version");
 
-                        if(version.equals(trafficControlVersion)) {
+                        if(version.equals(flightControlVersion)) {
                             bus.post(new Connected());
                         } else {
-                            trafficControlVersion = version;
+                            flightControlVersion = version;
                             bus.post(new NowConnected());
                         }
                     } catch (JSONException e) {
                         // TODO: exception handling for invalid response
-                        if(trafficControlVersion == null) {
+                        if(flightControlVersion == null) {
                             // Was already not connected
                             bus.post(new NotConnected());
                         } else {
                             // Was connected earlier
-                            trafficControlVersion = null;
+                            flightControlVersion = null;
                             bus.post(new NowDisconnected());
                         }
                     }
                 } else {
-                    if(trafficControlVersion == null) {
+                    if(flightControlVersion == null) {
                         // Was already not connected
                         bus.post(new NotConnected());
                     } else {
                         // Was connected earlier
-                        trafficControlVersion = null;
+                        flightControlVersion = null;
                         bus.post(new NowDisconnected());
                     }
                 }
@@ -227,7 +224,7 @@ public class TrafficControlManager {
      */
     private void sendAsynchronousRequest(String requestGroup, String requestType, String payload) {
         Request request = new Request.Builder()
-                .url(trafficControlUrl + requestGroup + "/" + requestType + "?payload=" + payload)
+                .url(flightControlUrl + requestGroup + "/" + requestType + "?payload=" + payload)
                 .build();
         // TODO: Encrypt data and send via POST
 
@@ -285,7 +282,7 @@ public class TrafficControlManager {
      */
     @Subscribe
     public void nowDisconnected(NowDisconnected event) {
-        trafficControlVersion = null; // Just in case it is missing somewhere else.
+        flightControlVersion = null; // Just in case it is missing somewhere else.
         stopAutoCommunicationTell();
         stopAutoCommunicationAsk();
     }
@@ -317,7 +314,7 @@ public class TrafficControlManager {
         if(requestsFailedCounter > requestsFailedCounterMax) {
             requestsFailedCounter = 0;
 
-            trafficControlVersion = null;
+            flightControlVersion = null;
             bus.post(new NowDisconnected());
         }
     }
@@ -460,7 +457,7 @@ public class TrafficControlManager {
             }
 
             if(informationHolder != null) {
-                if(informationHolder.getAndSetDataUpdatedSinceLastTrafficControlUpdate()) {
+                if(informationHolder.getAndSetDataUpdatedSinceLastFlightControlUpdate()) {
                     payload.put("data", informationHolder.getDatasetAsSmallJsonObject());
                     sendAsynchronousRequest("tell", requestType, payload.toString());
                 } else {
@@ -853,21 +850,21 @@ public class TrafficControlManager {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Gets the TrafficControl URL.
+     * Gets the FlightControl URL.
      *
-     * @return The trafficControlUrl.
+     * @return The flightControlUrl.
      */
-    public String getTrafficControlUrl() {
-        return trafficControlUrl;
+    public String getFlightControlUrl() {
+        return flightControlUrl;
     }
 
     /**
-     * Gets the Traffic Control version.
+     * Gets the Flight Control version.
      *
-     * @return The Traffic Control version.
+     * @return The Flight Control version.
      */
-    public String getTrafficControlVersion() {
-        return trafficControlVersion;
+    public String getFlightControlVersion() {
+        return flightControlVersion;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.andreasmenzel.adds_dji.Events.TrafficControl.Communication;
+package com.andreasmenzel.adds_dji.Events.FlightControl.Communication;
 
 import androidx.annotation.NonNull;
 

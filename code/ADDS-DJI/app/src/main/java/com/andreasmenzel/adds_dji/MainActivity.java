@@ -15,12 +15,12 @@ import org.greenrobot.eventbus.ThreadMode;
 // Events
 import com.andreasmenzel.adds_dji.Events.ProductConnectivityChange.ProductConnectivityChange;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionCheckInProgress;
-import com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity.ConnectionEvent;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.ConnectionCheckInProgress;
+import com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity.ConnectionEvent;
 
 // Manager
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
-import com.andreasmenzel.adds_dji.Managers.TrafficControlManager;
+import com.andreasmenzel.adds_dji.Managers.FlightControlManager;
 
 /**
  * The main activity. This is shown when the app is started.
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final EventBus bus = EventBus.getDefault();
 
     private DJIManager djiManager;
-    private TrafficControlManager trafficControlManager;
+    private FlightControlManager flightControlManager;
 
 
     /**
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         djiManager = MApplication.getDjiManager();
-        trafficControlManager = MApplication.getTrafficControlManager();
+        flightControlManager = MApplication.getFlightControlManager();
 
 
         findViewById(R.id.btn_showDroneInfoActivity).setOnClickListener((View view) -> {
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateUI() {
         updateUIProductModelName(null);
-        updateUITrafficControlConnectionState(null);
+        updateUIFlightControlConnectionState(null);
     }
 
 
@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
      * @param event Event.
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void trafficControlConnectionCheckInProgress(ConnectionCheckInProgress event) {
-        TextView txtView_trafficControlConnectionState = findViewById(R.id.txtView_trafficControlConnectionState);
-        txtView_trafficControlConnectionState.setText(R.string.trafficControl_checking_connection);
+    public void flightControlConnectionCheckInProgress(ConnectionCheckInProgress event) {
+        TextView txtView_flightControlConnectionState = findViewById(R.id.txtView_flightControlConnectionState);
+        txtView_flightControlConnectionState.setText(R.string.flightControl_checking_connection);
     }
 
     /**
@@ -119,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
      * @param event Event.
      */
     @Subscribe
-    public void updateUITrafficControlConnectionState(ConnectionEvent event) {
+    public void updateUIFlightControlConnectionState(ConnectionEvent event) {
         runOnUiThread(() -> {
-            TextView txtView_trafficControlConnectionState = findViewById(R.id.txtView_trafficControlConnectionState);
+            TextView txtView_flightControlConnectionState = findViewById(R.id.txtView_flightControlConnectionState);
 
-            String version = trafficControlManager.getTrafficControlVersion();
+            String version = flightControlManager.getFlightControlVersion();
 
             if(version != null) {
-                txtView_trafficControlConnectionState.setText(version);
+                txtView_flightControlConnectionState.setText(version);
             } else {
-                txtView_trafficControlConnectionState.setText(R.string.trafficControl_not_connected);
+                txtView_flightControlConnectionState.setText(R.string.flightControl_not_connected);
             }
         });
     }

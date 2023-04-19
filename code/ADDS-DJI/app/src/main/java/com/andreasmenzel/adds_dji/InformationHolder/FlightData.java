@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FlightData implements InformationHolder {
 
-    AtomicBoolean dataUpdatedSinceLastTrafficControlUpdate = new AtomicBoolean(true);
+    private final AtomicBoolean dataUpdatedSinceLastFlightControlUpdate = new AtomicBoolean(true);
 
     private double timeRecorded;
 
@@ -80,10 +80,10 @@ public class FlightData implements InformationHolder {
 
     public void dataUpdated() {
         this.timeRecorded = System.currentTimeMillis() / 1000.0;
-        dataUpdatedSinceLastTrafficControlUpdate.set(true);
+        dataUpdatedSinceLastFlightControlUpdate.set(true);
     }
-    public boolean getAndSetDataUpdatedSinceLastTrafficControlUpdate() {
-        return dataUpdatedSinceLastTrafficControlUpdate.getAndSet(false);
+    public boolean getAndSetDataUpdatedSinceLastFlightControlUpdate() {
+        return dataUpdatedSinceLastFlightControlUpdate.getAndSet(false);
     }
 
 

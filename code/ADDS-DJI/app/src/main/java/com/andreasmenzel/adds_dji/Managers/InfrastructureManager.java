@@ -1,10 +1,7 @@
 package com.andreasmenzel.adds_dji.Managers;
 
-import android.util.Log;
-
 import com.andreasmenzel.adds_dji.Datasets.Corridor;
 import com.andreasmenzel.adds_dji.Datasets.Intersection;
-import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.MApplication;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,11 +20,7 @@ import okhttp3.OkHttpClient;
 
 public class InfrastructureManager {
 
-    private EventBus bus = EventBus.getDefault();
-
-    private String trafficControlUrl;
-
-    private final OkHttpClient client = new OkHttpClient();
+    //private EventBus bus = EventBus.getDefault();
 
     private Map<String, Intersection> intersections;
     private Map<String, Corridor> corridors;
@@ -35,8 +28,6 @@ public class InfrastructureManager {
 
     public InfrastructureManager() {
         //bus.register(this); // TODO: deregister?
-
-        trafficControlUrl = MApplication.getTrafficControlManager().getTrafficControlUrl();
 
         intersections = new HashMap<>();
         corridors = new HashMap<>();

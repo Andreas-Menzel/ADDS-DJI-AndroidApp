@@ -3,10 +3,10 @@ package com.andreasmenzel.adds_dji;
 import android.app.Application;
 import android.content.Context;
 
+import com.andreasmenzel.adds_dji.Managers.FlightControlManager;
 import com.andreasmenzel.adds_dji.Managers.InfrastructureManager;
 import com.andreasmenzel.adds_dji.Managers.DJIManager;
 import com.andreasmenzel.adds_dji.Managers.MissionManager;
-import com.andreasmenzel.adds_dji.Managers.TrafficControlManager;
 import com.secneo.sdk.Helper;
 
 
@@ -19,7 +19,7 @@ public class MApplication extends Application {
     private static boolean droneActive = false;
 
     private static DJIManager djiManager;
-    private static TrafficControlManager trafficControlManager;
+    private static FlightControlManager flightControlManager;
     private static InfrastructureManager infrastructureManager;
     private static MissionManager missionManager;
 
@@ -37,7 +37,7 @@ public class MApplication extends Application {
     public static void initializeManagers() {
         djiManager = new DJIManager();
         missionManager = new MissionManager();
-        trafficControlManager = new TrafficControlManager();
+        flightControlManager = new FlightControlManager();
         infrastructureManager = new InfrastructureManager();
     }
 
@@ -75,11 +75,11 @@ public class MApplication extends Application {
     }
 
     /**
-     * Returns the TrafficControlManager.
-     * @return trafficControlManager.
+     * Returns the FlightControlManager.
+     * @return flightControlManager.
      */
-    public static TrafficControlManager getTrafficControlManager() {
-        return trafficControlManager;
+    public static FlightControlManager getFlightControlManager() {
+        return flightControlManager;
     }
 
     /**
