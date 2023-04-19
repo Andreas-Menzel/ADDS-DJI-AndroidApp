@@ -101,6 +101,17 @@ public class MissionManager {
                     || MApplication.getDjiManager().getHighLevelOperationMode() instanceof Hovering
                     || MApplication.getDjiManager().getHighLevelOperationMode() instanceof UseVirtualStick
                     || MApplication.getDjiManager().getHighLevelOperationMode() instanceof WaypointMissionReady) {
+
+                // Move "uploaded" corridors to "finished".
+                LinkedList<Corridor> corridorsUploaded = missionData.getCorridorsUploaded();
+                LinkedList<Corridor> corridorsFinished = missionData.getCorridorsFinished();
+                if(!corridorsUploaded.isEmpty()) {
+                    while(!corridorsUploaded.isEmpty()) {
+                        corridorsFinished.addLast(corridorsUploaded.removeFirst());
+                    }
+                    missionData.dataUpdated();
+                }
+
                 // If startIntersection is null, lastUploadedIntersection is also null
                 if(missionData.getStartIntersection() == null) {
                     bus.post(new ToastMessage("ERROR: MissionManager: Cannot create mission: startIntersection is null."));
@@ -108,6 +119,7 @@ public class MissionManager {
                     uploadInProgress.set(false);
                     return;
                 }
+
                 if(missionData.getCorridorsApproved().isEmpty() && !missionData.getCorridorsPending().isEmpty()) {
                     bus.post(new ToastMessage("MissionManager: Cannot create mission: Waiting for corridors to be approved."));
                     uploadMissionHandler.postDelayed(this::createAndUploadNewWaypoints, uploadMissionHandlerDelay);
@@ -115,17 +127,12 @@ public class MissionManager {
                     uploadInProgress.set(false);
                     return;
                 }
+
                 if(missionData.getCorridorsApproved().isEmpty() && missionData.getCorridorsPending().isEmpty()) {
                     //bus.post(new ToastMessage("MissionManager: (Cannot create mission:) Mission already finished."));
 
                     uploadInProgress.set(false);
                     return;
-                }
-
-                // Move "uploaded" corridors to "finished".
-                while(!missionData.getCorridorsUploaded().isEmpty()) {
-                    missionData.getCorridorsFinished().addLast(missionData.getCorridorsUploaded().removeFirst());
-                    missionData.dataUpdated();
                 }
 
                 DJIManager.waypointMissionClearWaypoints();
