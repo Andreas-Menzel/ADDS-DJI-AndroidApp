@@ -174,7 +174,7 @@ public class FlightData implements InformationHolder {
             datasetAsJsonObject.put("landing_gps_lat", roundDouble(landingGpsLat, 8));  // accuracy: approx. 1mm
             datasetAsJsonObject.put("landing_gps_lon", roundDouble(landingGpsLon, 8));  // accuracy: approx. 1mm
 
-            datasetAsJsonObject.put("opm", operationModes);
+            datasetAsJsonObject.put("operation_modes", operationModes);
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;

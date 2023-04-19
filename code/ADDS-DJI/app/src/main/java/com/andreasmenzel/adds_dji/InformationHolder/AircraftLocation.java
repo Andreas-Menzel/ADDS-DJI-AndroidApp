@@ -232,9 +232,9 @@ public class AircraftLocation implements InformationHolder {
             datasetAsJsonObject.put("velocity_y", roundFloat(velocityY, 2));   // accuracy: approx. 0.01m/s ~= 0.036km/h
             datasetAsJsonObject.put("velocity_z", roundFloat(velocityZ, 2));   // accuracy: approx. 0.01m/s ~= 0.036km/h
 
-            datasetAsJsonObject.put("pit", pitch);
+            datasetAsJsonObject.put("pitch", pitch);
             datasetAsJsonObject.put("yaw", yaw);
-            datasetAsJsonObject.put("rol", roll);
+            datasetAsJsonObject.put("roll", roll);
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;
