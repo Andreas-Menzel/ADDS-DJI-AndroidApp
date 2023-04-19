@@ -106,36 +106,44 @@ public class MissionData implements InformationHolder {
         if(startIntersection != null) {
             startIntersectionId = startIntersection.getId();
         }
+        String lastUploadedIntersectionId = null;
+        if(lastUploadedIntersection != null) {
+            lastUploadedIntersectionId = lastUploadedIntersection.getId();
+        }
+        String lastMissionIntersectionId = null;
+        if(lastMissionIntersection != null) {
+            lastMissionIntersectionId = lastMissionIntersection.getId();
+        }
 
         try {
             datasetAsJsonObject.put("time_recorded", timeRecorded);
 
             datasetAsJsonObject.put("start_intersection", startIntersectionId);
-            datasetAsJsonObject.put("last_uploaded_intersection", lastUploadedIntersection);
-            datasetAsJsonObject.put("last_mission_intersection", lastMissionIntersection);
+            datasetAsJsonObject.put("last_uploaded_intersection", lastUploadedIntersectionId);
+            datasetAsJsonObject.put("last_mission_intersection", lastMissionIntersectionId);
             datasetAsJsonObject.put("land_after_mission_finished", landAfterMissionFinished);
 
             JSONArray corridorsPendingJsonArray = new JSONArray();
             for(int i = 0; i < corridorsPending.size(); ++i) {
-                corridorsPendingJsonArray.put(corridorsPending.get(i));
+                corridorsPendingJsonArray.put(corridorsPending.get(i).getId());
             }
             datasetAsJsonObject.put("corridors_pending", corridorsPendingJsonArray);
 
             JSONArray corridorsApprovedJsonArray = new JSONArray();
             for(int i = 0; i < corridorsApproved.size(); ++i) {
-                corridorsApprovedJsonArray.put(corridorsApproved.get(i));
+                corridorsApprovedJsonArray.put(corridorsApproved.get(i).getId());
             }
             datasetAsJsonObject.put("corridors_approved", corridorsApprovedJsonArray);
 
             JSONArray corridorsUploadedJsonArray = new JSONArray();
             for(int i = 0; i < corridorsUploaded.size(); ++i) {
-                corridorsUploadedJsonArray.put(corridorsUploaded.get(i));
+                corridorsUploadedJsonArray.put(corridorsUploaded.get(i).getId());
             }
             datasetAsJsonObject.put("corridors_uploaded", corridorsUploadedJsonArray);
 
             JSONArray corridorsFinishedJsonArray = new JSONArray();
             for(int i = 0; i < corridorsFinished.size(); ++i) {
-                corridorsUploadedJsonArray.put(corridorsFinished.get(i));
+                corridorsFinishedJsonArray.put(corridorsFinished.get(i).getId());
             }
             datasetAsJsonObject.put("corridors_finished", corridorsFinishedJsonArray);
         } catch (JSONException e) {
