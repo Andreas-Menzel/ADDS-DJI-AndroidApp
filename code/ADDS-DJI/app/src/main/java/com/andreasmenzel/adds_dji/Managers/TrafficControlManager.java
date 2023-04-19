@@ -62,7 +62,7 @@ public class TrafficControlManager {
      * Base information for Traffic Control connection
      */
     private final OkHttpClient client = new OkHttpClient();
-    private final String trafficControlUrl = "http://adds-demo.an-men.de/";
+    private final String trafficControlUrl = "http://adds-demo.an-men.de:2000/";
 
     /*
      * Periodically check the connection to the Traffic Control
@@ -461,7 +461,7 @@ public class TrafficControlManager {
 
             if(informationHolder != null) {
                 if(informationHolder.getAndSetDataUpdatedSinceLastTrafficControlUpdate()) {
-                    payload.put("data", informationHolder.getDatasetAsJsonObject()); // TODO-LATER: SmallJsonObject (?)
+                    payload.put("data", informationHolder.getDatasetAsSmallJsonObject());
                     sendAsynchronousRequest("tell", requestType, payload.toString());
                 } else {
                     // Nothing changed since last update. Check again later.

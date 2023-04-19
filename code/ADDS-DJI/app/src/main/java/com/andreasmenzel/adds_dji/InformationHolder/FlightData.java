@@ -162,17 +162,17 @@ public class FlightData implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
-            datasetAsJsonObject.put("rec", timeRecorded);                           // time_recorded
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
 
-            datasetAsJsonObject.put("tti", takeOffTime);
-            datasetAsJsonObject.put("tgv", takeOffGpsValid);
-            datasetAsJsonObject.put("tla", roundDouble(takeOffGpsLat, 8)); // takeoff_lat
-            datasetAsJsonObject.put("tlo", roundDouble(takeOffGpsLon, 8)); // takeoff_lon
+            datasetAsJsonObject.put("takeoff_time", takeOffTime);
+            datasetAsJsonObject.put("takeoff_gps_valid", takeOffGpsValid);
+            datasetAsJsonObject.put("takeoff_gps_lat", roundDouble(takeOffGpsLat, 8));  // accuracy: approx. 1mm
+            datasetAsJsonObject.put("takeoff_gps_lon", roundDouble(takeOffGpsLon, 8));  // accuracy: approx. 1mm
 
-            datasetAsJsonObject.put("lti", landingTime);
-            datasetAsJsonObject.put("lgv", landingGpsValid);
-            datasetAsJsonObject.put("lla", roundDouble(landingGpsLat, 8)); // landing_lat
-            datasetAsJsonObject.put("llo", roundDouble(landingGpsLon, 8)); // landing_lon
+            datasetAsJsonObject.put("landing_time", landingTime);
+            datasetAsJsonObject.put("landing_gps_valid", landingGpsValid);
+            datasetAsJsonObject.put("landing_gps_lat", roundDouble(landingGpsLat, 8));  // accuracy: approx. 1mm
+            datasetAsJsonObject.put("landing_gps_lon", roundDouble(landingGpsLon, 8));  // accuracy: approx. 1mm
 
             datasetAsJsonObject.put("opm", operationModes);
         } catch (JSONException e) {

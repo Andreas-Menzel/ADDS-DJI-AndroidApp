@@ -219,24 +219,24 @@ public class AircraftLocation implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
-            datasetAsJsonObject.put("rec", timeRecorded);                       // time_recorded
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
 
-            datasetAsJsonObject.put("lvl", gpsSignalLevel);                     // gps_signal_level
-            datasetAsJsonObject.put("con", gpsSatellitesConnected);             // gps_satellites_connected
+            datasetAsJsonObject.put("gps_signal_level", gpsSignalLevel);
+            datasetAsJsonObject.put("gps_satellites_connected", gpsSatellitesConnected);
 
-            datasetAsJsonObject.put("gok", gpsValid);                           // gps_valid
-            datasetAsJsonObject.put("lat", roundDouble(gpsLat, 8));     // gps_lat (accuracy: approx. 1mm)
-            datasetAsJsonObject.put("lon", roundDouble(gpsLon, 8));     // gps_lon (accuracy: approx. 1mm)
+            datasetAsJsonObject.put("gps_valid", gpsValid);
+            datasetAsJsonObject.put("gps_lat", roundDouble(gpsLat, 8));     // accuracy: approx. 1mm
+            datasetAsJsonObject.put("gps_lon", roundDouble(gpsLon, 8));     // accuracy: approx. 1mm
 
-            datasetAsJsonObject.put("alt", roundFloat(altitude, 3));    // altitude (accuracy: approx. 1mm)
+            datasetAsJsonObject.put("altitude", roundFloat(altitude, 3));    // accuracy: approx. 1mm
 
-            datasetAsJsonObject.put("v_x", roundFloat(velocityX, 2));   // velocity_x (accuracy: approx. 0.01m/s ~= 0.036km/h)
-            datasetAsJsonObject.put("v_y", roundFloat(velocityY, 2));   // velocity_y (accuracy: approx. 0.01m/s ~= 0.036km/h)
-            datasetAsJsonObject.put("v_z", roundFloat(velocityZ, 2));   // velocity_z (accuracy: approx. 0.01m/s ~= 0.036km/h)
+            datasetAsJsonObject.put("velocity_x", roundFloat(velocityX, 2));   // accuracy: approx. 0.01m/s ~= 0.036km/h
+            datasetAsJsonObject.put("velocity_y", roundFloat(velocityY, 2));   // accuracy: approx. 0.01m/s ~= 0.036km/h
+            datasetAsJsonObject.put("velocity_z", roundFloat(velocityZ, 2));   // accuracy: approx. 0.01m/s ~= 0.036km/h
 
-            datasetAsJsonObject.put("pit", pitch);  // pitch
-            datasetAsJsonObject.put("yaw", yaw);    // yaw
-            datasetAsJsonObject.put("rol", roll);   // roll
+            datasetAsJsonObject.put("pit", pitch);
+            datasetAsJsonObject.put("yaw", yaw);
+            datasetAsJsonObject.put("rol", roll);
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;

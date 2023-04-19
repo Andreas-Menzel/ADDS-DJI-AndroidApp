@@ -66,14 +66,6 @@ public class MissionManager {
         DJIManager.changeOperationMode(new WaypointMissionResume());
     }
 
-
-    private void checkAndInitiateClearanceAsk() {
-        // Call this function every second.
-        // corridorsPending not empty:
-        //   addAsk? -> can also be part of TrafficControl
-    }
-
-
     public void setLandAfterMissionFinished(boolean landAfterMissionFinished) {
         missionData.setLandAfterMissionFinished(landAfterMissionFinished);
     }
@@ -95,9 +87,6 @@ public class MissionManager {
         }
 
         missionData.dataUpdated();
-
-        // TODO: REMOVE THIS TEST
-        //missionData.getCorridorsApproved().addLast(corridor);
     }
 
     /**

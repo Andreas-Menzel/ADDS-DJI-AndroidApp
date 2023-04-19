@@ -119,13 +119,13 @@ public class AircraftPower implements InformationHolder {
         JSONObject datasetAsJsonObject = new JSONObject();
 
         try {
-            datasetAsJsonObject.put("rec", timeRecorded);                   // time_recorded
+            datasetAsJsonObject.put("time_recorded", timeRecorded);
 
-            datasetAsJsonObject.put("rem", batteryRemaining);               // battery_remaining
-            datasetAsJsonObject.put("rep", batteryRemainingPercent);        // battery_remaining_percent
+            datasetAsJsonObject.put("battery_remaining", batteryRemaining);
+            datasetAsJsonObject.put("battery_remaining_percent", batteryRemainingPercent);
 
-            datasetAsJsonObject.put("ret", remainingFlightTime);            // remaining_flight_time
-            datasetAsJsonObject.put("rer", (int) remainingFlightRadius);    // remaining_flight_radius (accuracy: approx. 1m)
+            datasetAsJsonObject.put("remaining_flight_time", remainingFlightTime);
+            datasetAsJsonObject.put("remaining_flight_radius", (int) remainingFlightRadius);    // accuracy: approx. 1m
         } catch (JSONException e) {
             // TODO: error handling
             datasetAsJsonObject = null;
