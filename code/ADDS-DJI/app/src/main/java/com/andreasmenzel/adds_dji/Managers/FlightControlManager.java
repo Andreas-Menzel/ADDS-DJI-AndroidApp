@@ -1,6 +1,7 @@
 package com.andreasmenzel.adds_dji.Managers;
 
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -744,6 +745,7 @@ public class FlightControlManager {
                 }, 1000);
             }
         } else if(requestType.equals("request_flightpath")) {
+            Log.d("MY_DEBUG_5", "Sending request_flightpath ???");
             // Only send, if there is currently no mission
             boolean send = true;
 
@@ -753,14 +755,27 @@ public class FlightControlManager {
             if(!missionData.getCorridorsUploaded().isEmpty()) send = false;
             if(!missionData.getCorridorsFinished().isEmpty()) send = false;
 
-            String destinationIntersectionId = missionData.getDestinationIntersection().getId();
-            if(destinationIntersectionId == null) send = false;
+            Intersection destinationIntersection = missionData.getDestinationIntersection();
+            String destinationIntersectionId = null;
+            if(destinationIntersection != null) {
+                destinationIntersectionId = missionData.getDestinationIntersection().getId();
+            } else {
+                send = false;
+            }
 
             if(send) {
+                Log.d("MY_DEBUG_5", "Sending request_flightpath !!!");
                 JSONObject payload = new JSONObject();
 
                 try {
-                    payload.put("dest_intersection", destinationIntersectionId);
+                    payload.put("drone_id", MApplication.getDroneId());
+                    payload.put("data_type", requestType);
+                    //payload.put("time_sent", System.currentTimeMillis() / 1000.0);
+
+                    JSONObject payloadData = new JSONObject();
+
+                    payloadData.put("dest_intersection", destinationIntersectionId);
+                    payload.put("data", payloadData);
                 } catch (JSONException e) {
                     // TODO: Error Handling
                 }
@@ -840,7 +855,8 @@ public class FlightControlManager {
                 } else {
                     // TODO: Maybe handle this? Show on screen? -> Not necessary
                 }
-            } else  if(event.getAsk().equals("request_flightpath")) {
+            } else if(event.getAsk().equals("request_flightpath")) {
+                Log.d("MY_DEBUG_5", "Got response for request_flightpath");
                 if(responseData != null) {
                     InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
 
@@ -855,18 +871,24 @@ public class FlightControlManager {
                     missionData.setStartIntersection(null);
 
                     String startIntersectionId = responseData.getString("start_intersection");
+                    Log.d("MY_DEBUG_5", "Setting start intersection to " + startIntersectionId);
                     Intersection startIntersection = infrastructureManager.getIntersection(startIntersectionId);
-                    missionData.setStartIntersection(startIntersection);
+                    Log.d("MY_DEBUG_5", "Start Intersection != null? " + (startIntersection != null));
+                    missionManager.setStartIntersection(startIntersection);
 
                     JSONArray flightpath = responseData.getJSONArray("flightpath");
                     for(int i = 0; i < flightpath.length(); ++i) {
                         Corridor cor = infrastructureManager.getCorridor(flightpath.getString(i));
+                        Log.d("MY_DEBUG_5", "Adding corridor: " + flightpath.getString(i));
+                        Log.d("MY_DEBUG_5", "corridor != null? " + (cor != null));
                         if(cor != null) {
-                            missionData.getCorridorsPending().addLast(cor);
+                            missionManager.getMissionData().getCorridorsPending().addLast(cor);
                         } else {
                             // TODO: Error handling
                         }
                     }
+
+                    missionManager.startMission();
                 } else {
                     // TODO: Maybe handle this? Show on screen?
                 }
