@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 // Traffic System Communication Events
 import com.andreasmenzel.adds_dji.Datasets.Corridor;
+import com.andreasmenzel.adds_dji.Datasets.Intersection;
 import com.andreasmenzel.adds_dji.Events.ToastMessage;
 import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.Communication;
 import com.andreasmenzel.adds_dji.Events.FlightControl.Communication.GotTellResponse;
@@ -108,6 +109,10 @@ public class FlightControlManager {
     // Auto communication: ask/request_clearance
     private final Handler autoCommunicationHandlerRequestClearance = new Handler();
     private final int autoCommunicationDelayRequestClearance = 2000; // Note: Nothing will be sent if no clearance is required
+
+    // Auto communication: ask/request_flightpath
+    private final Handler autoCommunicationHandlerRequestFlightpath = new Handler();
+    private final int autoCommunicationDelayRequestFlightpath = 3000; // Note: Nothing will be sent if no flightpath is required
 
     /*
      * Count the number of failed requests (TELL or ASK). "/how_are_you" requests are not considered.
@@ -589,6 +594,7 @@ public class FlightControlManager {
 
         addAskToSend("infrastructure");
         addAskToSend("request_clearance");
+        addAskToSend("request_flightpath");
     }
     /**
      * Stops the automatic communication for ASKs.
@@ -598,6 +604,7 @@ public class FlightControlManager {
 
         autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
         autoCommunicationHandlerRequestClearance.removeCallbacksAndMessages(null);
+        autoCommunicationHandlerRequestFlightpath.removeCallbacksAndMessages(null);
     }
 
 
@@ -609,6 +616,8 @@ public class FlightControlManager {
             autoCommunicationHandlerInfrastructure.removeCallbacksAndMessages(null);
         } else if(ask.equals("request_clearance")) {
             autoCommunicationHandlerRequestClearance.removeCallbacksAndMessages(null);
+        } else if(ask.equals("request_flightpath")) {
+            autoCommunicationHandlerRequestFlightpath.removeCallbacksAndMessages(null);
         }
 
         // Do nothing and retry in 1 second when drone is not active
@@ -620,6 +629,10 @@ public class FlightControlManager {
             } else if(ask.equals("request_clearance")) {
                 autoCommunicationHandlerRequestClearance.postDelayed(() -> {
                     addAskToSend("request_clearance");
+                }, 1000);
+            } else if(ask.equals("request_flightpath")) {
+                autoCommunicationHandlerRequestFlightpath.postDelayed(() -> {
+                    addAskToSend("request_flightpath");
                 }, 1000);
             }
 
@@ -730,6 +743,35 @@ public class FlightControlManager {
                     addAskToSend("request_clearance");
                 }, 1000);
             }
+        } else if(requestType.equals("request_flightpath")) {
+            // Only send, if there is currently no mission
+            boolean send = true;
+
+            MissionData missionData = MApplication.getMissionManager().getMissionData();
+            if(!missionData.getCorridorsPending().isEmpty()) send = false;
+            if(!missionData.getCorridorsApproved().isEmpty()) send = false;
+            if(!missionData.getCorridorsUploaded().isEmpty()) send = false;
+            if(!missionData.getCorridorsFinished().isEmpty()) send = false;
+
+            String destinationIntersectionId = missionData.getDestinationIntersection().getId();
+            if(destinationIntersectionId == null) send = false;
+
+            if(send) {
+                JSONObject payload = new JSONObject();
+
+                try {
+                    payload.put("dest_intersection", destinationIntersectionId);
+                } catch (JSONException e) {
+                    // TODO: Error Handling
+                }
+
+                sendAsynchronousRequest("ask", "request_flightpath", payload.toString());
+            } else {
+                // Don't send. Try again later.
+                autoCommunicationHandlerRequestFlightpath.postDelayed(() -> {
+                    addAskToSend("request_flightpath");
+                }, 1000);
+            }
         }
     }
 
@@ -796,6 +838,37 @@ public class FlightControlManager {
                         bus.post(new ToastMessage("Got clearance for corridor \"" + clearedCorridorId + "\"."));
                     }
                 } else {
+                    // TODO: Maybe handle this? Show on screen? -> Not necessary
+                }
+            } else  if(event.getAsk().equals("request_flightpath")) {
+                if(responseData != null) {
+                    InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
+
+                    // Clear current mission (Should be empty - just in case)
+                    MissionData missionData = MApplication.getMissionManager().getMissionData();
+                    missionData.getCorridorsPending().clear();
+                    missionData.getCorridorsApproved().clear();
+                    missionData.getCorridorsUploaded().clear();
+                    missionData.getCorridorsFinished().clear();
+                    missionData.setLastMissionIntersection(null);
+                    missionData.setLastUploadedIntersection(null);
+                    missionData.setStartIntersection(null);
+
+                    String startIntersectionId = responseData.getString("start_intersection");
+                    Intersection startIntersection = infrastructureManager.getIntersection(startIntersectionId);
+                    missionData.setStartIntersection(startIntersection);
+
+                    JSONArray flightpath = responseData.getJSONArray("flightpath");
+                    for(int i = 0; i < flightpath.length(); ++i) {
+                        Corridor cor = infrastructureManager.getCorridor(flightpath.getString(i));
+                        if(cor != null) {
+                            missionData.getCorridorsPending().addLast(cor);
+                        } else {
+                            // TODO: Error handling
+                        }
+                    }
+                } else {
+                    // TODO: Maybe handle this? Show on screen?
                 }
             }
 
@@ -814,6 +887,10 @@ public class FlightControlManager {
                 autoCommunicationHandlerRequestClearance.postDelayed(() -> {
                     addAskToSend("request_clearance");
                 }, autoCommunicationDelayRequestClearance);
+            } else if(event.getAsk().equals("request_flightpath")) {
+                autoCommunicationHandlerRequestFlightpath.postDelayed(() -> {
+                    addAskToSend("request_flightpath");
+                }, autoCommunicationDelayRequestFlightpath);
             }
         }
     }
@@ -839,6 +916,10 @@ public class FlightControlManager {
                 autoCommunicationHandlerRequestClearance.postDelayed(() -> {
                     addAskToSend("request_clearance");
                 }, autoCommunicationDelayRequestClearance);
+            } else if(event.getAsk().equals("request_flightpath")) {
+                autoCommunicationHandlerRequestFlightpath.postDelayed(() -> {
+                    addAskToSend("request_flightpath");
+                }, autoCommunicationDelayRequestFlightpath);
             }
         }
     }

@@ -128,9 +128,11 @@ public class MissionManager {
                     return;
                 }
 
+                // Check if mission is finished
                 if(missionData.getCorridorsApproved().isEmpty() && missionData.getCorridorsPending().isEmpty()) {
                     //bus.post(new ToastMessage("MissionManager: (Cannot create mission:) Mission already finished."));
 
+                    missionData.setDestinationIntersection(null);
                     uploadInProgress.set(false);
                     return;
                 }

@@ -16,6 +16,8 @@ public class MissionData implements InformationHolder {
 
     private double timeRecorded = 0;
 
+    private Intersection destinationIntersection = null;
+
     private Intersection startIntersection = null;
     private boolean landAfterMissionFinished = false;
 
@@ -34,6 +36,10 @@ public class MissionData implements InformationHolder {
     // Last intersection that was uploaded to the drone.
     private Intersection lastUploadedIntersection = null;
 
+
+    public Intersection getDestinationIntersection() {
+        return destinationIntersection;
+    }
 
     public Intersection getStartIntersection() {
         return startIntersection;
@@ -67,6 +73,11 @@ public class MissionData implements InformationHolder {
         return lastUploadedIntersection;
     }
 
+
+    public void setDestinationIntersection(Intersection destinationIntersection) {
+        this.destinationIntersection = destinationIntersection;
+        dataUpdated();
+    }
 
     public void setLandAfterMissionFinished(boolean landAfterMissionFinished) {
         this.landAfterMissionFinished = landAfterMissionFinished;
