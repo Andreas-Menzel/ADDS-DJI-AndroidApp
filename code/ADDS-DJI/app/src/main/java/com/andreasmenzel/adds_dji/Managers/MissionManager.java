@@ -48,6 +48,8 @@ public class MissionManager {
 
     public MissionManager() {
         //bus.register(this); // TODO: deregister?
+
+        MApplication.getDjiManager().controlDrone();
     }
 
     public void startMission() {
@@ -55,6 +57,15 @@ public class MissionManager {
     }
 
     public void stopMission() {
+        missionData.getCorridorsPending().clear();
+        missionData.getCorridorsApproved().clear();
+        missionData.getCorridorsUploaded().clear();
+        missionData.getCorridorsFinished().clear();
+        missionData.setLastMissionIntersection(null);
+        missionData.setLastUploadedIntersection(null);
+        missionData.setStartIntersection(null);
+        missionData.dataUpdated();
+
         DJIManager.changeOperationMode(new WaypointMissionStop());
     }
 
@@ -64,6 +75,19 @@ public class MissionManager {
 
     public void resumeMission() {
         DJIManager.changeOperationMode(new WaypointMissionResume());
+    }
+
+    public void setMissionDestination(Intersection destinationIntersection, boolean landAfterMissionFinished) {
+        if(missionData.getCorridorsPending().isEmpty() && missionData.getCorridorsApproved().isEmpty()
+                && missionData.getCorridorsUploaded().isEmpty()) {
+            missionData.getCorridorsFinished().clear();
+            missionData.dataUpdated();
+
+            missionData.setDestinationIntersection(destinationIntersection);
+            missionData.setLandAfterMissionFinished(landAfterMissionFinished);
+        } else {
+            bus.post(new ToastMessage("Cannot set mission destination. Mission is still running."));
+        }
     }
 
     public void setLandAfterMissionFinished(boolean landAfterMissionFinished) {

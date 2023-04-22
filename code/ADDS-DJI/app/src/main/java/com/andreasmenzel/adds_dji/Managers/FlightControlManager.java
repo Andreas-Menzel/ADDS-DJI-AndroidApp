@@ -745,7 +745,6 @@ public class FlightControlManager {
                 }, 1000);
             }
         } else if(requestType.equals("request_flightpath")) {
-            Log.d("MY_DEBUG_5", "Sending request_flightpath ???");
             // Only send, if there is currently no mission
             boolean send = true;
 
@@ -764,7 +763,6 @@ public class FlightControlManager {
             }
 
             if(send) {
-                Log.d("MY_DEBUG_5", "Sending request_flightpath !!!");
                 JSONObject payload = new JSONObject();
 
                 try {
@@ -856,7 +854,6 @@ public class FlightControlManager {
                     // TODO: Maybe handle this? Show on screen? -> Not necessary
                 }
             } else if(event.getAsk().equals("request_flightpath")) {
-                Log.d("MY_DEBUG_5", "Got response for request_flightpath");
                 if(responseData != null) {
                     InfrastructureManager infrastructureManager = MApplication.getInfrastructureManager();
 
@@ -871,16 +868,12 @@ public class FlightControlManager {
                     missionData.setStartIntersection(null);
 
                     String startIntersectionId = responseData.getString("start_intersection");
-                    Log.d("MY_DEBUG_5", "Setting start intersection to " + startIntersectionId);
                     Intersection startIntersection = infrastructureManager.getIntersection(startIntersectionId);
-                    Log.d("MY_DEBUG_5", "Start Intersection != null? " + (startIntersection != null));
                     missionManager.setStartIntersection(startIntersection);
 
                     JSONArray flightpath = responseData.getJSONArray("flightpath");
                     for(int i = 0; i < flightpath.length(); ++i) {
                         Corridor cor = infrastructureManager.getCorridor(flightpath.getString(i));
-                        Log.d("MY_DEBUG_5", "Adding corridor: " + flightpath.getString(i));
-                        Log.d("MY_DEBUG_5", "corridor != null? " + (cor != null));
                         if(cor != null) {
                             missionManager.getMissionData().getCorridorsPending().addLast(cor);
                         } else {

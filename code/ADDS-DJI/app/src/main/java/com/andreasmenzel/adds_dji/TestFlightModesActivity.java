@@ -49,6 +49,10 @@ public class TestFlightModesActivity extends AppCompatActivity {
             Intent switchActivityIntent = new Intent(this, InfrastructureWaypointMissionDemoActivity.class);
             startActivity(switchActivityIntent);
         });
+        findViewById(R.id.btn_showAdvancedMissionDemoActivity).setOnClickListener((View view) -> {
+            Intent switchActivityIntent = new Intent(this, AdvancedMissionDemoActivity.class);
+            startActivity(switchActivityIntent);
+        });
     }
 
 

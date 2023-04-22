@@ -96,6 +96,9 @@
     <string name="infrastructure_waypoint_mission_title">Infrastructure Waypoint Mission</string>
     <string name="infrastructure_waypoint_mission_description">Specify a start-intersection and a list of corridors. The drone will then autonomously fly the selected waypoint mission.</string>
 
+    <string name="advanced_mission_title">Advanced Waypoint Mission</string>
+    <string name="advanced_mission_description">Select a destination intersection. The app will request an available flightpath and start the drone.</string>
+
 
 
 

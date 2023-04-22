@@ -121,6 +121,11 @@
             android:screenOrientation="landscape">
         </activity>
 
+        <activity android:name=".AdvancedMissionDemoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="landscape">
+        </activity>
+
         <activity android:name=".FPVDemoActivity"
             android:configChanges="orientation"
             android:screenOrientation="landscape">
