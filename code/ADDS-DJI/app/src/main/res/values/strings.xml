@@ -20,7 +20,7 @@
     <string name="label_productModelName">Model:</string>
     <string name="product_not_connected">not connected</string>
 
-    <string name="label_flightControl">Traffic System:</string>
+    <string name="label_flightControl">Flight Control:</string>
     <string name="flightControl_not_checked_yet">not checked yet</string>
     <string name="flightControl_checking_connection">checking connection...</string>
     <string name="flightControl_not_connected">not connected</string>
