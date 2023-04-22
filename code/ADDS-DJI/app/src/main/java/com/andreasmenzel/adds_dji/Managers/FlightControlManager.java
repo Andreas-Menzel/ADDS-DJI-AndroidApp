@@ -875,7 +875,7 @@ public class FlightControlManager {
                     for(int i = 0; i < flightpath.length(); ++i) {
                         Corridor cor = infrastructureManager.getCorridor(flightpath.getString(i));
                         if(cor != null) {
-                            missionManager.getMissionData().getCorridorsPending().addLast(cor);
+                            missionManager.addCorridor(cor);
                         } else {
                             // TODO: Error handling
                         }

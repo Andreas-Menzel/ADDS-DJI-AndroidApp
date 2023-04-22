@@ -106,8 +106,10 @@ public class MissionManager {
         String corIntBId = corridor.getIntersectionBId();
         if(corIntAId.equals(missionData.getLastMissionIntersection().getId())) {
             missionData.setLastMissionIntersection(MApplication.getInfrastructureManager().getIntersection(corIntBId));
-        } else {
+        } else if(corIntBId.equals(missionData.getLastMissionIntersection().getId())) {
             missionData.setLastMissionIntersection(MApplication.getInfrastructureManager().getIntersection(corIntAId));
+        } else {
+            // TODO: Error handling(?)
         }
 
         missionData.dataUpdated();
