@@ -1,6 +1,6 @@
 # ADDS-DJI-AndroidApp
 
-## An Integral Component of the Autonomous Drone Delivery System (ADDS)
+## Bridging the Gap: Direct DJI Drone Control for Seamless Integration with the ADDS project
 
 The ADDS-DJI-AndroidApp serves as a key component in the
 *Autonomous Drone Delivery System* project ecosystem, managing the
@@ -41,12 +41,14 @@ Upon launch, the ADDS-DJI-AndroidApp verifies all required permissions. Once
 these have been granted, you're able to select your drone's ID and then click
 "GO FLY" to enter the main screen.
 
-![Initialize App-Screen](images/initialize_app)
+![Initialize App-Screen](images/initialize_app_screen.jpg)
 
 At this stage, the app seamlessly links with the
 [ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
 service, fetching the existing infrastructure data and initializing automatic
 updates if any modifications have been detected.
+
+![Initialize App-Screen](images/main_app_screen.jpg)
 
 To ensure the reliability of the ADDS-DJI-AndroidApp and facilitate
 comprehensive testing, which is especially important for further development,
@@ -110,7 +112,9 @@ has the appropriate clearances before it starts navigating along the designated
 flight paths, reinforcing the safety and efficiency of operations within the
 ADDS ecosystem. This mode offers a comprehensive demonstration of the drone's
 autonomous flight capabilities, emphasizing the integration and interactivity
-between the drone, the app, and the Flight Control service.
+between the drone, the app, and the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service.
 
 See this mode in action: [Youtube](https://youtu.be/0oiUxM2VdOI)
 
@@ -124,15 +128,18 @@ destination is set, the app communicates with the
 [ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
 service to request a suitable flight path.
 
-The Flight Control service calculates the most efficient route for the drone to
+The
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service calculates the most efficient route for the drone to
 follow, which is typically the shortest and fastest path. In instances where the
 optimal path is unavailable due to other drones currently using or having
-reserved certain sections of the route, the Flight Control system has the
-functionality to navigate around these constraints. It accomplishes this by
-calculating an alternate route that avoids the occupied corridors, thus ensuring
-the continuity of drone operations.
+reserved certain sections of the route, the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+system has the functionality to navigate around these constraints. It
+accomplishes this by calculating an alternate route that avoids the occupied
+corridors, thus ensuring the continuity of drone operations.
 
-This mode represents the heart of the autonomous drone delivery system, where
+This mode represents the heart of the Autonomous Drone Delivery System, where
 complex path planning, real-time traffic management, and autonomous control come
 together to create a sophisticated and reliable drone navigation solution.
 
