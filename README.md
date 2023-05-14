@@ -1,41 +1,150 @@
 # ADDS-DJI-AndroidApp
 
-## Understanding the App's Code
+## An Integral Component of the Autonomous Drone Delivery System (ADDS)
 
-In this section, a small overview of the parts of the app is given. This should help you to understand how everything is connected and how the app works from a very high-level point of view. Have a look at the detailed java documentation for implementation-specific information.
+The ADDS-DJI-AndroidApp serves as a key component in the
+*Autonomous Drone Delivery System* project ecosystem, managing the
+interaction between your drone and the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service.
 
-### Operation Modes
+**Note:** This application requires the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service for data management and mission planning.
 
-An *Operation Mode* is the (flying) mode the drone is currently in. This is higher-level than the modes provided by DJI [1], because the `DJIManager` (inside the `Managers` package) will check if the currently selected mode can be executed. If so, it will work through the states `start` -> `attempting` -> `inProgress` -> `finished` (exceptions apply; see `OnGround` and `Hovering`), issuing the command to the drone and checking if the command is being executed, finished or if it failed. If an error occured, the state will be set to `failed`.
+## Setup
 
-Thanks to these modes, the *DJIManager* can detect and automatically recover from e.g. the pilot taking control of the aircraft. The *DJIManager* can automatically try to take back control of the drone, so the high-level methods issuing landing, waypoint missions, ... do not have to worry about these things.
+Discover the possibilities of the ADDS-DJI-AndroidApp without needing to connect
+to a DJI drone by simply installing the .apk file provided in the releases. This
+offers a great way to familiarize yourself with the app's interface and its
+features.
 
-#### Mode States
+However, if you're eager to utilize this app with an actual DJI drone, there's a
+minor setup required. You'll need to update the `flightControlUrl` variable to
+match your [ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+instance. You can find this variable inside the
+`/app/src/main/java/com/andreasmenzel/adds_dji/Managers/FlightControlManager.java`
+file:
 
-As mentioned above, an Operation Mode can be in one of the following states:
+```java
+private final String flightControlUrl = "http://<flight_control_url>:<port>/";
+```
 
-* `start`: The mode was just started and no command was sent yet.
-* `attempting`: The desired command was issued to the DJI MSDK and is currently being executed.
-* `inProgress`: The MSDK accepted the command with no errors or warnings. The drone will now execute the command.
-* `finished`: The drone finished the execution. E.g. it is hovering 1,2 meters above ground after the takeoff ("takeoff complete").
-* `failed`: Something went wrong (multiple times). The *DJIManager* will retry the command a few times before setting the state to *failed*.
-* `active`: This is a special state for modes that do not have to execute anything, e.g. *OnGround* or *Hovering*.
+After making this adjustment, you're ready to upload the app to your device
+using Android Studio. This will enable you to harness the full potential of the
+ADDS-DJI-AndroidApp, offering a seamless, efficient, and autonomous drone
+control experience.
 
-In the following graphic you can see all currently supported modes.
+## How it Works
 
-![](images/HighLevelOperationModes.png)
+Upon launch, the ADDS-DJI-AndroidApp verifies all required permissions. Once
+these have been granted, you're able to select your drone's ID and then click
+"GO FLY" to enter the main screen.
 
-### DJIManager and InformationHolders
+![Initialize App-Screen](images/initialize_app)
 
-The `DJIManager` (inside the `Managers` package) manages the DJI aircraft. It is an interface between the high-level methods issuing commands like takeoff and waypoint missions and the DJI MSDK, hence the drone.
+At this stage, the app seamlessly links with the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service, fetching the existing infrastructure data and initializing automatic
+updates if any modifications have been detected.
 
-The information of the drone (battery state of charge, remaining flight time, gps location, speed, ...) is saved in three *Information Holder* objects (inside the `InformationHolders` package), `AircraftLocation`, `AircraftPower` and `AircraftHealth`, each grouping together a subset of values. The *DJIManager* registers callbacks to the DJI MSDK, updating the *Information Holders* every time an update is sent by the DJI MSDK, hence the drone (up to 10Hz [2]). The *Information Holders* are managed by the *DJIManager* can can be accessed by public methods.
+To ensure the reliability of the ADDS-DJI-AndroidApp and facilitate
+comprehensive testing, which is especially important for further development,
+multiple testing- and demo-modes have been implemented:
 
-The connections between the *DJIManager* and the *Information Holders* can be seen in the following graphic.
+### Takeoff/Landing
 
-![](images/InternalDroneControl.png)
+Tests the basic takeoff and landing functionality.
 
-## Sources
+See this mode in action: [Youtube](https://youtu.be/yjyHMoYgwBY)
 
-* [1] <https://developer.dji.com/api-reference/android-api/Components/FlightController/DJIFlightController_DJIFlightControllerCurrentState.html#djiflightcontroller_djiflightcontrollerflightmode_inline> (accessed 2023-02-08 18:30)
-* [2] <https://developer.dji.com/mobile-sdk/documentation/introduction/component-guide-flightController.html#state> (accessed 2023-02-08 18:30)
+![Takeoff/LandingDemo-Screen](images/takeoff_landing_demo.jpg)
+
+### VirtualStickBasic
+
+This mode facilitates the testing of the DJI Virtual Stick functionality. In
+this mode, the app emulates a virtual remote, empowering it with the ability to
+control the drone as if manually operated by a pilot.
+
+See this mode in action: [Youtube](https://youtu.be/9rUtqEKblUw)
+
+![VirtualStickBasicDemo-Screen](images/virtual_stick_basic_demo.jpg)
+
+### VirtualStickCross
+
+Similar to the VirtualStickBasic demo mode, the app also uses a virtual remote.
+However, in this case, the app manipulates the virtual joysticks to command the
+drone to execute a straightforward X or cross pattern flight path, effectively
+providing a more complex demonstration of the drone's capabilities.
+
+See this mode in action (simulated): [Youtube](https://youtu.be/-yoLSRGguAg)
+
+See this mode in action (real-world): [Youtube](https://youtu.be/61h0QPKzlvw)
+
+![VirtualStickCrossDemo-Screen](images/virtual_stick_cross_demo.jpg)
+
+### BasicWaypointMission
+
+This mode allows you to manually control the drone while marking waypoints
+throughout the flight. Once marked, the drone can replicate the trajectory of
+your flight by revisiting these waypoints, providing a hands-off demonstration
+of the drone's navigational abilities.
+
+See this mode in action: [Youtube](https://youtu.be/g_tqQO5sinE)
+
+![BasicWaypointMissionDemo-Screen](images/basic_waypoint_mission_demo.jpg)
+
+### InfrastructureWaypointMission
+
+In the InfrastructureWaypointMission mode, the app not only utilizes the
+infrastructure data saved in and managed by the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service, but also actively communicates with
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl) to
+ensure safe and orderly flight operations. Upon selecting the starting
+intersection and the list of corridors that the drone should follow, the app
+requests flight permissions from the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service before the drone enters a flight corridor. This ensures that the drone
+has the appropriate clearances before it starts navigating along the designated
+flight paths, reinforcing the safety and efficiency of operations within the
+ADDS ecosystem. This mode offers a comprehensive demonstration of the drone's
+autonomous flight capabilities, emphasizing the integration and interactivity
+between the drone, the app, and the Flight Control service.
+
+See this mode in action: [Youtube](https://youtu.be/0oiUxM2VdOI)
+
+![InfrastructureWaypointMissionDemo-Screen](images/infrastructure_waypoint_mission_demo.jpg)
+
+### AdvancedWaypointMission
+
+In the AdvancedWaypointMission mode, the app takes drone automation to a new
+level. Here, you only need to specify the destination intersection. Once the
+destination is set, the app communicates with the
+[ADDS-FlightControl](https://github.com/Andreas-Menzel/ADDS-FlightControl)
+service to request a suitable flight path.
+
+The Flight Control service calculates the most efficient route for the drone to
+follow, which is typically the shortest and fastest path. In instances where the
+optimal path is unavailable due to other drones currently using or having
+reserved certain sections of the route, the Flight Control system has the
+functionality to navigate around these constraints. It accomplishes this by
+calculating an alternate route that avoids the occupied corridors, thus ensuring
+the continuity of drone operations.
+
+This mode represents the heart of the autonomous drone delivery system, where
+complex path planning, real-time traffic management, and autonomous control come
+together to create a sophisticated and reliable drone navigation solution.
+
+See this mode in action: [Youtube](https://youtu.be/OemlvOYHL6Q)
+
+![AdvancedWaypointMissionDemo-Screen](images/advanced_waypoint_mission_demo.jpg)
+
+## Feedback
+
+Your feedback and suggestions are always welcome. Please feel free to raise an
+issue, submit a pull request, or contact me directly.
+
+Disclaimer: Please remember that this software is provided 'as is', with no
+guarantees of suitability for any particular purpose or warranties of any kind,
+either expressed or implied.
