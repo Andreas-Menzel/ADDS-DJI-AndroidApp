@@ -144,7 +144,7 @@ public class DroneInfoActivity extends AppCompatActivity {
         String roll;
 
         if(djiManager.getModelName() != null) { // Drone connected
-            gpsSignalLevel = aircraftLocation.getGpsSignalLevel() + " / 5";
+            gpsSignalLevel = aircraftLocation.getGpsSignalLevel() + " / 6";
             gpsSatellitesConnected = String.valueOf(aircraftLocation.getGpsSatellitesConnected());
             gpsValid = String.valueOf(aircraftLocation.getGpsValid());
             gpsLat = "LAT: " + (round(aircraftLocation.getGpsLat()*100000000) / 100000000.0);

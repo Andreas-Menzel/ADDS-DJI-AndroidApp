@@ -127,7 +127,7 @@
                 android:id="@+id/btn_amd_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Requet flightpath and start mission"
+                android:text="Request flightpath and start mission"
                 android:layout_gravity="center_horizontal"/>
 
             <TextView

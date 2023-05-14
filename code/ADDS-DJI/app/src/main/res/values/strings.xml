@@ -82,22 +82,22 @@
     <string name="test_this_mode_button_text">Test this mode!</string>
 
     <string name="takeoff_landing_title">Takeoff / Landing</string>
-    <string name="takeoff_landing_description">Test the autonomous TakeOff and Landing modes..</string>
+    <string name="takeoff_landing_description">Test the autonomous Takeoff and Landing modes.</string>
 
     <string name="virtual_stick_basic_title">Virtual Stick Basic</string>
-    <string name="virtual_stick_basic_description">Test the Virtual Stick mode! Manually control the pitch and roll of the drone.</string>
+    <string name="virtual_stick_basic_description">Test the Virtual Stick mode. Manually control the pitch and roll of the drone via buttons in the app, instead of the remote controller.</string>
 
     <string name="virtual_stick_cross_title">Virtual Stick "Cross"</string>
-    <string name="virtual_stick_cross_description">Select flight speed and duration. The drone will autonomously fly a simple cross.</string>
+    <string name="virtual_stick_cross_description">An advancement of the previous "Virtual Stick Basic" mode. The drone will autonomously fly a simple cross-/plus-pattern. It is possible to specify both the flight duration and the speed of the drone when it travels from one end to the other.</string>
 
     <string name="basic_waypoint_mission_title">Basic Waypoint Mission</string>
-    <string name="basic_waypoint_mission_description">Specify multiple waypoints (gps coordinates + altitude). The drone will then autonomously fly the pre-recorded waypoint mission.</string>
+    <string name="basic_waypoint_mission_description">Manually control the drone and specify multiple waypoints (gps coordinates + altitude) along the way by pressing a button. The drone will then autonomously fly the pre-recorded waypoint mission.</string>
 
     <string name="infrastructure_waypoint_mission_title">Infrastructure Waypoint Mission</string>
-    <string name="infrastructure_waypoint_mission_description">Specify a start-intersection and a list of corridors. The drone will then autonomously fly the selected waypoint mission.</string>
+    <string name="infrastructure_waypoint_mission_description">Specify a start-intersection and a list of corridors the drone should follow. The app will request the information of the infrastructure from Flight Control and request clearance for the specified intersections and corridors. The gps-coordinates and altitude will be extracted from the intersections along the flightpath and uploaded to the drone as a waypoint mission.</string>
 
     <string name="advanced_mission_title">Advanced Waypoint Mission</string>
-    <string name="advanced_mission_description">Select a destination intersection. The app will request an available flightpath and start the drone.</string>
+    <string name="advanced_mission_description">Simplification of the previous "Infrastructure Waypoint Mission" mode by utilizing the request_flightpath api-endpoint of Flight Control. After selecting the destination intersection, the app will request the infrastructure information, a flightpath and clearance. The mission will then be uploaded onto the drone to follow.</string>
 
 
 
