@@ -35,6 +35,17 @@ using Android Studio. This will enable you to harness the full potential of the
 ADDS-DJI-AndroidApp, offering a seamless, efficient, and autonomous drone
 control experience.
 
+## Documentation
+
+Comprehensive documentation for the ADDS-DJI-AndroidApp is readily available in
+the `Javadoc` folder of this repository. The Javadoc provides detailed
+information about the classes, methods, and data structures used in the
+application.
+
+To access the documentation, navigate to the Javadoc folder and open the
+`index.html` file in a web browser. You can then browse through the
+documentation, which is organized by package and class.
+
 ## How it Works
 
 Upon launch, the ADDS-DJI-AndroidApp verifies all required permissions. Once

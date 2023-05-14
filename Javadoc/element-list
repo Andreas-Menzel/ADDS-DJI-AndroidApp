@@ -1,10 +1,11 @@
 com.andreasmenzel.adds_dji
+com.andreasmenzel.adds_dji.Datasets
 com.andreasmenzel.adds_dji.Events
 com.andreasmenzel.adds_dji.Events.DJIManager
+com.andreasmenzel.adds_dji.Events.FlightControl.Communication
+com.andreasmenzel.adds_dji.Events.FlightControl.Connectivity
 com.andreasmenzel.adds_dji.Events.InformationHolder
 com.andreasmenzel.adds_dji.Events.ProductConnectivityChange
-com.andreasmenzel.adds_dji.Events.TrafficControl.Communication
-com.andreasmenzel.adds_dji.Events.TrafficControl.Connectivity
 com.andreasmenzel.adds_dji.InformationHolder
-com.andreasmenzel.adds_dji.Manager
-com.andreasmenzel.adds_dji.Manager.HighLevelOperationModes
+com.andreasmenzel.adds_dji.Managers
+com.andreasmenzel.adds_dji.OperationModes
